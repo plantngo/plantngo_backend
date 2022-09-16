@@ -1,0 +1,12 @@
+# workspace
+.vscode/
+env
+
+# build
+target/
+
+# docker files
+Dockerfile
+docker-compose.yaml
+*.env
+

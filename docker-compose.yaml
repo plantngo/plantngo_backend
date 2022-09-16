@@ -1,0 +1,27 @@
+version: '3.0'
+services:
+  plantngo-db:
+    container_name: plantngo-db
+    image: postgres:14.5
+    env_file:
+      - ./main.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+
+  plantngo-backend:
+    container_name: plantngo-backend
+    image: plantngo-backend:latest
+    build: .
+    env_file: ./main.env
+    restart: always
+    depends_on:
+      - plantngo-db
+    volumes:
+      - .:/opt/app
+    ports: 
+      - 8080:8080
+
+volumes:
+  postgres_data:
