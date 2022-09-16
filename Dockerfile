@@ -1,8 +1,8 @@
-FROM openjdk:17-alpine
+FROM openjdk:17
 
 WORKDIR /opt/app
 
-RUN apk update && apk upgrade && apk add curl
+# RUN [ "apt update && apt upgrade && apt add curl"]
 
 COPY . .
 
