@@ -1,5 +1,6 @@
 package me.plantngo.backend.models;
 
+import java.util.*;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,14 +16,9 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity(name = "customer")
-public class Customer {
+public class Customer extends Account {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(
-        name = "customer_id"
-    )
-    private Integer id;
-
+    private Integer greenPts;
+    private List<String> preferences;
 
 }
