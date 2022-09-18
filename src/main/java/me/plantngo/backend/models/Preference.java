@@ -8,8 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.CascadeType;
+import javax.persistence.ManyToOne;
 import lombok.*;
 
 
@@ -20,20 +19,16 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity
-@Table(name = "customer")
-public class Customer {
-
+@Table(name = "preference")
+public class Preference {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String username;
+    private String preference;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Preference> preferences;
-
-    private String email;
-    private String name;
-    private String password;
-    private Integer greenPts;
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
 
 }
