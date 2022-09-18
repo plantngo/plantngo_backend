@@ -153,3 +153,28 @@ After you have tested that it works locally, you can then update the changes of 
 # Because the development branch already had its upstream branch set before automatically, you can just do git push and it will push to its upstream branch origin/development
 git push
 ```
+
+## 5. Connecting to local PostgreSQL database
+Note that the docker compose setup makes use of a PostgreSQL database. You can see the credentials for the local database in the `main.env` file.
+
+To connect to the database, you will first need to have the project started. To do so, use the command:
+```bash
+# start the SpringBoot server and PostgreSQL server
+docker compose up
+```
+
+After which, you will need to key in your credentials according to the `main.env` file's credentials.
+
+![](./resources/README/database-credentials-main-env.png) 
+
+In the example below, I used DBeaver to connect to the PostgreSQL server, but you can use any other tools you wish to, just ensure the credentials are keyed in properly as per the `main.env` file above. 
+
+Take note that your host should be written as `localhost` as docker is running on localhost (below is the reason why its written as `plantngo-db` in `main.env`). 
+> The docker container for PostgreSQL server is named as `plantngo-db` as per the `docker-compose.yml` file. This naming of the docker container is then applied on the container as a hostname by docker.
+
+>Since we know the container's name tallies with the hostname of the container, we can simply use the container's name as the hostname to resolve for its ip address.
+
+![](./resources/README/postgresql-connection.png)
+
+
+
