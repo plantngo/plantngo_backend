@@ -1,5 +1,7 @@
 package me.plantngo.backend.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +18,15 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public Customer getCustomerById(Integer id) {
-        return this.customerRepository.findById(id).orElseThrow(()->new RuntimeException());
+    public Optional<Customer> getCustomerById(String username) {
+        return customerRepository.findByUsername(username);
+    }
+    
+    public Optional<Customer> getCustomerByEmail(String email) {
+        return customerRepository.findByEmail(email);
     }
 
-
-
-    
-
+    public void saveCustomer(Customer customer) {
+        customerRepository.save(customer);
+    }
 }

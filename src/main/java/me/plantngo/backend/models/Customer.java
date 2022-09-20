@@ -34,7 +34,11 @@ public class Customer {
 
     @Email @NotNull
     private String email;
+
+    @NotNull
     private String name;
+
+    @NotNull
     private String password;
     private Integer greenPts;
 
