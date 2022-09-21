@@ -12,6 +12,8 @@ import javax.validation.constraints.NotNull;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
+import javax.validation.constraints.Size;
+
 import lombok.*;
 
 
@@ -27,15 +29,31 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
+    @Size(
+            min = 5,
+            max = 15,
+            message = "Username must be between 5 and 15 characters long"
+    )
+    @NotNull(
+            message = "Username cannot be null"
+    )
     private String username;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Preference> preferences;
 
-    @Email @NotNull
+    @Email(
+            message = "Must be a valid email"
+    )
+    @NotNull(
+            message = "Email cannot be null"
+    )
     private String email;
-    private String name;
+
     private String password;
+
     private Integer greenPts;
 
 }
