@@ -22,14 +22,14 @@ import me.plantngo.backend.services.CustomerService;
 @RequestMapping(path = "api/v1/account")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AccountController {
-    
+
     private final CustomerService customerService;
 
     @Autowired
     public AccountController(AccountService customerService) {
         this.customerService = customerService;
     }
-    
+
 
     @GetMapping(path="{username}")
     public Customer getUserByUsername(@PathVariable("username") String username) {
