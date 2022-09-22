@@ -25,8 +25,8 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity
-@Table(name = "merchant")
-public class Merchant {
+@Table(name = "Account")
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -56,11 +56,27 @@ public class Merchant {
     )
     private String password;
 
-    @NotNull(
-            message = "Company cannot be null"
-    )
+    /*
+        Discriminator:
+     */
+
+    private boolean isMerchant;
+
+    /*
+        Merchant attributes:
+     */
+
     private String company;
 
+    /*
+        Customer attributes:
+     */
 
-    
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Preference> preferences;
+
+    private Integer greenPts;
+
+
+
 }
