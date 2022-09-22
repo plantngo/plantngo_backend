@@ -7,9 +7,10 @@ import java.util.*;
 import me.plantngo.backend.models.Customer;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, String>{
+public interface CustomerRepository extends JpaRepository<Customer, Integer>{
     
     public Optional<Customer> findByUsername(String username);
+    public Optional<Customer> findById(Integer id);
     public Optional<Customer> findByEmail(String email);
 
 }

@@ -19,9 +19,6 @@ public class MerchantService {
     public Merchant getMerchantById(Integer id) {
         return this.merchantRepository.findById(id).orElseThrow(()->new RuntimeException());
     }
-
-
-
     
 
 }
