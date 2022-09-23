@@ -7,5 +7,8 @@ import me.plantngo.backend.models.Merchant;
 @Repository
 public interface MerchantRepository extends JpaRepository<Merchant, Integer>{
     
+    public boolean existsByEmail(String email);
+    public boolean existsByUsername(String username);
+    
 }
 

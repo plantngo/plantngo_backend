@@ -50,9 +50,9 @@ public class CustomerController {
         return customerList;
     }
 
-    @PostMapping(path="register")
-    public ResponseEntity<String> registerCustomer(@RequestBody RegistrationDTO registrationDTO) {
-        return customerService.registerCustomer(registrationDTO);
-    }
+    // @PostMapping(path="register")
+    // public ResponseEntity<String> registerCustomer(@RequestBody RegistrationDTO registrationDTO) {
+    //     return customerService.registerCustomer(registrationDTO);
+    // }
 }
 

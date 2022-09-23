@@ -20,4 +20,6 @@ public class RegistrationDTO {
 
     @NonNull
     Character userType;
+
+    String company;
 }

@@ -24,7 +24,7 @@ public class CustomerService {
 
     public Customer getCustomerByUsername(String username) {
         if (customerRepository.findByUsername(username).isEmpty()) {
-            System.out.println("User doesn't exist");
+            System.err.println("User doesn't exist");
             return null;
         }
         return customerRepository.findByUsername(username).get();
@@ -42,27 +42,27 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public ResponseEntity<String> registerCustomer(RegistrationDTO registrationDTO) {
+    // public ResponseEntity<String> registerCustomer(RegistrationDTO registrationDTO) {
 
-        // Check if email is already in use
-        if (getCustomerByEmail(registrationDTO.getEmail()) != null) {
-            return new ResponseEntity<>("Email already taken!", HttpStatus.BAD_REQUEST);
-        }
+    //     // Check if email is already in use
+    //     if (getCustomerByEmail(registrationDTO.getEmail()) != null) {
+    //         return new ResponseEntity<>("Email already taken!", HttpStatus.BAD_REQUEST);
+    //     }
 
-        // Check if username is already in use
-        if (getCustomerByUsername(registrationDTO.getUsername()) != null) {
-            return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
-        }
+    //     // Check if username is already in use
+    //     if (getCustomerByUsername(registrationDTO.getUsername()) != null) {
+    //         return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
+    //     }
         
-        Customer customer = new Customer();
-        customer.setEmail(registrationDTO.getEmail());
-        customer.setUsername(registrationDTO.getUsername());
-        customer.setPassword(registrationDTO.getPassword());
-        customer.setGreenPts(0);
+    //     Customer customer = new Customer();
+    //     customer.setEmail(registrationDTO.getEmail());
+    //     customer.setUsername(registrationDTO.getUsername());
+    //     customer.setPassword(registrationDTO.getPassword());
+    //     customer.setGreenPts(0);
 
-        customerRepository.save(customer);
+    //     customerRepository.save(customer);
 
-        return new ResponseEntity<>("User registered!", HttpStatus.OK);
-    }
+    //     return new ResponseEntity<>("User registered!", HttpStatus.OK);
+    // }
 
 }
