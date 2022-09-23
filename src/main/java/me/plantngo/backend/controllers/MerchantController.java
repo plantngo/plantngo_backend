@@ -1,5 +1,7 @@
 package me.plantngo.backend.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +25,14 @@ public class MerchantController {
     }
     
 
-    @GetMapping(path="{MerchantId}")
-    public Merchant getUserById(@PathVariable("merchantId") Integer id){
-        return this.merchantService.getMerchantById(id);
+    @GetMapping(path="{username}")
+    public Merchant getUserByUsername(@PathVariable("username") String username) {
+        return merchantService.getMerchantByUsername(username);
+    }
+
+    @GetMapping
+    public List<Merchant> getAllUsers() {
+        return merchantService.findAll();
     }
 
   

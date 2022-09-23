@@ -3,6 +3,7 @@ package me.plantngo.backend.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,20 +34,26 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // http
+        // .httpBasic()
+        //     .and() 
+        // .authorizeRequests()
+        //     .antMatchers(HttpMethod.GET).permitAll()
+        //     .antMatchers(HttpMethod.POST).permitAll()
+        //     .and()
+        // .csrf().disable() // CSRF protection is needed only for browser based attacks
+        // .formLogin().disable()
+        // .headers().disable(); // Disable the security headers, as we do not return HTML in our service
+
         http
-        .httpBasic()
-            .and() 
         .authorizeRequests()
-            .antMatchers("/api/v1/customer/**").permitAll()
-            .antMatchers("/api/v1/customer/test").permitAll()
+            .antMatchers(HttpMethod.GET).permitAll()
+            .antMatchers(HttpMethod.POST).permitAll()
             .and()
-        .authorizeRequests()
-            .anyRequest()
-            .authenticated()
-            .and()
-        .csrf().disable() // CSRF protection is needed only for browser based attacks
+        .csrf().disable()
         .formLogin().disable()
-        .headers().disable(); // Disable the security headers, as we do not return HTML in our service
+        .headers().disable();
+
         return http.build();
     }
 
