@@ -2,7 +2,6 @@ package me.plantngo.backend.models;
 
 import lombok.*;
 
-
 @Getter
 @Setter
 @RequiredArgsConstructor
