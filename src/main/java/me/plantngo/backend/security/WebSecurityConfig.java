@@ -34,21 +34,12 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // http
-        // .httpBasic()
-        //     .and() 
-        // .authorizeRequests()
-        //     .antMatchers(HttpMethod.GET).permitAll()
-        //     .antMatchers(HttpMethod.POST).permitAll()
-        //     .and()
-        // .csrf().disable() // CSRF protection is needed only for browser based attacks
-        // .formLogin().disable()
-        // .headers().disable(); // Disable the security headers, as we do not return HTML in our service
 
         http
+        .httpBasic()
+            .and()
         .authorizeRequests()
-            .antMatchers(HttpMethod.GET).permitAll()
-            .antMatchers(HttpMethod.POST).permitAll()
+            .antMatchers("/**").permitAll()
             .and()
         .csrf().disable()
         .formLogin().disable()
