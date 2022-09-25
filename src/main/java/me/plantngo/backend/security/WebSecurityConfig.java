@@ -24,8 +24,14 @@ public class WebSecurityConfig {
             .authenticated()
             .and()
         .csrf().disable() // CSRF protection is needed only for browser based attacks
-        .formLogin().disable()
+        .formLogin()
+            .usernameParameter("username")
+            .defaultSuccessUrl("/home")
+            .permitAll()
+            .and()
         .headers().disable(); // Disable the security headers, as we do not return HTML in our service
         return http.build();
     }
+
+
 }
