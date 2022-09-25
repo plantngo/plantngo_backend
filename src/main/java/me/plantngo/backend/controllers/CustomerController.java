@@ -41,14 +41,14 @@ public class CustomerController {
         return customerService.findAll();
     }
 
-    @GetMapping(path="test")
-    public List<Customer> getAllCustomers() {
-        List<Customer> customerList = new ArrayList<>();
-        customerList.add(new Customer(1, "Jack", null, "ojh1@gmail.com", "password1", 0));
-        customerList.add(new Customer(2, "Jane", null, "ojh1@gmail.com", "password1", 0));
+    // @GetMapping(path="test")
+    // public List<Customer> getAllCustomers() {
+    //     List<Customer> customerList = new ArrayList<>();
+    //     customerList.add(new Customer(1, "Jack", null, "ojh1@gmail.com", "password1", 0));
+    //     customerList.add(new Customer(2, "Jane", null, "ojh1@gmail.com", "password1", 0));
 
-        return customerList;
-    }
+    //     return customerList;
+    // }
 
     // @PostMapping(path="register")
     // public ResponseEntity<String> registerCustomer(@RequestBody RegistrationDTO registrationDTO) {

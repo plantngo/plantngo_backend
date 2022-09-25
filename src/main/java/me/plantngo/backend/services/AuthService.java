@@ -31,19 +31,19 @@ public class AuthService {
         }
 
         // Check if username is already in use
-        if (customerRepository.existsByUsername(registrationDTO.getUsername())) {
+        if (customerRepository.existsByUsername(registrationDTO.getName())) {
             return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
         }
         
         Customer customer = new Customer();
         customer.setEmail(registrationDTO.getEmail());
-        customer.setUsername(registrationDTO.getUsername());
+        customer.setUsername(registrationDTO.getName());
         customer.setPassword(registrationDTO.getPassword());
         customer.setGreenPts(0);
 
         customerRepository.save(customer);
 
-        return new ResponseEntity<>("Customer registered!", HttpStatus.OK);
+        return new ResponseEntity<>("Customer registered!", HttpStatus.CREATED);
     }
 
     public ResponseEntity<String> registerMerchant(RegistrationDTO registrationDTO) {
@@ -54,19 +54,19 @@ public class AuthService {
         }
 
         // Check if username is already in use
-        if (merchantRepository.existsByUsername(registrationDTO.getUsername())) {
+        if (merchantRepository.existsByUsername(registrationDTO.getName())) {
             return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
         }
         
         Merchant merchant = new Merchant();
         merchant.setEmail(registrationDTO.getEmail());
-        merchant.setUsername(registrationDTO.getUsername());
+        merchant.setUsername(registrationDTO.getName());
         merchant.setPassword(registrationDTO.getPassword());
         merchant.setCompany(registrationDTO.getCompany());
 
         merchantRepository.save(merchant);
 
-        return new ResponseEntity<>("Merchant registered!", HttpStatus.OK);
+        return new ResponseEntity<>("Merchant registered!", HttpStatus.CREATED);
 
     }
 }
