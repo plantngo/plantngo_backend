@@ -10,7 +10,7 @@ import lombok.*;
 public class RegistrationDTO {
 
     @NonNull
-    String name;
+    String username;
 
     @NonNull
     String email;

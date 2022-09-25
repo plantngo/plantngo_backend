@@ -31,13 +31,13 @@ public class AuthService {
         }
 
         // Check if username is already in use
-        if (customerRepository.existsByUsername(registrationDTO.getName())) {
+        if (customerRepository.existsByUsername(registrationDTO.getUsername())) {
             return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
         }
         
         Customer customer = new Customer();
         customer.setEmail(registrationDTO.getEmail());
-        customer.setUsername(registrationDTO.getName());
+        customer.setUsername(registrationDTO.getUsername());
         customer.setPassword(registrationDTO.getPassword());
         customer.setGreenPts(0);
 
@@ -54,13 +54,13 @@ public class AuthService {
         }
 
         // Check if username is already in use
-        if (merchantRepository.existsByUsername(registrationDTO.getName())) {
+        if (merchantRepository.existsByUsername(registrationDTO.getUsername())) {
             return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
         }
         
         Merchant merchant = new Merchant();
         merchant.setEmail(registrationDTO.getEmail());
-        merchant.setUsername(registrationDTO.getName());
+        merchant.setUsername(registrationDTO.getUsername());
         merchant.setPassword(registrationDTO.getPassword());
         merchant.setCompany(registrationDTO.getCompany());
 
