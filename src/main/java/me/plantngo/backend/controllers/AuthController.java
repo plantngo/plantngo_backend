@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import me.plantngo.backend.models.LoginDTO;
 import me.plantngo.backend.models.RegistrationDTO;
 import me.plantngo.backend.services.AuthService;
 
@@ -24,7 +25,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping(path="register")
+    @PostMapping(path="/register")
     public ResponseEntity<String> registerUser(@RequestBody RegistrationDTO registrationDTO) {
 
         if (registrationDTO.getUserType() == 'C') {
@@ -34,4 +35,16 @@ public class AuthController {
         }
         return new ResponseEntity<>("Invalid User Type!", HttpStatus.BAD_REQUEST);
     }
+
+    @PostMapping(path="/login")
+    public ResponseEntity<String> loginUser(@RequestBody LoginDTO loginDTO){
+        if (loginDTO.getUserType() == 'C') {
+            return authService.loginCustomer(loginDTO);
+        } else if (loginDTO.getUserType() == 'M') {
+            return authService.loginMerchant(loginDTO); 
+        }
+        return new ResponseEntity<>("Invalid User Type!", HttpStatus.BAD_REQUEST);
+    }
+
+
 }
