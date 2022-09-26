@@ -11,21 +11,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.plantngo.backend.models.LoginDTO;
 import me.plantngo.backend.models.RegistrationDTO;
-import me.plantngo.backend.services.AuthService;
+import me.plantngo.backend.services.AuthManager;
 
 @RestController
-@RequestMapping(path="api/v1")
+@RequestMapping(path = "api/v1")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AuthController {
-    
-    private final AuthService authService;
+
+    private final AuthManager authService;
 
     @Autowired
-    public AuthController(AuthService authService) {
+    public AuthController(AuthManager authService) {
         this.authService = authService;
     }
 
-    @PostMapping(path="/register")
+    @PostMapping(path = "/register")
     public ResponseEntity<String> registerUser(@RequestBody RegistrationDTO registrationDTO) {
 
         if (registrationDTO.getUserType() == 'C') {
@@ -36,15 +36,14 @@ public class AuthController {
         return new ResponseEntity<>("Invalid User Type!", HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping(path="/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginDTO loginDTO){
+    @PostMapping(path = "/login")
+    public ResponseEntity<String> authenticateUser(@RequestBody LoginDTO loginDTO) {
         if (loginDTO.getUserType() == 'C') {
-            return authService.loginCustomer(loginDTO);
+            return authService.authenticateCustomer(loginDTO);
         } else if (loginDTO.getUserType() == 'M') {
-            return authService.loginMerchant(loginDTO); 
+            return authService.authenticateMerchant(loginDTO);
         }
         return new ResponseEntity<>("Invalid User Type!", HttpStatus.BAD_REQUEST);
     }
-
 
 }

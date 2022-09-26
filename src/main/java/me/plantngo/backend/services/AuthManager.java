@@ -1,58 +1,71 @@
 package me.plantngo.backend.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.stereotype.Service;
 
 import me.plantngo.backend.models.Customer;
+import me.plantngo.backend.models.CustomerDetails;
 import me.plantngo.backend.models.Merchant;
+import me.plantngo.backend.models.MerchantDetails;
 import me.plantngo.backend.models.RegistrationDTO;
 import me.plantngo.backend.models.LoginDTO;
 import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 
 @Service
-public class AuthService {
-
+public class AuthManager {
+    @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
     private MerchantRepository merchantRepository;
+
+    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public AuthService(CustomerRepository customerRepository, MerchantRepository merchantRepository,
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    public AuthManager(CustomerRepository customerRepository, MerchantRepository merchantRepository,
             BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.customerRepository = customerRepository;
         this.merchantRepository = merchantRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public ResponseEntity<String> loginCustomer(LoginDTO loginDTO) {
-        // Authentication authentication = authenticationManager
-        //         .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
-        //                 loginRequest.getPassword()));
+    public ResponseEntity<String> authenticateCustomer(LoginDTO loginDTO) {
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
+                        loginDTO.getPassword()));
 
-        // SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        // UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        // return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE).body(customerDetails.toString());
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE).body(userDetails.toString());
 
-        // ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
-
-        // List<String> roles = userDetails.getAuthorities().stream()
-        //         .map(item -> item.getAuthority())
-        //         .collect(Collectors.toList());
-
-        // return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-        //         .body(new UserInfoResponse(userDetails.getId(),
-        //                 userDetails.getUsername(),
-        //                 userDetails.getEmail(),
-        //                 roles));
-        return null;
     }
 
-    public ResponseEntity<String> loginMerchant(LoginDTO loginDTO) {
-        return null;
+    public ResponseEntity<String> authenticateMerchant(LoginDTO loginDTO) {
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
+                        loginDTO.getPassword()));
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE).body(userDetails.toString());
     }
 
     public ResponseEntity<String> registerCustomer(RegistrationDTO registrationDTO) {
