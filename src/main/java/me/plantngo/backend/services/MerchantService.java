@@ -1,5 +1,7 @@
 package me.plantngo.backend.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +18,24 @@ public class MerchantService {
         this.merchantRepository = merchantRepository;
     }
 
-    public Merchant getMerchantById(Integer id) {
-        return this.merchantRepository.findById(id).orElseThrow(()->new RuntimeException());
+    public Merchant getMerchantByUsername(String username) {
+        if (merchantRepository.findByUsername(username).isEmpty()) {
+            System.err.println("User doesn't exist");
+            return null;
+        }
+        return merchantRepository.findByUsername(username).get();
+    }
+    
+    public Merchant getMerchantByEmail(String email) {
+        if (merchantRepository.findByEmail(email).isEmpty()) {
+            System.out.println("Email doesn't exist");
+            return null;
+        }
+        return merchantRepository.findByEmail(email).get();
+    }
+
+    public List<Merchant> findAll() {
+        return merchantRepository.findAll();
     }
     
 

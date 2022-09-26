@@ -7,19 +7,13 @@ import lombok.*;
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class RegistrationDTO {
-
+public class LoginDTO {
     @NonNull
     String username;
-
-    @NonNull
-    String email;
 
     @NonNull
     String password;
 
     @NonNull
     Character userType;
-
-    String company;
 }

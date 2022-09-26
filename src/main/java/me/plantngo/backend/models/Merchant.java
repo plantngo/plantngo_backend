@@ -17,7 +17,6 @@ import javax.validation.constraints.Size;
 
 import lombok.*;
 
-
 @Getter
 @Setter
 @ToString
@@ -28,39 +27,22 @@ import lombok.*;
 @Table(name = "merchant")
 public class Merchant {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
+        private Integer id;
 
-    @Size(
-            min = 5,
-            max = 15,
-            message = "Username must be between 5 and 15 characters long"
-    )
-    @NotNull(
-            message = "Username cannot be null"
-    )
-    private String username;
+        @Size(min = 5, max = 15, message = "Username must be between 5 and 15 characters long")
+        @NotNull(message = "Username cannot be null")
+        private String username;
 
-    @Email(
-            message = "Must be a valid email"
-    )
-    @NotNull(
-            message = "Email cannot be null"
-    )
-    private String email;
+        @Email(message = "Must be a valid email")
+        @NotNull(message = "Email cannot be null")
+        private String email;
 
+        @NotNull(message = "Password cannot be null")
+        private String password;
 
-    @NotNull(
-            message = "Password cannot be null"
-    )
-    private String password;
+        @NotNull(message = "Company cannot be null")
+        private String company;
 
-    @NotNull(
-            message = "Company cannot be null"
-    )
-    private String company;
-
-
-    
 }
