@@ -3,6 +3,7 @@ package me.plantngo.backend.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import me.plantngo.backend.models.Customer;
@@ -16,17 +17,19 @@ public class AuthService {
     
     private CustomerRepository customerRepository;
     private MerchantRepository merchantRepository;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public AuthService(CustomerRepository customerRepository, MerchantRepository merchantRepository) {
+    public AuthService(CustomerRepository customerRepository, MerchantRepository merchantRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.customerRepository = customerRepository;
         this.merchantRepository = merchantRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public ResponseEntity<String> registerCustomer(RegistrationDTO registrationDTO) {
 
         // Check if email is already in use
-        if (customerRepository.existsByEmail(registrationDTO.getEmail())) {
+        if (customerRepository.existsByEmail(registrationDTO.getEmail()) || merchantRepository.existsByEmail(registrationDTO.getEmail())) {
             return new ResponseEntity<>("Email already taken!", HttpStatus.BAD_REQUEST);
         }
 
@@ -38,7 +41,7 @@ public class AuthService {
         Customer customer = new Customer();
         customer.setEmail(registrationDTO.getEmail());
         customer.setUsername(registrationDTO.getUsername());
-        customer.setPassword(registrationDTO.getPassword());
+        customer.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
         customer.setGreenPts(0);
 
         customerRepository.save(customer);
@@ -49,7 +52,7 @@ public class AuthService {
     public ResponseEntity<String> registerMerchant(RegistrationDTO registrationDTO) {
 
         // Check if email is already in use
-        if (merchantRepository.existsByEmail(registrationDTO.getEmail())) {
+        if (merchantRepository.existsByEmail(registrationDTO.getEmail()) || customerRepository.existsByEmail(registrationDTO.getEmail())) {
             return new ResponseEntity<>("Email already taken!", HttpStatus.BAD_REQUEST);
         }
 
@@ -61,7 +64,7 @@ public class AuthService {
         Merchant merchant = new Merchant();
         merchant.setEmail(registrationDTO.getEmail());
         merchant.setUsername(registrationDTO.getUsername());
-        merchant.setPassword(registrationDTO.getPassword());
+        merchant.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
         merchant.setCompany(registrationDTO.getCompany());
 
         merchantRepository.save(merchant);
