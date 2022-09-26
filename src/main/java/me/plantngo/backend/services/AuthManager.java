@@ -48,9 +48,7 @@ public class AuthManager {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        // return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE).body(customerDetails.toString());
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE).body(userDetails.toString());
-
     }
 
     public ResponseEntity<String> authenticateMerchant(LoginDTO loginDTO) {
