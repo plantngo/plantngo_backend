@@ -77,7 +77,7 @@ public class AuthManager {
         }
 
         // Check if username is already in use
-        if (customerRepository.existsByUsername(registrationDTO.getUsername())) {
+        if (customerRepository.existsByUsername(registrationDTO.getUsername()) || merchantRepository.existsByUsername(registrationDTO.getUsername())) {
             return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
         }
 
@@ -101,7 +101,7 @@ public class AuthManager {
         }
 
         // Check if username is already in use
-        if (merchantRepository.existsByUsername(registrationDTO.getUsername())) {
+        if (merchantRepository.existsByUsername(registrationDTO.getUsername()) || customerRepository.existsByUsername(registrationDTO.getUsername())) {
             return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
         }
 
