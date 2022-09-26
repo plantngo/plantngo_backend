@@ -42,6 +42,9 @@ public class AuthManager {
     }
 
     public ResponseEntity<String> authenticateCustomer(LoginDTO loginDTO) {
+        if (!customerRepository.existsByUsername(loginDTO.getUsername())) {
+            return new ResponseEntity<>("Not a customer!", HttpStatus.BAD_REQUEST); 
+        }
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
                         loginDTO.getPassword()));
@@ -52,6 +55,11 @@ public class AuthManager {
     }
 
     public ResponseEntity<String> authenticateMerchant(LoginDTO loginDTO) {
+
+        if (!merchantRepository.existsByUsername(loginDTO.getUsername())) {
+            return new ResponseEntity<>("Not a merchant!", HttpStatus.BAD_REQUEST); 
+        }
+
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
                         loginDTO.getPassword()));
