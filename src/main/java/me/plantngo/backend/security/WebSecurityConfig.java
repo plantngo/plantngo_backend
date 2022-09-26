@@ -41,10 +41,17 @@ public class WebSecurityConfig {
         .authorizeRequests()
             .antMatchers("/**").permitAll()
             .and()
-        .csrf().disable()
-        .formLogin().disable()
-        .headers().disable();
-
+        .authorizeRequests()
+            .anyRequest()
+            .authenticated()
+            .and()
+        .csrf().disable() // CSRF protection is needed only for browser based attacks
+        .formLogin()
+            .usernameParameter("username")
+            .defaultSuccessUrl("/home")
+            .permitAll()
+            .and()
+        .headers().disable(); // Disable the security headers, as we do not return HTML in our service
         return http.build();
     }
 
