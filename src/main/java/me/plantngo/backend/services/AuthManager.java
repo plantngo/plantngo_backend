@@ -26,24 +26,19 @@ import me.plantngo.backend.repositories.MerchantRepository;
 
 @Service
 public class AuthManager {
-    @Autowired
+
     private CustomerRepository customerRepository;
-
-    @Autowired
     private MerchantRepository merchantRepository;
-
-    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
     public AuthManager(CustomerRepository customerRepository, MerchantRepository merchantRepository,
-            BCryptPasswordEncoder bCryptPasswordEncoder) {
+            BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager authenticationManager) {
         this.customerRepository = customerRepository;
         this.merchantRepository = merchantRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.authenticationManager = authenticationManager;
     }
 
     public ResponseEntity<String> authenticateCustomer(LoginDTO loginDTO) {
