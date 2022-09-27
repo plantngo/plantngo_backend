@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.plantngo.backend.models.LoginDTO;
 import me.plantngo.backend.models.RegistrationDTO;
-import me.plantngo.backend.services.AuthManager;
+import me.plantngo.backend.services.AuthService;
 
 @RestController
 @RequestMapping(path = "api/v1")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AuthController {
 
-    private final AuthManager authService;
+    private final AuthService authService;
 
     @Autowired
-    public AuthController(AuthManager authService) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
