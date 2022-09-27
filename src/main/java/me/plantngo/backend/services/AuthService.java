@@ -2,7 +2,6 @@ package me.plantngo.backend.services;
 
 import me.plantngo.backend.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,8 +14,8 @@ import org.springframework.stereotype.Service;
 
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.models.Merchant;
-import me.plantngo.backend.models.RegistrationDTO;
-import me.plantngo.backend.models.LoginDTO;
+import me.plantngo.backend.DTO.RegistrationDTO;
+import me.plantngo.backend.DTO.LoginDTO;
 import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 
@@ -39,7 +38,7 @@ public class AuthService {
         this.jwtProvider = jwtProvider;
     }
 
-    public ResponseEntity<String> authenticateCustomer(LoginDTO loginDTO) {
+    public ResponseEntity<String> authenticateUser(LoginDTO loginDTO) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
                         loginDTO.getPassword()));
@@ -51,22 +50,7 @@ public class AuthService {
             jwt = jwtProvider.generateToken(userDetails);
         }
 
-        return ResponseEntity.ok().header("jwt", jwt).body("Customer Login Success!");
-    }
-
-    public ResponseEntity<String> authenticateMerchant(LoginDTO loginDTO) {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
-                        loginDTO.getPassword()));
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        String jwt = "";
-        if (userDetails != null){
-            jwt = jwtProvider.generateToken(userDetails);
-        }
-
-        return ResponseEntity.ok().header("jwt", jwt).body("Merchant Login Success!");
+        return ResponseEntity.ok().header("jwt", jwt).body(" Login Success!");
     }
 
     public ResponseEntity<String> registerCustomer(RegistrationDTO registrationDTO) {
