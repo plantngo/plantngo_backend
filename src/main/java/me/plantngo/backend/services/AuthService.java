@@ -1,65 +1,58 @@
 package me.plantngo.backend.services;
 
+import me.plantngo.backend.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.springframework.stereotype.Service;
 
 import me.plantngo.backend.models.Customer;
-import me.plantngo.backend.models.CustomerDetails;
 import me.plantngo.backend.models.Merchant;
-import me.plantngo.backend.models.MerchantDetails;
-import me.plantngo.backend.models.RegistrationDTO;
-import me.plantngo.backend.models.LoginDTO;
+import me.plantngo.backend.DTO.RegistrationDTO;
+import me.plantngo.backend.DTO.LoginDTO;
 import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 
 @Service
-public class AuthManager {
+public class AuthService {
 
     private CustomerRepository customerRepository;
     private MerchantRepository merchantRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private AuthenticationManager authenticationManager;
+    private JwtProvider jwtProvider;
 
     @Autowired
-    public AuthManager(CustomerRepository customerRepository, MerchantRepository merchantRepository,
-            BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager authenticationManager) {
+    public AuthService(CustomerRepository customerRepository, MerchantRepository merchantRepository,
+                       BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
         this.customerRepository = customerRepository;
         this.merchantRepository = merchantRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.authenticationManager = authenticationManager;
+        this.jwtProvider = jwtProvider;
     }
 
-    public ResponseEntity<String> authenticateCustomer(LoginDTO loginDTO) {
+    public ResponseEntity<String> authenticateUser(LoginDTO loginDTO) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
                         loginDTO.getPassword()));
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE).body(userDetails.toString());
+        String jwt = "";
+        if (userDetails != null){
+            jwt = jwtProvider.generateToken(userDetails);
+        }
+
+        return ResponseEntity.ok().header("jwt", jwt).body(" Login Success!");
     }
 
-    public ResponseEntity<String> authenticateMerchant(LoginDTO loginDTO) {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
-                        loginDTO.getPassword()));
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE).body(userDetails.toString());
-    }
 
     public ResponseEntity<String> registerCustomer(RegistrationDTO registrationDTO) {
 

@@ -1,4 +1,4 @@
-package me.plantngo.backend.models;
+package me.plantngo.backend.DTO;
 
 import lombok.*;
 
@@ -7,13 +7,19 @@ import lombok.*;
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class LoginDTO {
+public class RegistrationDTO {
+
     @NonNull
     String username;
+
+    @NonNull
+    String email;
 
     @NonNull
     String password;
 
     @NonNull
     Character userType;
+
+    String company;
 }
