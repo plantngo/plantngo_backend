@@ -58,6 +58,7 @@ public class AuthService {
         return ResponseEntity.ok().header("jwt", jwt).body(" Login Success!");
     }
 
+
     public ResponseEntity<String> registerCustomer(RegistrationDTO registrationDTO) {
 
         // Check if email is already in use
