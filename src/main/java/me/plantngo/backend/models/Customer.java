@@ -44,4 +44,5 @@ public class Customer {
 
     private Integer greenPts;
 
+    private final String AUTHORITY = "CUSTOMER";
 }

@@ -26,7 +26,7 @@ public class JwtProvider {
     private String SECRET_KEY;
 
     // 24 hours expiration date - change last digit to determine hours
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 24;
+    public static final long JWT_TOKEN_VALIDITY = 1000 * 5 * 60 * 60 * 24;
 
     @PostConstruct
     protected void init() {
@@ -65,6 +65,7 @@ public class JwtProvider {
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
+                .setIssuedAt(new Date())
                 .setSubject(subject)
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
@@ -78,14 +79,14 @@ public class JwtProvider {
         Optional<Merchant> search2 = merchantRepo.findByUsername(userDetails.getUsername());
         String token = "";
 
-        if (!search.isPresent() && !search2.isPresent()) {
-            throw new UserNotFoundException();
-        } else if (search.isPresent()){
-            claims.put("customer",search.get());
-            token = createToken(claims, search.get().getId().toString());
+        if (search.isPresent()){
+            claims.put("Authority",search.get().getAUTHORITY());
+            token = createToken(claims, search.get().getUsername());
         } else if (search2.isPresent()){
-            claims.put("merchant",search2.get());
-            token = createToken(claims, search2.get().getId().toString());
+            claims.put("Authority",search2.get().getAUTHORITY());
+            token = createToken(claims, search2.get().getUsername());
+        } else {
+            throw new UserNotFoundException();
         }
 
         return token;
@@ -93,9 +94,7 @@ public class JwtProvider {
 
     // checks if user exists and token is not expired
     public Boolean validateToken(String token, UserDetails userDetails) {
-
         final String username = extractUsername(token);
-
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
@@ -105,11 +104,10 @@ public class JwtProvider {
 
         String jwt = null;
 
-        if (Objects.nonNull(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
+        if (Objects.nonNull(authorizationHeader)) {
             jwt = authorizationHeader.substring(7);
         }
 
         return jwt;
     }
-
 }

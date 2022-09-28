@@ -1,5 +1,6 @@
 package me.plantngo.backend.services;
 
+import me.plantngo.backend.exceptions.LoginFailedException;
 import me.plantngo.backend.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -39,16 +41,19 @@ public class AuthService {
     }
 
     public ResponseEntity<String> authenticateUser(LoginDTO loginDTO) {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
-                        loginDTO.getPassword()));
+
+        Authentication authentication = null;
+        try{
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
+                            loginDTO.getPassword()));
+        } catch (AuthenticationException e){
+            throw new LoginFailedException();
+        }
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        String jwt = "";
-        if (userDetails != null){
-            jwt = jwtProvider.generateToken(userDetails);
-        }
+        String jwt = jwtProvider.generateToken(userDetails);
 
         return ResponseEntity.ok().header("jwt", jwt).body(" Login Success!");
     }

@@ -45,4 +45,5 @@ public class Merchant {
         @NotNull(message = "Company cannot be null")
         private String company;
 
+        private final String AUTHORITY = "MERCHANT";
 }
