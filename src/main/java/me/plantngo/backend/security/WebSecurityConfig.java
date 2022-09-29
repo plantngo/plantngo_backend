@@ -54,6 +54,10 @@ public class WebSecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/**/login").permitAll()
                 .antMatchers("/**/register").permitAll()
+                .antMatchers("/**/customer").hasRole("ADMIN") //blocked from all users as of right now
+                .antMatchers("/**/merchant").hasRole("ADMIN")
+                .antMatchers("/**/customer/*").hasRole("CUSTOMER") //temporary, to be changed
+                .antMatchers("/**/merchant/*").hasRole("MERCHANT")
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable() // CSRF protection is needed only for browser based attacks

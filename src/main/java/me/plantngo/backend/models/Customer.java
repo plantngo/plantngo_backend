@@ -44,5 +44,9 @@ public class Customer {
 
     private Integer greenPts;
 
+    /*
+        for customer, authority can either be CUSTOMER or ADMIN (for testing)
+     */
+    @NotNull(message = "AUTHORITY cannot be null, choose CUSTOMER or ADMIN")
     private final String AUTHORITY = "CUSTOMER";
 }
