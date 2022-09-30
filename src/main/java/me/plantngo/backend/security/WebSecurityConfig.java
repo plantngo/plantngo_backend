@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
     private JwtRequestFilter jwtRequestFilter;
     private UserDetailsService userDetailsService;
@@ -56,8 +58,6 @@ public class WebSecurityConfig {
                 .antMatchers("/**/register").permitAll()
                 .antMatchers("/**/customer").hasRole("ADMIN") //blocked from all users as of right now
                 .antMatchers("/**/merchant").hasRole("ADMIN")
-                .antMatchers("/**/customer/*").hasRole("CUSTOMER") //temporary, to be changed
-                .antMatchers("/**/merchant/*").hasRole("MERCHANT")
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable() // CSRF protection is needed only for browser based attacks
