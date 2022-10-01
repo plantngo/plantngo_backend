@@ -2,6 +2,7 @@ package me.plantngo.backend.models;
 
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -10,7 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -29,30 +30,37 @@ import lombok.*;
 @Entity
 @Table(name = "order")
 public class Order {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "customer_id")
+    private @NotBlank Integer customerId;
 
-    @ManyToOne
-    @NotNull
-    // the column "book_id" will be in the auto-generated table "review"
-    // nullable = false: add not-null constraint to the database column "book_id"
-    @JoinColumn(name = "merchant_id", nullable = false)
-    private Merchant merchant;
+    @Column(name = "merchant_id")
+    private @NotBlank Integer merchant_Id;
 
+    @Column(name = "created_date")
+    private Date createdDate;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "customer_id", nullable = false)
+    @Column(name = "total_price")
+    private Double totalPrice;
+
+    @Column(name = "session-id")
+    private String sessionId;
+
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "order_id",referencedColumnName = "id",insertable = false,updatable = false)
+    private List<OrderItem> orderItems;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Customer customer;
 
-    //TODO: change type String to actual product
-    // implement quantity also
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<String> product;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "merchant_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Merchant merchant;
+
 
     
 }
