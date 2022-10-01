@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.CascadeType;
@@ -28,32 +29,29 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "customer_id")
-    private @NotBlank Integer customerId;
+    @NotNull
+    private Integer customerId;
 
-    @Column(name = "merchant_id")
-    private @NotBlank Integer merchant_Id;
+    @NotNull
+    private Integer merchant_Id;
 
-    @Column(name = "created_date")
     private Date createdDate;
 
-    @Column(name = "total_price")
     private Double totalPrice;
 
-    @Column(name = "session-id")
     private String sessionId;
 
     // @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     // @JoinColumn(name = "order_id",referencedColumnName = "id",insertable = false,updatable = false)
     // private List<OrderItem> orderItems;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "customer_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private Customer customer;
+    // @ManyToOne(cascade = CascadeType.ALL)
+    // @JoinColumn(name = "customer_id", referencedColumnName = "id", insertable = false, updatable = false)
+    // private Customer customer;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "merchant_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private Merchant merchant;
+    // @ManyToOne(cascade = CascadeType.ALL)
+    // @JoinColumn(name = "merchant_id", referencedColumnName = "id", insertable = false, updatable = false)
+    // private Merchant merchant;
 
 
     

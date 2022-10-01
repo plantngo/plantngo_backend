@@ -45,5 +45,8 @@ public class Merchant {
         @NotNull(message = "Company cannot be null")
         private String company;
 
+        @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
+        private List<Product> products;
+
         private final String AUTHORITY = "MERCHANT";
 }

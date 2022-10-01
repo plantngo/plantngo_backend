@@ -28,24 +28,22 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderItemId;
 
-    @Column(name = "productId")
-    private @NotNull Long productId;
+    @NotNull
+    private Long productId;
 
-    @Column(name = "quantity")
-    private @NotNull int quantity;
+    @NotNull
+    private int quantity;
 
-    @Column(name = "price")
-    private @NotNull double price;
+    @NotNull
+    private double price;
 
-    @Column(name = "order_id")
     private Integer orderId;
 
-    @Column(name = "created_date")
     private Date createdDate;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id",referencedColumnName = "id",insertable = false,updatable = false)
-    private Order order;
+    // @ManyToOne
+    // @JoinColumn(name = "order_id",referencedColumnName = "id",insertable = false,updatable = false)
+    // private Order order;
 
     //TODO: Create Product
     // @OneToOne
