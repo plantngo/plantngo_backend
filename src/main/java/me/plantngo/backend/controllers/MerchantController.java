@@ -25,8 +25,8 @@ public class MerchantController {
     }
     
 
-    @GetMapping(path="{username}")
-    public Merchant getUserByUsername(@PathVariable("username") String username) {
+    @GetMapping(path="/{username}")
+    public Merchant getMerchantByUsername(@PathVariable("username") String username) {
         return merchantService.getMerchantByUsername(username);
     }
 

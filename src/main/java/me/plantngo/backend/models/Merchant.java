@@ -15,6 +15,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.*;
 
 @Getter
@@ -46,6 +49,7 @@ public class Merchant {
         private String company;
 
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
+        @JsonManagedReference // Serializes this side
         private List<Product> products;
 
         private final String AUTHORITY = "MERCHANT";

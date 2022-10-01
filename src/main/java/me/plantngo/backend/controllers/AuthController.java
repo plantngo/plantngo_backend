@@ -1,5 +1,7 @@
 package me.plantngo.backend.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ public class AuthController {
     private final AuthService authService;
 
     private final AuthenticationManager authenticationManager;
+
     @Autowired
     public AuthController(AuthService authService, AuthenticationManager authenticationManager) {
         this.authService = authService;
@@ -30,7 +33,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegistrationDTO registrationDTO) {
+    public ResponseEntity<String> registerUser(@Valid @RequestBody RegistrationDTO registrationDTO) {
 
         if (registrationDTO.getUserType() == 'C') {
             return authService.registerCustomer(registrationDTO);
@@ -41,7 +44,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<String> authenticateUser(@Valid @RequestBody LoginDTO loginDTO) {
         return authService.authenticateUser(loginDTO);
     }
 

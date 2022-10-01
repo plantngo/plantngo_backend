@@ -4,9 +4,7 @@ import lombok.*;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
-@ToString
-@EqualsAndHashCode
+@AllArgsConstructor
 public class LoginDTO {
     @NonNull
     String username;

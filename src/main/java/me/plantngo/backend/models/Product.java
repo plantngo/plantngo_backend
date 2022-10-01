@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.*;
 
 @Getter
@@ -18,7 +20,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity
-@Table(name = "customer")
+@Table(name = "product")
 public class Product {
     
     @Id
@@ -38,6 +40,7 @@ public class Product {
     private double carbonEmission;
 
     @ManyToOne
-    @JoinColumn(name = "merchant_id")
+    @JoinColumn(name = "merchant_id", nullable = false)
+    @JsonBackReference // Prevents infinite loop by not serializing this when sending GET request for merchants
     private Merchant merchant;
 }

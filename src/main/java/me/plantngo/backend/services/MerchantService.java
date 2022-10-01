@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import me.plantngo.backend.exceptions.UserNotFoundException;
 import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.repositories.MerchantRepository;
 
@@ -21,7 +22,7 @@ public class MerchantService {
     public Merchant getMerchantByUsername(String username) {
         if (merchantRepository.findByUsername(username).isEmpty()) {
             System.err.println("User doesn't exist");
-            return null;
+            throw new UserNotFoundException();
         }
         return merchantRepository.findByUsername(username).get();
     }
