@@ -50,16 +50,18 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .httpBasic().and()
-                .authorizeRequests()
-                .antMatchers("/**/login").permitAll()
-                .antMatchers("/**/register").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .csrf().disable() // CSRF protection is needed only for browser based attacks
-                .formLogin().disable()
-                .headers().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Disable the security headers, as we do not return HTML in our service
+        .httpBasic()
+            .and()
+        .authorizeRequests()
+            .antMatchers("/**/login").permitAll()
+            .antMatchers("/**/register").permitAll()
+            .antMatchers("/api/v1/**").permitAll()
+        .anyRequest().authenticated()
+            .and()
+        .csrf().disable() // CSRF protection is needed only for browser based attacks
+        .formLogin().disable()
+        .headers().disable()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Disable the security headers, as we do not return HTML in our service
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
