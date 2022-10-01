@@ -1,9 +1,6 @@
 package me.plantngo.backend.models;
 
-
-import java.security.Principal;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,10 +11,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.*;
 
@@ -49,9 +43,9 @@ public class Order {
     @Column(name = "session-id")
     private String sessionId;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "order_id",referencedColumnName = "id",insertable = false,updatable = false)
-    private List<OrderItem> orderItems;
+    // @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    // @JoinColumn(name = "order_id",referencedColumnName = "id",insertable = false,updatable = false)
+    // private List<OrderItem> orderItems;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", referencedColumnName = "id", insertable = false, updatable = false)
