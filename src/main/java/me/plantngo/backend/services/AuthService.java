@@ -101,7 +101,7 @@ public class AuthService {
         merchant.setUsername(registrationDTO.getUsername());
         merchant.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
         merchant.setCompany(registrationDTO.getCompany());
-        merchant.setProducts(null);
+        merchant.setCategories(null);
 
         merchantRepository.save(merchant);
 

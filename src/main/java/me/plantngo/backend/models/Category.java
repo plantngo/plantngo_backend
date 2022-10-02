@@ -1,15 +1,20 @@
 package me.plantngo.backend.models;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.*;
 
@@ -20,27 +25,22 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity
-@Table(name = "product")
-public class Product {
-    
+@Table(name = "category")
+public class Category {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    
+
     @NotNull
     private String name;
 
-    @NotNull
-    private double price;
-
-    @NotNull
-    private String description;
-
-    @NotNull
-    private double carbonEmission;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Product> products;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    @JsonBackReference // Prevents infinite loop by not serializing this when sending GET request for merchants
-    private Category category;
+    @JoinColumn(name = "merchant_id")
+    @JsonBackReference
+    private Merchant merchant;
 }

@@ -1,14 +1,15 @@
 package me.plantngo.backend.DTO;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class LoginDTO {
-    @NonNull
+    @NotNull
     String username;
 
-    @NonNull
+    @NotNull
     String password;
 }

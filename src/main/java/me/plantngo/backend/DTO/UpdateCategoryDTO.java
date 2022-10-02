@@ -6,14 +6,8 @@ import lombok.*;
 
 @Data
 @AllArgsConstructor
-public class UpdateProductDTO {
-
+@NoArgsConstructor
+public class UpdateCategoryDTO {
     @NotNull
     private String name;
-
-    private Double price;
-
-    private String description;
-
-    private Double carbonEmission;
 }
