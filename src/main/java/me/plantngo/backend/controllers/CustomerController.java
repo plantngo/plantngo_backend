@@ -25,7 +25,7 @@ public class CustomerController {
     }
     
 
-    @GetMapping(path="{username}")
+    @GetMapping(path="/{username}")
     public Customer getUserByUsername(@PathVariable("username") String username) {
         return customerService.getCustomerByUsername(username);
     }
