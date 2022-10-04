@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -37,9 +38,10 @@ public class Customer {
     private List<Preference> preferences;
 
     @Email(message = "Must be a valid email")
-    @NotNull(message = "Email cannot be null")
+    @NotBlank(message = "Email cannot be null")
     private String email;
 
+    
     private String password;
 
     private Integer greenPts;
