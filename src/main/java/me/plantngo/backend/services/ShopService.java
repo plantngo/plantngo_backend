@@ -140,10 +140,16 @@ public class ShopService {
 
         // If changing product name, check to see if another product with that name already exists in the category
         List<Product> productList = category.getProducts();
+
+        int count = 0;
         for (Product p : productList) {
             if (p.getName().equals(updateProductDTO.getName())) {
-                throw new AlreadyExistsException();
+                count++;
             }
+        }
+
+        if (count > 1) {
+            throw new AlreadyExistsException();
         }
 
         // Updating product

@@ -10,6 +10,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
@@ -40,6 +43,7 @@ public class Customer {
     @NotNull(message = "Email cannot be null")
     private String email;
 
+    @JsonIgnore
     private String password;
 
     private Integer greenPts;

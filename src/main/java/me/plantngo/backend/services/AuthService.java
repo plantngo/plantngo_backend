@@ -2,6 +2,8 @@ package me.plantngo.backend.services;
 
 import me.plantngo.backend.exceptions.LoginFailedException;
 import me.plantngo.backend.jwt.JwtProvider;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,11 +74,7 @@ public class AuthService {
             return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
         }
 
-        Customer customer = new Customer();
-        customer.setEmail(registrationDTO.getEmail());
-        customer.setUsername(registrationDTO.getUsername());
-        customer.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
-        customer.setGreenPts(0);
+        Customer customer = this.customerMapToEntity(registrationDTO);
 
         customerRepository.save(customer);
 
@@ -96,16 +94,25 @@ public class AuthService {
             return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
         }
 
-        Merchant merchant = new Merchant();
-        merchant.setEmail(registrationDTO.getEmail());
-        merchant.setUsername(registrationDTO.getUsername());
-        merchant.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
-        merchant.setCompany(registrationDTO.getCompany());
-        merchant.setCategories(null);
+        Merchant merchant = this.merchantMapToEntity(registrationDTO);
 
         merchantRepository.save(merchant);
 
         return new ResponseEntity<>("Merchant registered!", HttpStatus.CREATED);
 
+    }
+
+    private Customer customerMapToEntity(RegistrationDTO registrationDTO) {
+        ModelMapper mapper = new ModelMapper();
+
+        Customer customer = mapper.map(registrationDTO, Customer.class);
+        return customer;
+    }
+
+    private Merchant merchantMapToEntity(RegistrationDTO registrationDTO) {
+        ModelMapper mapper = new ModelMapper();
+
+        Merchant merchant = mapper.map(registrationDTO, Merchant.class);
+        return merchant;
     }
 }
