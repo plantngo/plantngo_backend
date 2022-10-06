@@ -140,14 +140,15 @@ public class ShopService {
 
         // If changing product name, check to see if another product with that name already exists in the category
         List<Product> productList = category.getProducts();
+        Product product = tempProduct.get();
+
         for (Product p : productList) {
-            if (p.getName().equals(updateProductDTO.getName())) {
+            if (p.getName().equals(updateProductDTO.getName()) && p != product) {
                 throw new AlreadyExistsException();
             }
         }
 
         // Updating product
-        Product product = tempProduct.get();
         ModelMapper mapper = new ModelMapper();
 
         mapper.map(updateProductDTO, product);

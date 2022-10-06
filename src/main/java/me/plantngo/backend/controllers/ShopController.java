@@ -65,7 +65,7 @@ public class ShopController {
     }
 
     @PutMapping(path = "/{merchantName}/{categoryName}")
-    public ResponseEntity<String> updateProduct(@PathVariable("merchantName") String merchantName,
+    public ResponseEntity<String> updateCategory(@PathVariable("merchantName") String merchantName,
                                                 @PathVariable("categoryName") String categoryName,
                                                 @Valid @RequestBody UpdateCategoryDTO updateCategoryDTO) {
         try {
