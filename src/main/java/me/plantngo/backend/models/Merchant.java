@@ -50,5 +50,8 @@ public class Merchant {
         @JsonManagedReference // Serializes this side
         private List<Category> categories;
 
+        /*
+                for merchant, authority can only be MERCHANT
+        */
         private final String AUTHORITY = "MERCHANT";
 }
