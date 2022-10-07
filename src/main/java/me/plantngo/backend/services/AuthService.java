@@ -103,6 +103,7 @@ public class AuthService {
     }
 
     private Customer customerMapToEntity(RegistrationDTO registrationDTO) {
+        registrationDTO.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
         ModelMapper mapper = new ModelMapper();
 
         Customer customer = mapper.map(registrationDTO, Customer.class);
@@ -110,6 +111,7 @@ public class AuthService {
     }
 
     private Merchant merchantMapToEntity(RegistrationDTO registrationDTO) {
+        registrationDTO.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
         ModelMapper mapper = new ModelMapper();
 
         Merchant merchant = mapper.map(registrationDTO, Merchant.class);
