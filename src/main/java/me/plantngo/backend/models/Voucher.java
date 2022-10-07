@@ -1,5 +1,6 @@
 package me.plantngo.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,4 +25,9 @@ public class Voucher {
 
     @NotNull(message = "value cannot be null")
     private double value;
+
+    @ManyToOne
+    @JoinColumn(name = "merchant_id")
+    @JsonBackReference
+    private Merchant merchant;
 }

@@ -5,16 +5,15 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import me.plantngo.backend.DTO.*;
+import me.plantngo.backend.models.Voucher;
+import me.plantngo.backend.repositories.VoucherRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import me.plantngo.backend.DTO.CategoryDTO;
-import me.plantngo.backend.DTO.ProductDTO;
-import me.plantngo.backend.DTO.UpdateCategoryDTO;
-import me.plantngo.backend.DTO.UpdateProductDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
@@ -32,6 +31,8 @@ public class ShopService {
     private MerchantRepository merchantRepository;
     private CategoryRepository categoryRepository;
 
+    private VoucherRepository voucherRepository;
+
     @Autowired
     public ShopService(ProductRepository productRepository, MerchantRepository merchantRepository, CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
@@ -39,6 +40,51 @@ public class ShopService {
         this.categoryRepository = categoryRepository;
     }
 
+    public Voucher addVoucher(Merchant merchant, VoucherDTO voucherDTO) {
+
+        Voucher voucher = this.voucherMapToEntity(voucherDTO, merchant);
+        voucherRepository.save(voucher);
+
+        return voucher;
+    }
+
+    public Voucher getVoucher(Merchant merchant, Integer voucherId) {
+        Optional<Voucher> tempVoucher = voucherRepository.findByIdAndMerchant(voucherId, merchant);
+        if (tempVoucher.isEmpty()) {
+            throw new NotExistException();
+        }
+        return tempVoucher.get();
+    }
+
+    public Voucher updateVoucher(Merchant merchant, Integer voucherId, UpdateVoucherDTO updateVoucherDTO) {
+
+        // Check to see if voucher exists
+        Optional<Voucher> tempVoucher = voucherRepository.findByIdAndMerchant(voucherId, merchant);
+        if (tempVoucher.isEmpty()) {
+            throw new NotExistException();
+        }
+
+        //update the voucher's value
+        Voucher voucher = tempVoucher.get();
+        ModelMapper mapper = new ModelMapper();
+
+        mapper.map(updateVoucherDTO, voucher);;
+
+        // In case we need to call it before method ends
+        voucherRepository.saveAndFlush(voucher);
+
+        return voucher;
+    }
+
+    public void deleteVoucher(Merchant merchant, Integer voucherId) {
+        // Check to see if same category under merchant already exists
+        if (voucherRepository.findByIdAndMerchant(voucherId, merchant).isEmpty()) {
+            throw new NotExistException();
+        }
+
+        Voucher voucher = voucherRepository.findByIdAndMerchant(voucherId, merchant).get();
+        voucherRepository.delete(voucher);
+    }
     public Category addCategory(Merchant merchant, CategoryDTO categoryDTO) {
 
         Category category = this.categoryMapToEntity(categoryDTO, merchant);
@@ -168,6 +214,14 @@ public class ShopService {
     // }
 
 
+    private Voucher voucherMapToEntity(VoucherDTO voucherDTO, Merchant merchant) {
+        ModelMapper mapper = new ModelMapper();
+
+        Voucher voucher = mapper.map(voucherDTO, Voucher.class);
+        voucher.setMerchant(merchant);
+
+        return voucher;
+    }
     private Category categoryMapToEntity(CategoryDTO categoryDTO, Merchant merchant) {
         ModelMapper mapper = new ModelMapper();
 

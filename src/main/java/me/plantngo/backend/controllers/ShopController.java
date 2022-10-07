@@ -49,9 +49,25 @@ public class ShopController {
     }
 
     @PostMapping(path = "/{merchantName}")
-    public ResponseEntity<String> addCategory(@PathVariable("merchantName") String merchantName,
+    public ResponseEntity<String> addVoucher(@PathVariable("merchantName") String merchantName,
                                               @Valid @RequestBody CategoryDTO categoryDTO) {
         
+        try {
+            Merchant merchant = merchantService.getMerchantByUsername(merchantName);
+            //shopService.addCategory(merchant, categoryDTO);
+            return new ResponseEntity<>("Category Added!", HttpStatus.CREATED);
+        } catch (UserNotFoundException e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
+        } catch (AlreadyExistsException e) {
+            return new ResponseEntity<>("Category already exists for this merchant!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(path = "/{merchantName}")
+    public ResponseEntity<String> addCategory(@PathVariable("merchantName") String merchantName,
+                                              @Valid @RequestBody CategoryDTO categoryDTO) {
+
         try {
             Merchant merchant = merchantService.getMerchantByUsername(merchantName);
             shopService.addCategory(merchant, categoryDTO);

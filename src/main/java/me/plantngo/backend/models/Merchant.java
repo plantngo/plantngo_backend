@@ -56,4 +56,8 @@ public class Merchant {
                 for merchant, authority can only be MERCHANT
         */
         private final String AUTHORITY = "MERCHANT";
+
+        @OneToMany(mappedBy = "book", orphanRemoval = true, cascade = CascadeType.ALL)
+        @JsonManagedReference
+        private List<Voucher> vouchers;
 }
