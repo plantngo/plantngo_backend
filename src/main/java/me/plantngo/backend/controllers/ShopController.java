@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import me.plantngo.backend.DTO.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.plantngo.backend.DTO.CategoryDTO;
-import me.plantngo.backend.DTO.ProductDTO;
-import me.plantngo.backend.DTO.UpdateCategoryDTO;
-import me.plantngo.backend.DTO.UpdateProductDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
@@ -48,7 +45,7 @@ public class ShopController {
         this.merchantService = merchantService;
     }
 
-    @PostMapping(path = "/{merchantName}")
+    @PostMapping(path = "/{merchantName}/vouchers")
     public ResponseEntity<String> addVoucher(@PathVariable("merchantName") String merchantName,
                                               @Valid @RequestBody CategoryDTO categoryDTO) {
         
@@ -61,6 +58,38 @@ public class ShopController {
             return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
         } catch (AlreadyExistsException e) {
             return new ResponseEntity<>("Category already exists for this merchant!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(path = "/{merchantName}/vouchers/{voucherId}")
+    public ResponseEntity<String> updateVoucher(@PathVariable("merchantName") String merchantName,
+                                                 @PathVariable("voucherId") Integer voucherId,
+                                                 @Valid @RequestBody UpdateVoucherDTO updateVoucherDTO) {
+        try {
+            Merchant merchant = merchantService.getMerchantByUsername(merchantName);
+            shopService.updateVoucher(merchant, voucherId, updateVoucherDTO);
+            return new ResponseEntity<>("Category updated!", HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
+        } catch (AlreadyExistsException e) {
+            return new ResponseEntity<>("Category with the new name already exists!", HttpStatus.BAD_REQUEST);
+        } catch (NotExistException e) {
+            return new ResponseEntity<>("Category doesn't exist!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping(path = "/{merchantName}/vouchers/{voucherId}")
+    public ResponseEntity<String> deleteVoucher(@PathVariable("merchantName") String merchantName,
+                                                 @PathVariable("voucherId") Integer voucherId) {
+
+        try {
+            Merchant merchant = merchantService.getMerchantByUsername(merchantName);
+            shopService.deleteVoucher(merchant, voucherId);
+            return new ResponseEntity<>("Category deleted!", HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
+        } catch (NotExistException e) {
+            return new ResponseEntity<>("Category under merchant doesn't exist!", HttpStatus.BAD_REQUEST);
         }
     }
 
