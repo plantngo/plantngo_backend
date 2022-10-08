@@ -12,4 +12,7 @@ public class UpdateVoucherDTO {
     @NotNull
     private double value;
 
+    @NotNull(message = "description ")
+    private String description;
+
 }

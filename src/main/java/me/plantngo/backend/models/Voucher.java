@@ -24,7 +24,10 @@ public class Voucher {
     private Integer id;
 
     @NotNull(message = "value cannot be null")
-    private double value;
+    private Double value;
+
+    @NotNull(message = "description ")
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "merchant_id")

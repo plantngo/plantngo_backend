@@ -47,17 +47,15 @@ public class ShopController {
 
     @PostMapping(path = "/{merchantName}/vouchers")
     public ResponseEntity<String> addVoucher(@PathVariable("merchantName") String merchantName,
-                                              @Valid @RequestBody CategoryDTO categoryDTO) {
+                                              @Valid @RequestBody VoucherDTO voucherDTO) {
         
         try {
             Merchant merchant = merchantService.getMerchantByUsername(merchantName);
-            //shopService.addCategory(merchant, categoryDTO);
-            return new ResponseEntity<>("Category Added!", HttpStatus.CREATED);
+            shopService.addVoucher(merchant, voucherDTO);
+            return new ResponseEntity<>("Voucher Added!", HttpStatus.CREATED);
         } catch (UserNotFoundException e) {
             System.out.println(e.getMessage());
             return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
-        } catch (AlreadyExistsException e) {
-            return new ResponseEntity<>("Category already exists for this merchant!", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -68,13 +66,11 @@ public class ShopController {
         try {
             Merchant merchant = merchantService.getMerchantByUsername(merchantName);
             shopService.updateVoucher(merchant, voucherId, updateVoucherDTO);
-            return new ResponseEntity<>("Category updated!", HttpStatus.OK);
+            return new ResponseEntity<>("Voucher updated!", HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
-        } catch (AlreadyExistsException e) {
-            return new ResponseEntity<>("Category with the new name already exists!", HttpStatus.BAD_REQUEST);
         } catch (NotExistException e) {
-            return new ResponseEntity<>("Category doesn't exist!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Voucher doesn't exist!", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -85,11 +81,11 @@ public class ShopController {
         try {
             Merchant merchant = merchantService.getMerchantByUsername(merchantName);
             shopService.deleteVoucher(merchant, voucherId);
-            return new ResponseEntity<>("Category deleted!", HttpStatus.OK);
+            return new ResponseEntity<>("Voucher deleted!", HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
         } catch (NotExistException e) {
-            return new ResponseEntity<>("Category under merchant doesn't exist!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Voucher under merchant doesn't exist!", HttpStatus.BAD_REQUEST);
         }
     }
 

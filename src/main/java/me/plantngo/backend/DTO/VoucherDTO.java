@@ -8,6 +8,10 @@ import javax.validation.constraints.NotNull;
 @Data
 @AllArgsConstructor
 public class VoucherDTO {
+
     @NotNull
     private double value;
+
+    @NotNull(message = "description ")
+    private String description;
 }
