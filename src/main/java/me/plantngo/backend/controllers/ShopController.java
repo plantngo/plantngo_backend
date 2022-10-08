@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import me.plantngo.backend.DTO.*;
+import me.plantngo.backend.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
-import me.plantngo.backend.models.Category;
-import me.plantngo.backend.models.Merchant;
-import me.plantngo.backend.models.Product;
 import me.plantngo.backend.services.MerchantService;
 import me.plantngo.backend.services.ShopService;
 
@@ -43,6 +41,18 @@ public class ShopController {
     public ShopController(ShopService shopService, MerchantService merchantService) {
         this.shopService = shopService;
         this.merchantService = merchantService;
+    }
+
+    @GetMapping(path="/{merchantName}/vouchers/{id}")
+    public Voucher getVoucher(@PathVariable("merchantName") String merchantName, @PathVariable("id") Integer id) {
+        Merchant merchant = merchantService.getMerchantByUsername(merchantName);
+        return shopService.getVoucher(merchant, id);
+    }
+
+    @GetMapping(path="/{merchantName}/vouchers")
+    public List<Voucher> getAllVouchersFromMerchantName(@PathVariable("merchantName") String merchantName) {
+        Merchant merchant = merchantService.getMerchantByUsername(merchantName);
+        return shopService.getAllVouchersFromMerchant(merchant);
     }
 
     @PostMapping(path = "/{merchantName}/vouchers")

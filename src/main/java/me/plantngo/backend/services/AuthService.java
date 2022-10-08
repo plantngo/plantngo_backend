@@ -96,6 +96,8 @@ public class AuthService {
 
         Merchant merchant = this.merchantMapToEntity(registrationDTO);
 
+        System.out.println(merchant);
+
         merchantRepository.save(merchant);
 
         return new ResponseEntity<>("Merchant registered!", HttpStatus.CREATED);

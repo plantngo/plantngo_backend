@@ -16,4 +16,5 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
 
     Boolean existsByIdAndMerchant(Integer id, Merchant merchant);
 
+    List<Voucher> findAllByMerchant(Merchant merchant);
 }

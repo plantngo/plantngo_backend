@@ -34,10 +34,11 @@ public class ShopService {
     private VoucherRepository voucherRepository;
 
     @Autowired
-    public ShopService(ProductRepository productRepository, MerchantRepository merchantRepository, CategoryRepository categoryRepository) {
+    public ShopService(ProductRepository productRepository, MerchantRepository merchantRepository, CategoryRepository categoryRepository, VoucherRepository voucherRepository) {
         this.productRepository = productRepository;
         this.merchantRepository = merchantRepository;
         this.categoryRepository = categoryRepository;
+        this.voucherRepository = voucherRepository;
     }
 
     public Voucher addVoucher(Merchant merchant, VoucherDTO voucherDTO) {
@@ -54,6 +55,10 @@ public class ShopService {
             throw new NotExistException();
         }
         return tempVoucher.get();
+    }
+
+    public List<Voucher> getAllVouchersFromMerchant(Merchant merchant) {
+        return voucherRepository.findAllByMerchant(merchant);
     }
 
     public Voucher updateVoucher(Merchant merchant, Integer voucherId, UpdateVoucherDTO updateVoucherDTO) {
