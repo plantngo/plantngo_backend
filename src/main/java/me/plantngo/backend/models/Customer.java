@@ -17,6 +17,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 @Getter
@@ -48,6 +50,10 @@ public class Customer {
     private String password;
 
     private Integer greenPts;
+
+    @OneToMany(mappedBy = "customer", orphanRemoval = true, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Ownership> ownerships;
 
     /*
         for customer, authority can either be CUSTOMER or ADMIN (for testing)

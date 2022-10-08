@@ -57,7 +57,7 @@ public class Merchant {
         */
         private final String AUTHORITY = "MERCHANT";
 
-        @OneToMany(mappedBy = "book", orphanRemoval = true, cascade = CascadeType.ALL)
+        @OneToMany(mappedBy = "merchant", orphanRemoval = true, cascade = CascadeType.ALL)
         @JsonManagedReference
         private List<Voucher> vouchers;
 }

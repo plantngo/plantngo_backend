@@ -27,7 +27,7 @@ public class MerchantController {
     
 
     @GetMapping(path="/{username}")
-    @PreAuthorize("authentication.principal.username == #username || hasRole('ADMIN')")
+    //@PreAuthorize("authentication.principal.username == #username || hasRole('ADMIN')")
     public Merchant getMerchantByUsername(@PathVariable("username") String username) {
         return merchantService.getMerchantByUsername(username);
     }

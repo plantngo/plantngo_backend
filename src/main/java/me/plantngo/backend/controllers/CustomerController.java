@@ -27,7 +27,7 @@ public class CustomerController {
     
 
     @GetMapping(path="/{username}")
-    @PreAuthorize("authentication.principal.username == #username || hasRole('ADMIN')")
+    //@PreAuthorize("authentication.principal.username == #username || hasRole('ADMIN')")
     public Customer getUserByUsername(@PathVariable("username") String username) {
         return customerService.getCustomerByUsername(username);
     }
