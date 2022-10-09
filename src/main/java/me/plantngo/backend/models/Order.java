@@ -1,17 +1,24 @@
 package me.plantngo.backend.models;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
 
 import lombok.*;
@@ -23,36 +30,25 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull
-    private Integer customerId;
-
-    @NotNull
-    private Integer merchant_Id;
-
-    private Date createdDate;
+    @Column(name = "Orders_Customer_Id")
+    private Integer customer_Id;
 
     private Double totalPrice;
 
-    private String sessionId;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<OrderItem> orderItems;
 
-    // @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
-    // @JoinColumn(name = "order_id",referencedColumnName = "id",insertable = false,updatable = false)
-    // private List<OrderItem> orderItems;
-
-    // @ManyToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "customer_id", referencedColumnName = "id", insertable = false, updatable = false)
-    // private Customer customer;
-
-    // @ManyToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "merchant_id", referencedColumnName = "id", insertable = false, updatable = false)
-    // private Merchant merchant;
-
-
+    @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false)
+    @JsonBackReference
+    private Customer customer;
     
 }

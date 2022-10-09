@@ -55,6 +55,10 @@ public class Customer {
     @JsonManagedReference
     private List<Ownership> ownerships;
 
+    @OneToMany(mappedBy = "customer", orphanRemoval = true, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Order> orders;
+
     /*
         for customer, authority can either be CUSTOMER or ADMIN (for testing)
      */
