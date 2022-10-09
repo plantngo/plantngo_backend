@@ -1,22 +1,13 @@
 package me.plantngo.backend.models;
 
 import java.util.*;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.CascadeType;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
@@ -51,9 +42,23 @@ public class Customer {
 
     private Integer greenPts;
 
-    @OneToMany(mappedBy = "customer", orphanRemoval = true, cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(name="ownership",
+            joinColumns= @JoinColumn(name="customer_id"),
+            inverseJoinColumns=
+            @JoinColumn(name="voucher_id"))
     @JsonManagedReference
-    private List<Ownership> ownerships;
+    private Set<Voucher> ownedVouchers;
+
+    @ManyToMany
+    @JoinTable(name="cart",
+            joinColumns= @JoinColumn(name="customer_id"),
+            inverseJoinColumns=
+            @JoinColumn(name="voucher_id"))
+    @JsonManagedReference
+    private Set<Voucher> vouchersCart;
+
+
 
     @OneToMany(mappedBy = "customer", orphanRemoval = true, cascade = CascadeType.ALL)
     @JsonManagedReference
