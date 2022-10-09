@@ -28,14 +28,11 @@ public class OrderService {
 
     private ProductRepository productRepository;
 
-    private OrderItemRepository orderItemRepository;
-
     @Autowired
-    public OrderService(OrderRepository orderRepository, CustomerService customerService, ProductRepository productRepository, OrderItemRepository orderItemRepository) {
+    public OrderService(OrderRepository orderRepository, CustomerService customerService, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.customerService = customerService;
         this.productRepository = productRepository;
-        this.orderItemRepository = orderItemRepository;
     }
 
     public List<Order> getOrdersByCustomerName(String name) {
