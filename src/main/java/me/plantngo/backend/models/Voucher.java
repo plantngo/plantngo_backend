@@ -49,7 +49,11 @@ public class Voucher {
     @JsonBackReference
     private Merchant merchant;
 
-    @OneToMany(mappedBy = "voucher", orphanRemoval = true, cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Ownership> ownerships;
+    @ManyToMany(mappedBy = "ownedVouchers")
+    @JsonBackReference
+    private List<Customer> customersThatOwn;
+
+    @ManyToMany(mappedBy = "vouchersCart")
+    @JsonBackReference
+    private List<Customer> customersInCart;
 }
