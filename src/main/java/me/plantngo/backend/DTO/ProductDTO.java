@@ -6,19 +6,18 @@ import lombok.*;
 
 @Data
 @AllArgsConstructor
-public class RegistrationDTO {
+public class ProductDTO {
+    
+    @NotNull
+    private String name;
 
     @NotNull
-    String username;
+    private Double price;
 
     @NotNull
-    String email;
+    private String description;
 
     @NotNull
-    String password;
-
-    @NotNull
-    Character userType;
-
-    String company;
+    private Double carbonEmission;
+    
 }

@@ -6,10 +6,8 @@ import lombok.*;
 
 @Data
 @AllArgsConstructor
-public class LoginDTO {
+@NoArgsConstructor
+public class CategoryDTO {
     @NotNull
-    String username;
-
-    @NotNull
-    String password;
+    private String name;
 }

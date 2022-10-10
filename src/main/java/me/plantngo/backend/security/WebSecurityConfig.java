@@ -7,10 +7,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
     private JwtRequestFilter jwtRequestFilter;
     private UserDetailsService userDetailsService;
@@ -38,10 +41,10 @@ public class WebSecurityConfig {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-     
+
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(encoder());
- 
+
         return authProvider;
     }
 
@@ -49,22 +52,19 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-        .httpBasic()
-            .and()
-        .authorizeRequests()
-            .antMatchers("/**").permitAll()
-            .and()
-        .authorizeRequests()
-            .anyRequest()
-            .authenticated()
-            .and()
-        .csrf().disable() // CSRF protection is needed only for browser based attacks
-        .formLogin()
-            .usernameParameter("username")
-            .defaultSuccessUrl("/home")
-            .permitAll()
-            .and()
-        .headers().disable(); // Disable the security headers, as we do not return HTML in our service
+                .httpBasic().and()
+                .authorizeRequests()
+                    .antMatchers("/**/login").permitAll()
+                    .antMatchers("/**/register").permitAll()
+                    .antMatchers("/api/v1/**").permitAll()
+                    .antMatchers("/**/customer").hasRole("ADMIN") //blocked from all users as of right now
+                    .antMatchers("/**/merchant").hasRole("ADMIN")
+                .anyRequest().authenticated()
+                .and()
+                .csrf().disable() // CSRF protection is needed only for browser based attacks
+                .formLogin().disable()
+                .headers().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Disable the security headers, as we do not return HTML in our service
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 

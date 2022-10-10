@@ -3,6 +3,7 @@ package me.plantngo.backend.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +26,8 @@ public class CustomerController {
     }
     
 
-    @GetMapping(path="{username}")
+    @GetMapping(path="/{username}")
+    //@PreAuthorize("authentication.principal.username == #username || hasRole('ADMIN')")
     public Customer getUserByUsername(@PathVariable("username") String username) {
         return customerService.getCustomerByUsername(username);
     }
@@ -35,18 +37,5 @@ public class CustomerController {
         return customerService.findAll();
     }
 
-    // @GetMapping(path="test")
-    // public List<Customer> getAllCustomers() {
-    //     List<Customer> customerList = new ArrayList<>();
-    //     customerList.add(new Customer(1, "Jack", null, "ojh1@gmail.com", "password1", 0));
-    //     customerList.add(new Customer(2, "Jane", null, "ojh1@gmail.com", "password1", 0));
-
-    //     return customerList;
-    // }
-
-    // @PostMapping(path="register")
-    // public ResponseEntity<String> registerCustomer(@RequestBody RegistrationDTO registrationDTO) {
-    //     return customerService.registerCustomer(registrationDTO);
-    // }
 }
 

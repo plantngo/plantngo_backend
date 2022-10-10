@@ -1,12 +1,16 @@
 package me.plantngo.backend.services;
 
+import me.plantngo.backend.exceptions.LoginFailedException;
 import me.plantngo.backend.jwt.JwtProvider;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -39,16 +43,19 @@ public class AuthService {
     }
 
     public ResponseEntity<String> authenticateUser(LoginDTO loginDTO) {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
-                        loginDTO.getPassword()));
+
+        Authentication authentication = null;
+        try{
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
+                            loginDTO.getPassword()));
+        } catch (AuthenticationException e){
+            throw new LoginFailedException();
+        }
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        String jwt = "";
-        if (userDetails != null){
-            jwt = jwtProvider.generateToken(userDetails);
-        }
+        String jwt = jwtProvider.generateToken(userDetails);
 
         return ResponseEntity.ok().header("jwt", jwt).body(" Login Success!");
     }
@@ -67,11 +74,7 @@ public class AuthService {
             return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
         }
 
-        Customer customer = new Customer();
-        customer.setEmail(registrationDTO.getEmail());
-        customer.setUsername(registrationDTO.getUsername());
-        customer.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
-        customer.setGreenPts(0);
+        Customer customer = this.customerMapToEntity(registrationDTO);
 
         customerRepository.save(customer);
 
@@ -91,15 +94,29 @@ public class AuthService {
             return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
         }
 
-        Merchant merchant = new Merchant();
-        merchant.setEmail(registrationDTO.getEmail());
-        merchant.setUsername(registrationDTO.getUsername());
-        merchant.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
-        merchant.setCompany(registrationDTO.getCompany());
+        Merchant merchant = this.merchantMapToEntity(registrationDTO);
+
+        System.out.println(merchant);
 
         merchantRepository.save(merchant);
 
         return new ResponseEntity<>("Merchant registered!", HttpStatus.CREATED);
 
+    }
+
+    private Customer customerMapToEntity(RegistrationDTO registrationDTO) {
+        registrationDTO.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
+        ModelMapper mapper = new ModelMapper();
+
+        Customer customer = mapper.map(registrationDTO, Customer.class);
+        return customer;
+    }
+
+    private Merchant merchantMapToEntity(RegistrationDTO registrationDTO) {
+        registrationDTO.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
+        ModelMapper mapper = new ModelMapper();
+
+        Merchant merchant = mapper.map(registrationDTO, Merchant.class);
+        return merchant;
     }
 }
