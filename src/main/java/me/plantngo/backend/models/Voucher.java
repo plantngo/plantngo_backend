@@ -1,9 +1,6 @@
 package me.plantngo.backend.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 import javax.persistence.*;
@@ -51,7 +48,11 @@ public class Voucher {
 
     @ManyToOne
     @JoinColumn(name = "merchant_id")
+    @JsonIgnore
     private Merchant merchant;
+
+    @NotNull
+    private Integer merchantId;
 
     @ManyToMany(mappedBy = "ownedVouchers")
     @JsonBackReference

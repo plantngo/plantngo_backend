@@ -3,20 +3,15 @@ package me.plantngo.backend.services;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
-
 import me.plantngo.backend.DTO.*;
 import me.plantngo.backend.models.Voucher;
 import me.plantngo.backend.repositories.VoucherRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
-import me.plantngo.backend.exceptions.UserNotFoundException;
 import me.plantngo.backend.models.Category;
 import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Product;
@@ -44,6 +39,7 @@ public class ShopService {
     public Voucher addVoucher(Merchant merchant, VoucherDTO voucherDTO) {
 
         Voucher voucher = this.voucherMapToEntity(voucherDTO, merchant);
+        voucher.setMerchantId(merchant.getId());
         voucherRepository.save(voucher);
 
         return voucher;
