@@ -16,4 +16,8 @@ public class UpdateProductDTO {
     private String description;
 
     private Double carbonEmission;
+
+    private String imageUrl;
+
+    private String flavourType;
 }
