@@ -60,5 +60,6 @@ public class Merchant {
         private final String AUTHORITY = "MERCHANT";
 
         @OneToMany(mappedBy = "merchant", orphanRemoval = true, cascade = CascadeType.ALL)
+        @JsonIgnore
         private List<Voucher> vouchers;
 }
