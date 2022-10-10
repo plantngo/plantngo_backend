@@ -26,6 +26,13 @@ public class MerchantService {
         }
         return merchantRepository.findByUsername(username).get();
     }
+
+    public Merchant getMerchantById(Integer id){
+        if (merchantRepository.findById(id).isEmpty()) {
+            throw new UserNotFoundException();
+        }
+        return merchantRepository.findById(id).get();
+    }
     
     public Merchant getMerchantByEmail(String email) {
         if (merchantRepository.findByEmail(email).isEmpty()) {
