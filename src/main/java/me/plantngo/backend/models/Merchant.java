@@ -52,31 +52,31 @@ public class Merchant {
         @NotBlank(message = "Company cannot be blank")
         private String company;
 
-        @NotNull
+        // @NotNull
         private String logoUrl;
 
-        @NotNull
+        // @NotNull
         private String bannerUrl;
 
-        @NotNull
+        // @NotNull
         private String address;
 
-        @NotNull
+        // @NotNull
         private String description;
 
-        @NotNull
+        // @NotNull
         private Double latitude;
 
-        @NotNull
+        // @NotNull
         private Double longtitude;
 
-        @NotNull
+        // @NotNull
         private String cuisineType;
 
-        @NotNull
+        // @NotNull
         private Integer priceRating;
 
-        @NotNull
+        // @NotNull
         private String operatingHours;
 
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)

@@ -46,10 +46,10 @@ public class Product {
     @NotNull
     private double carbonEmission;
 
-    @NotNull
+    // @NotNull
     private String imageUrl;
 
-    @NotNull
+    // @NotNull
     private String flavourType;
 
     @ManyToOne
