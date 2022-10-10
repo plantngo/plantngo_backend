@@ -31,7 +31,6 @@ public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @EqualsAndHashCode.Exclude
     private Integer id;
 
     @NotNull
@@ -41,7 +40,6 @@ public class OrderItem {
     @EqualsAndHashCode.Exclude
     private Integer quantity;
 
-    @EqualsAndHashCode.Exclude
     private Double price;
 
     @ManyToOne
