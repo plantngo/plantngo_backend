@@ -9,16 +9,34 @@ import lombok.*;
 public class RegistrationDTO {
 
     @NotNull
-    String username;
+    private String username;
 
     @NotNull
-    String email;
+    private String email;
 
     @NotNull
-    String password;
+    private String password;
 
     @NotNull
-    Character userType;
+    private Character userType;
 
-    String company;
+    private String company;
+
+    private String logoUrl;
+
+    private String bannerUrl;
+
+    private String address;
+
+    private String description;
+
+    private Double latitude;
+
+    private Double longtitude;
+
+    private String cuisineType;
+
+    private Integer priceRating;
+
+    private String operatingHours;
 }

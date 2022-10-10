@@ -53,6 +53,33 @@ public class Merchant {
         @NotNull(message = "Company cannot be null")
         private String company;
 
+        @NotNull
+        private String logoUrl;
+
+        @NotNull
+        private String bannerUrl;
+
+        @NotNull
+        private String address;
+
+        @NotNull
+        private String description;
+
+        @NotNull
+        private Double latitude;
+
+        @NotNull
+        private Double longtitude;
+
+        @NotNull
+        private String cuisineType;
+
+        @NotNull
+        private Integer priceRating;
+
+        @NotNull
+        private String operatingHours;
+
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
         @JsonManagedReference // Serializes this side
         private List<Category> categories;
