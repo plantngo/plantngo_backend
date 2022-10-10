@@ -7,4 +7,8 @@ public class AlreadyExistsException extends RuntimeException {
     public AlreadyExistsException() {
         super("Item already exists");
     }
+
+    public AlreadyExistsException(String item) {
+        super(item + " already exists");
+    }
 }

@@ -27,18 +27,19 @@ public class Customer {
     private Integer id;
 
     @Size(min = 5, max = 15, message = "Username must be between 5 and 15 characters long")
-    @NotNull(message = "Username cannot be null")
+    @NotBlank(message = "Username cannot be null")
     private String username;
-
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private List<Preference> preferences;
-
+    
     @Email(message = "Must be a valid email")
     @NotBlank(message = "Email cannot be null")
     private String email;
 
+    @NotBlank(message = "Password cannot be blank")
     @JsonIgnore
     private String password;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Preference> preferences;
 
     private Integer greenPts;
 
