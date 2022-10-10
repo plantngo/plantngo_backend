@@ -15,7 +15,6 @@ import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.models.Order;
 import me.plantngo.backend.models.OrderItem;
 import me.plantngo.backend.models.Product;
-import me.plantngo.backend.repositories.OrderItemRepository;
 import me.plantngo.backend.repositories.OrderRepository;
 import me.plantngo.backend.repositories.ProductRepository;
 
