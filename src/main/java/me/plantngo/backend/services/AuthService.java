@@ -107,12 +107,7 @@ public class AuthService {
             throw new FailedRegistrationException("Missing company");
         }
 
-        Merchant merchant = new Merchant();
-        merchant.setEmail(registrationDTO.getEmail());
-        merchant.setUsername(registrationDTO.getUsername());
-        merchant.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
-        merchant.setCompany(registrationDTO.getCompany());
-        merchant.setCategories(null);
+        Merchant merchant = this.merchantMapToEntity(registrationDTO);
 
         merchantRepository.save(merchant);
 
