@@ -57,7 +57,7 @@ public class VoucherPurchaseController {
                                             @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {
         try{
             Customer customer = customerService.getCustomerByUsername(customerUsername);
-            Voucher voucher = shopService.getVoucher(merchantService.getMerchantByUsername(voucherPurchaseDTO.getMerchantName()), voucherPurchaseDTO.getId());
+            Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
             voucherPurchaseService.addToCart(customer, voucher);
             return new ResponseEntity<>("Added to Cart.", HttpStatus.OK);
         } catch (UserNotFoundException e){
@@ -74,7 +74,7 @@ public class VoucherPurchaseController {
                                                  @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {
         try {
             Customer customer = customerService.getCustomerByUsername(customerUsername);
-            Voucher voucher = shopService.getVoucher(merchantService.getMerchantByUsername(voucherPurchaseDTO.getMerchantName()), voucherPurchaseDTO.getId());
+            Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
             voucherPurchaseService.deleteFromCart(customer, voucher);
             return new ResponseEntity<>("Deleted from Cart.", HttpStatus.OK);
         } catch (NotExistException e){
@@ -87,7 +87,7 @@ public class VoucherPurchaseController {
                                             @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {
         try{
             Customer customer = customerService.getCustomerByUsername(customerUsername);
-            Voucher voucher = shopService.getVoucher(merchantService.getMerchantByUsername(voucherPurchaseDTO.getMerchantName()), voucherPurchaseDTO.getId());
+            Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
             voucherPurchaseService.addOwnedVoucher(customer, voucher);
             return new ResponseEntity<>("Successfully added.", HttpStatus.OK);
         } catch (UserNotFoundException e){
@@ -104,11 +104,12 @@ public class VoucherPurchaseController {
                                                  @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {
         try {
             Customer customer = customerService.getCustomerByUsername(customerUsername);
-            Voucher voucher = shopService.getVoucher(merchantService.getMerchantByUsername(voucherPurchaseDTO.getMerchantName()), voucherPurchaseDTO.getId());
+            Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
             voucherPurchaseService.deleteOwnedVoucher(customer, voucher);
             return new ResponseEntity<>("Successfully removed.", HttpStatus.OK);
         } catch (NotExistException e){
             return new ResponseEntity<>("Voucher not found.", HttpStatus.BAD_REQUEST);
         }
     }
+
 }

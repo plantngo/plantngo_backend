@@ -22,19 +22,31 @@ public class MerchantService {
 
     public Merchant getMerchantByUsername(String username) {
         if (merchantRepository.findByUsername(username).isEmpty()) {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException("Username not found");
         }
         return merchantRepository.findByUsername(username).get();
+    }
+
+    public Merchant getMerchantById(Integer id){
+        if (merchantRepository.findById(id).isEmpty()) {
+            throw new UserNotFoundException();
+        }
+        return merchantRepository.findById(id).get();
     }
     
     public Merchant getMerchantByEmail(String email) {
         if (merchantRepository.findByEmail(email).isEmpty()) {
-            throw new NotExistException();
+            throw new UserNotFoundException("Email not found");
         }
         return merchantRepository.findByEmail(email).get();
     }
 
     public List<Merchant> findAll() {
+        return merchantRepository.findAll();
+    }
+
+    public List<Merchant> findMerchantsInRange(double latitude, double longitude) {
+        // some logic to filter out by location
         return merchantRepository.findAll();
     }
     

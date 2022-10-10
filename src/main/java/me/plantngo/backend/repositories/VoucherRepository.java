@@ -1,6 +1,5 @@
 package me.plantngo.backend.repositories;
 
-import me.plantngo.backend.models.Category;
 import me.plantngo.backend.models.Voucher;
 import me.plantngo.backend.models.Merchant;
 import org.springframework.data.jpa.repository.JpaRepository;

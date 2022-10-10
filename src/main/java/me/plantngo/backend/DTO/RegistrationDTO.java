@@ -1,6 +1,10 @@
 package me.plantngo.backend.DTO;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import lombok.*;
 
@@ -8,17 +12,37 @@ import lombok.*;
 @AllArgsConstructor
 public class RegistrationDTO {
 
-    @NotNull
+    @Size(min = 5, max = 15, message = "Username must be between 5 and 15 characters long")
+    @NotBlank(message = "Username cannot be blank")
     String username;
 
-    @NotNull
+    @Email(message = "Must be a valid email")
+    @NotBlank(message = "Email cannot be blank")
     String email;
 
-    @NotNull
+    @NotBlank(message = "Password cannot be blank")
     String password;
 
-    @NotNull
-    Character userType;
+    @NotNull(message = "Usertype cannot be blank")
+    private Character userType;
 
-    String company;
+    private String company;
+
+    private String logoUrl;
+
+    private String bannerUrl;
+
+    private String address;
+
+    private String description;
+
+    private Double latitude;
+
+    private Double longtitude;
+
+    private String cuisineType;
+
+    private Integer priceRating;
+
+    private String operatingHours;
 }

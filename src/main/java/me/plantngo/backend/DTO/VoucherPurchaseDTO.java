@@ -11,9 +11,9 @@ import javax.validation.constraints.NotNull;
 public class VoucherPurchaseDTO {
 
     @NotNull
-    Integer id;
+    Integer voucherId;
 
     @NotNull
-    String merchantName;
+    Integer merchantId;
 
 }

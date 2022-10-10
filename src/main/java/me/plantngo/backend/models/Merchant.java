@@ -1,14 +1,13 @@
 package me.plantngo.backend.models;
 
-import java.security.Principal;
 import java.util.*;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
@@ -39,19 +38,46 @@ public class Merchant {
         private Integer id;
 
         @Size(min = 5, max = 15, message = "Username must be between 5 and 15 characters long")
-        @NotNull(message = "Username cannot be null")
+        @NotBlank(message = "Username cannot be blank")
         private String username;
 
         @Email(message = "Must be a valid email")
-        @NotNull(message = "Email cannot be null")
+        @NotBlank(message = "Email cannot be blank")
         private String email;
 
-        @NotNull(message = "Password cannot be null")
+        @NotBlank(message = "Password cannot be blank")
         @JsonIgnore
         private String password;
 
-        @NotNull(message = "Company cannot be null")
+        @NotBlank(message = "Company cannot be blank")
         private String company;
+
+        // @NotNull
+        private String logoUrl;
+
+        // @NotNull
+        private String bannerUrl;
+
+        // @NotNull
+        private String address;
+
+        // @NotNull
+        private String description;
+
+        // @NotNull
+        private Double latitude;
+
+        // @NotNull
+        private Double longtitude;
+
+        // @NotNull
+        private String cuisineType;
+
+        // @NotNull
+        private Integer priceRating;
+
+        // @NotNull
+        private String operatingHours;
 
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
         @JsonManagedReference // Serializes this side
@@ -63,5 +89,6 @@ public class Merchant {
         private final String AUTHORITY = "MERCHANT";
 
         @OneToMany(mappedBy = "merchant", orphanRemoval = true, cascade = CascadeType.ALL)
+        @JsonIgnore
         private List<Voucher> vouchers;
 }

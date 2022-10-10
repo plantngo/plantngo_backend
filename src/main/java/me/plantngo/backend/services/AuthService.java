@@ -1,16 +1,16 @@
 package me.plantngo.backend.services;
 
-import me.plantngo.backend.exceptions.LoginFailedException;
+import me.plantngo.backend.exceptions.FailedRegistrationException;
+import me.plantngo.backend.exceptions.InvalidUserTypeException;
 import me.plantngo.backend.jwt.JwtProvider;
-
 import org.modelmapper.ModelMapper;
+import javax.security.auth.login.FailedLoginException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -34,7 +34,8 @@ public class AuthService {
 
     @Autowired
     public AuthService(CustomerRepository customerRepository, MerchantRepository merchantRepository,
-                       BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
+            BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager authenticationManager,
+            JwtProvider jwtProvider) {
         this.customerRepository = customerRepository;
         this.merchantRepository = merchantRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -45,13 +46,11 @@ public class AuthService {
     public ResponseEntity<String> authenticateUser(LoginDTO loginDTO) {
 
         Authentication authentication = null;
-        try{
-            authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
-                            loginDTO.getPassword()));
-        } catch (AuthenticationException e){
-            throw new LoginFailedException();
-        }
+
+        // throws AuthenticationException
+        authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
+                        loginDTO.getPassword()));
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
@@ -60,18 +59,27 @@ public class AuthService {
         return ResponseEntity.ok().header("jwt", jwt).body(" Login Success!");
     }
 
+    public ResponseEntity<String> registerUser(RegistrationDTO registrationDTO) {
+        if (registrationDTO.getUserType() == 'C') {
+            return registerCustomer(registrationDTO);
+        } else if (registrationDTO.getUserType() == 'M') {
+            return registerMerchant(registrationDTO);
+        }
+        throw new InvalidUserTypeException();
+    }
 
     public ResponseEntity<String> registerCustomer(RegistrationDTO registrationDTO) {
 
         // Check if email is already in use
         if (customerRepository.existsByEmail(registrationDTO.getEmail())
                 || merchantRepository.existsByEmail(registrationDTO.getEmail())) {
-            return new ResponseEntity<>("Email already taken!", HttpStatus.BAD_REQUEST);
+            throw new FailedRegistrationException("Email already taken!");
         }
 
         // Check if username is already in use
-        if (customerRepository.existsByUsername(registrationDTO.getUsername()) || merchantRepository.existsByUsername(registrationDTO.getUsername())) {
-            return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
+        if (customerRepository.existsByUsername(registrationDTO.getUsername())
+                || merchantRepository.existsByUsername(registrationDTO.getUsername())) {
+            throw new FailedRegistrationException("Username already taken!");
         }
 
         Customer customer = this.customerMapToEntity(registrationDTO);
@@ -86,17 +94,20 @@ public class AuthService {
         // Check if email is already in use
         if (merchantRepository.existsByEmail(registrationDTO.getEmail())
                 || customerRepository.existsByEmail(registrationDTO.getEmail())) {
-            return new ResponseEntity<>("Email already taken!", HttpStatus.BAD_REQUEST);
+            throw new FailedRegistrationException("Email already taken!");
         }
 
         // Check if username is already in use
-        if (merchantRepository.existsByUsername(registrationDTO.getUsername()) || customerRepository.existsByUsername(registrationDTO.getUsername())) {
-            return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
+        if (merchantRepository.existsByUsername(registrationDTO.getUsername())
+                || customerRepository.existsByUsername(registrationDTO.getUsername())) {
+            throw new FailedRegistrationException("Username already taken!");
+        }
+
+        if (registrationDTO.getCompany() == null) {
+            throw new FailedRegistrationException("Missing company");
         }
 
         Merchant merchant = this.merchantMapToEntity(registrationDTO);
-
-        System.out.println(merchant);
 
         merchantRepository.save(merchant);
 
