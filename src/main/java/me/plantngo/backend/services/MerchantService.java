@@ -22,14 +22,14 @@ public class MerchantService {
 
     public Merchant getMerchantByUsername(String username) {
         if (merchantRepository.findByUsername(username).isEmpty()) {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException("Username not found");
         }
         return merchantRepository.findByUsername(username).get();
     }
     
     public Merchant getMerchantByEmail(String email) {
         if (merchantRepository.findByEmail(email).isEmpty()) {
-            throw new NotExistException();
+            throw new UserNotFoundException("Email not found");
         }
         return merchantRepository.findByEmail(email).get();
     }

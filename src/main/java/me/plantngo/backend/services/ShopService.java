@@ -45,7 +45,7 @@ public class ShopService {
 
         // Check to see if same category under merchant already exists
         if (categoryRepository.existsByNameAndMerchant(category.getName(), merchant)) {
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException(category.getName());
         }
 
         categoryRepository.save(category);
@@ -56,7 +56,7 @@ public class ShopService {
     public Category getCategory(Merchant merchant, String categoryName) {
         Optional<Category> tempCategory = categoryRepository.findByNameAndMerchant(categoryName, merchant);
         if (tempCategory.isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException(categoryName, merchant.getCompany());
         }
         return tempCategory.get();
     }
@@ -66,12 +66,12 @@ public class ShopService {
         // Check to see if category exists under merchant
         Optional<Category> tempCategory = categoryRepository.findByNameAndMerchant(categoryName, merchant);
         if (tempCategory.isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException(categoryName, merchant.getCompany());
         }
 
         // If changing category name, check to see if another category with that name already exists
         if (!updateCategoryDTO.getName().equals(categoryName) && categoryRepository.existsByName(updateCategoryDTO.getName())) {
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException(updateCategoryDTO.getName());
         }
 
         // Updating category
@@ -89,7 +89,7 @@ public class ShopService {
     public void deleteCategory(Merchant merchant, String categoryName) {
         // Check to see if same category under merchant already exists
         if (categoryRepository.findByNameAndMerchant(categoryName, merchant).isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException(categoryName, merchant.getCompany());
         }
 
         Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
@@ -100,7 +100,7 @@ public class ShopService {
         Category category = this.getCategory(merchant, categoryName);
         Optional<Product> tempProduct = productRepository.findByNameAndCategory(productName, category);
         if (tempProduct.isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException(productName);
         }
         return tempProduct.get();
     }
@@ -109,7 +109,7 @@ public class ShopService {
 
         // Check to see if category exists
         if (!categoryRepository.existsByNameAndMerchant(categoryName, merchant)) {
-            throw new NotExistException();
+            throw new NotExistException(categoryName, merchant.getCompany());
         }
 
         Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
@@ -118,7 +118,7 @@ public class ShopService {
         // Check to see if product with same name already exists in category
         for (Product p : productList) {
             if (p.getName().equals(productDTO.getName())) {
-                throw new AlreadyExistsException();
+                throw new AlreadyExistsException(productDTO.getName());
             }
         }
 
@@ -135,14 +135,14 @@ public class ShopService {
         // Check to see if product exists under category
         Optional<Product> tempProduct = productRepository.findByNameAndCategory(productName, category);
         if (tempProduct.isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException(productName);
         }
 
         // If changing product name, check to see if another product with that name already exists in the category
         List<Product> productList = category.getProducts();
         for (Product p : productList) {
             if (p.getName().equals(updateProductDTO.getName())) {
-                throw new AlreadyExistsException();
+                throw new AlreadyExistsException(updateProductDTO.getName());
             }
         }
 
