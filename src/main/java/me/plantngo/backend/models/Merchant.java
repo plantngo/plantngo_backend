@@ -46,6 +46,7 @@ public class Merchant {
         private String email;
 
         @NotBlank(message = "Password cannot be blank")
+        @JsonIgnore
         private String password;
 
         @NotBlank(message = "Company cannot be blank")
