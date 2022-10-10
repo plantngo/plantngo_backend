@@ -1,7 +1,9 @@
 package me.plantngo.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,6 +13,9 @@ import java.util.List;
 /*
 each voucher is assumed to be applicable to all products issued by a merchant
  */
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 @Getter
 @Setter
 @ToString
@@ -46,10 +51,13 @@ public class Voucher {
 
     @ManyToOne
     @JoinColumn(name = "merchant_id")
-    @JsonBackReference
     private Merchant merchant;
 
-    @OneToMany(mappedBy = "voucher", orphanRemoval = true, cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Ownership> ownerships;
+    @ManyToMany(mappedBy = "ownedVouchers")
+    @JsonBackReference
+    private List<Customer> customersThatOwn;
+
+    @ManyToMany(mappedBy = "vouchersCart")
+    @JsonBackReference
+    private List<Customer> customersInCart;
 }

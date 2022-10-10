@@ -9,8 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import lombok.*;
 
@@ -21,33 +26,31 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity
-@Table(name = "orderitems")
+@Table(name = "order_items")
 public class OrderItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer orderItemId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @EqualsAndHashCode.Exclude
+    private Integer id;
 
     @NotNull
-    private Long productId;
+    private Integer productId;
 
     @NotNull
-    private int quantity;
+    @EqualsAndHashCode.Exclude
+    private Integer quantity;
 
-    @NotNull
-    private double price;
+    @EqualsAndHashCode.Exclude
+    private Double price;
 
-    private Integer orderId;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    @JsonBackReference
+    private Order order;
 
-    private Date createdDate;
-
-    // @ManyToOne
-    // @JoinColumn(name = "order_id",referencedColumnName = "id",insertable = false,updatable = false)
-    // private Order order;
-
-    //TODO: Create Product
-    // @OneToOne
-    // @JoinColumn(name = "productId",referencedColumnName = "id",insertable = false,updatable = false)
-    // private Product product;
-
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    @JsonIgnore
+    private Product product;
 }
