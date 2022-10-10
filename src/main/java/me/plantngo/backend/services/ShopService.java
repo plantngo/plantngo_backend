@@ -145,7 +145,7 @@ public class ShopService {
 
         for (Product p : productList) {
             if (p.getName().equals(updateProductDTO.getName())) {
-                throw new AlreadyExistsException(updateProductDTO.getName()));
+                throw new AlreadyExistsException(updateProductDTO.getName());
             }
         }
 
