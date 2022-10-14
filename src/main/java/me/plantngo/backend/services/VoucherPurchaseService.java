@@ -100,9 +100,17 @@ public class VoucherPurchaseService {
         if (totalCost > balanceGreenPts){
             throw new InsufficientBalanceException();
         }
-        for (Voucher v: vouchersInCart){
-            addOwnedVoucher(customer, v);
+
+        if(customer.getOwnedVouchers() == null) customer.setOwnedVouchers(new HashSet<Voucher>());
+
+        for (Voucher voucher: vouchersInCart){
+            customer.getOwnedVouchers().add(voucher);
+            customer.getVouchersCart().remove(voucher);
+            if(voucher.getCustomersThatOwn() == null) voucher.setCustomersThatOwn(new ArrayList<Customer>());
+            voucher.getCustomersThatOwn().add(customer);
         }
+
+
         customer.setGreenPts(customer.getGreenPts() - totalCost);
 
         customerRepository.save(customer);
