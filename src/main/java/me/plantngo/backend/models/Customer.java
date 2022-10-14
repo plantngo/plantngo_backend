@@ -41,7 +41,7 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Preference> preferences;
 
-    private Integer greenPts;
+    private Integer greenPts = 0;
 
     @ManyToMany
     @JoinTable(name="ownership",
