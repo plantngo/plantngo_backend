@@ -24,7 +24,25 @@ public class RegistrationDTO {
     String password;
 
     @NotNull(message = "Usertype cannot be blank")
-    Character userType;
+    private Character userType;
 
-    String company;
+    private String company;
+
+    private String logoUrl;
+
+    private String bannerUrl;
+
+    private String address;
+
+    private String description;
+
+    private Double latitude;
+
+    private Double longtitude;
+
+    private String cuisineType;
+
+    private Integer priceRating;
+
+    private String operatingHours;
 }

@@ -44,6 +44,11 @@ public class MerchantService {
     public List<Merchant> findAll() {
         return merchantRepository.findAll();
     }
+
+    public List<Merchant> findMerchantsInRange(double latitude, double longitude) {
+        // some logic to filter out by location
+        return merchantRepository.findAll();
+    }
     
 
 }

@@ -20,4 +20,10 @@ public class ProductDTO {
     @NotNull
     private Double carbonEmission;
     
+    // @NotNull
+    private String imageUrl;
+
+    // @NotNull
+    private String flavourType;
+
 }

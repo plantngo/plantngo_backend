@@ -46,6 +46,12 @@ public class Product {
     @NotNull
     private double carbonEmission;
 
+    // @NotNull
+    private String imageUrl;
+
+    // @NotNull
+    private String flavourType;
+
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     @JsonBackReference // Prevents infinite loop by not serializing this when sending GET request for merchants

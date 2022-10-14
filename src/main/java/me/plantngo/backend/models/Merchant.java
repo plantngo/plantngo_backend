@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
 import javax.validation.constraints.Size;
@@ -45,10 +46,38 @@ public class Merchant {
         private String email;
 
         @NotBlank(message = "Password cannot be blank")
+        @JsonIgnore
         private String password;
 
         @NotBlank(message = "Company cannot be blank")
         private String company;
+
+        // @NotNull
+        private String logoUrl;
+
+        // @NotNull
+        private String bannerUrl;
+
+        // @NotNull
+        private String address;
+
+        // @NotNull
+        private String description;
+
+        // @NotNull
+        private Double latitude;
+
+        // @NotNull
+        private Double longtitude;
+
+        // @NotNull
+        private String cuisineType;
+
+        // @NotNull
+        private Integer priceRating;
+
+        // @NotNull
+        private String operatingHours;
 
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
         @JsonManagedReference // Serializes this side
