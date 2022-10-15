@@ -10,9 +10,6 @@ import java.util.List;
 /*
 each voucher is assumed to be applicable to all products issued by a merchant
  */
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 @Getter
 @Setter
 @ToString
@@ -28,17 +25,17 @@ public class Voucher {
     private Integer id;
 
     @NotNull(message = "value cannot be null")
-    private Double value;
+    private Integer value;
 
     /*
-    type can be P (percentage-discount) or F (flat-discount)
+     * type can be P (percentage-discount) or F (flat-discount)
      */
     @NotNull
     private Character type;
 
     /*
-    with type P, discount can be between 0.00 and 1.00
-    with type F, discount can be any number greater than 0.00
+     * with type P, discount can be between 0.00 and 1.00
+     * with type F, discount can be any number greater than 0.00
      */
     @NotNull
     private Double discount;
@@ -55,10 +52,8 @@ public class Voucher {
     private Integer merchantId;
 
     @ManyToMany(mappedBy = "ownedVouchers")
-    @JsonBackReference
     private List<Customer> customersThatOwn;
 
     @ManyToMany(mappedBy = "vouchersCart")
-    @JsonBackReference
     private List<Customer> customersInCart;
 }

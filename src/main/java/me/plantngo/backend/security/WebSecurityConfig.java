@@ -31,7 +31,6 @@ public class WebSecurityConfig {
         this.userDetailsService = userDetailsService;
     }
 
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {
@@ -54,19 +53,22 @@ public class WebSecurityConfig {
         http
                 .httpBasic().and()
                 .authorizeRequests()
-                    .antMatchers("/**").permitAll()
-                    .antMatchers("/v2/**").permitAll()
-                    .antMatchers("/**/login").permitAll()
-                    .antMatchers("/**/register").permitAll()
-                    .antMatchers("/api/v1/**").permitAll()
-                    .antMatchers("/**/customer").hasRole("ADMIN") //blocked from all users as of right now
-                    .antMatchers("/**/merchant").hasRole("ADMIN")
+                .antMatchers("/**").permitAll()
+                .antMatchers("/v2/**").permitAll()
+                .antMatchers("/**/login").permitAll()
+                .antMatchers("/**/register").permitAll()
+                .antMatchers("/api/v1/**").permitAll()
+                .antMatchers("/**/customer").hasRole("ADMIN") // blocked from all users as of right now
+                .antMatchers("/**/merchant").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable() // CSRF protection is needed only for browser based attacks
                 .formLogin().disable()
                 .headers().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Disable the security headers, as we do not return HTML in our service
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Disable the security
+                                                                                             // headers, as we do not
+                                                                                             // return HTML in our
+                                                                                             // service
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 

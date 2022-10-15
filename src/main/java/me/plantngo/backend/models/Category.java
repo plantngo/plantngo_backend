@@ -36,11 +36,11 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference(value = "product_category")
     private List<Product> products;
 
     @ManyToOne
     @JoinColumn(name = "merchant_id")
-    @JsonBackReference
+    @JsonBackReference(value = "merchant_category")
     private Merchant merchant;
 }

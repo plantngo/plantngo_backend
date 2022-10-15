@@ -1,4 +1,4 @@
-name: main
+name: test
 spring:
   mvc:
     pathmatch:
@@ -22,7 +22,6 @@ spring:
     password: ${POSTGRES_PASSWORD}
 
 server:
-  port: 8080
   error:
     include-message: always
     include-binding-errors: always
