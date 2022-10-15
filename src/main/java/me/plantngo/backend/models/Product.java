@@ -14,14 +14,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.*;
@@ -61,8 +59,8 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    @JsonBackReference // Prevents infinite loop by not serializing this when sending GET request for
-                       // merchants
+    @JsonBackReference("product_category") // Prevents infinite loop by not serializing this when sending GET request
+    // for merchants
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
