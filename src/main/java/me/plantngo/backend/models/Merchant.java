@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
 import javax.validation.constraints.Size;
@@ -83,6 +82,10 @@ public class Merchant {
         @JsonManagedReference // Serializes this side
         private List<Category> categories;
 
+        @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
+        @JsonManagedReference
+        private List<Promotion> promotions;
+
         /*
                 for merchant, authority can only be MERCHANT
         */
@@ -91,4 +94,8 @@ public class Merchant {
         @OneToMany(mappedBy = "merchant", orphanRemoval = true, cascade = CascadeType.ALL)
         @JsonIgnore
         private List<Voucher> vouchers;
+
+        @OneToMany(mappedBy = "merchant", orphanRemoval = true, cascade = CascadeType.ALL)
+        @JsonManagedReference
+        private List<Order> order;
 }

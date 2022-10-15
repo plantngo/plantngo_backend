@@ -53,6 +53,8 @@ public class WebSecurityConfig {
         http
                 .httpBasic().and()
                 .authorizeRequests()
+                .antMatchers("/**").permitAll()
+                .antMatchers("/v2/**").permitAll()
                 .antMatchers("/**/login").permitAll()
                 .antMatchers("/**/register").permitAll()
                 .antMatchers("/api/v1/**").permitAll()

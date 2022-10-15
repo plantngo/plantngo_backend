@@ -57,8 +57,8 @@ public class CustomerControllerTest {
     void testGetAllUsers_CustomersExist_CustomerList() throws Exception {
 
         URI uri = new URI(rootUrl + port + apiUrl);
-        Customer customer = new Customer(null, "John Doe", "john.doe@example.com", "Password12345!",
-                List.of(new Preference()), 1000, new HashSet<Voucher>(), new HashSet<Voucher>(),
+        Customer customer = new Customer(1, "John Doe", "john.doe@example.com", "Password12345!",
+                new ArrayList<Preference>(), 1000, new HashSet<Voucher>(), new HashSet<Voucher>(),
                 new ArrayList<Order>());
         customerRepository.save(customer);
 

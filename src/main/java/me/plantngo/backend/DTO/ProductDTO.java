@@ -1,5 +1,6 @@
 package me.plantngo.backend.DTO;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.*;
@@ -14,7 +15,7 @@ public class ProductDTO {
     @NotNull
     private Double price;
 
-    @NotNull
+    @NotBlank
     private String description;
 
     @NotNull

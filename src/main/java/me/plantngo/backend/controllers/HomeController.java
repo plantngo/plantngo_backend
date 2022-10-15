@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class HomeController {
     @GetMapping
-    public String homePage(){
+    public String homePage() {
         return "Health Check Endpoint";
     }
 
