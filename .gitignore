@@ -40,3 +40,6 @@ src/main/java/.DS_Store
 src/main/java/me/.DS_Store
 src/main/java/me/plantngo/.DS_Store
 src/main/java/me/plantngo/backend/.DS_Store
+
+# Testing
+h2_data/

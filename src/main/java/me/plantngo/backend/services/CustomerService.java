@@ -1,6 +1,7 @@
 package me.plantngo.backend.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,17 +22,19 @@ public class CustomerService {
     }
 
     public Customer getCustomerByUsername(String username) {
-        if (customerRepository.findByUsername(username).isEmpty()) {
+        Optional<Customer> optionalCustomer = customerRepository.findByUsername(username);
+        if (optionalCustomer.isEmpty()) {
             throw new UserNotFoundException("Username not found");
         }
-        return customerRepository.findByUsername(username).get();
+        return optionalCustomer.get();
     }
     
     public Customer getCustomerByEmail(String email) {
-        if (customerRepository.findByEmail(email).isEmpty()) {
+        Optional<Customer> optionalCustomer = customerRepository.findByEmail(email);
+        if (optionalCustomer.isEmpty()) {
             throw new UserNotFoundException("Email not found");
         }
-        return customerRepository.findByEmail(email).get();
+        return optionalCustomer.get();
     }
 
     public List<Customer> findAll() {

@@ -17,12 +17,13 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "customer")
 public class Customer {
 
     @Id
+    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
@@ -70,4 +71,6 @@ public class Customer {
      */
     @NotNull(message = "AUTHORITY cannot be null, choose CUSTOMER or ADMIN")
     private final String AUTHORITY = "CUSTOMER";
+
+    
 }
