@@ -64,8 +64,4 @@ public class Promotion {
 
     private URL url;
     
-
-
-
-    
 }

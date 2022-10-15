@@ -39,6 +39,7 @@ public class Customer {
     private String password;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Preference> preferences;
 
     private Integer greenPoints;

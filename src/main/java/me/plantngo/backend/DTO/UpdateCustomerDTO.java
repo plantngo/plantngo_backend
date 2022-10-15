@@ -19,5 +19,5 @@ public class UpdateCustomerDTO {
 
     private List<Preference> preferences;
 
-    private Integer greenPts;
+    private Integer greenPoints;
 }

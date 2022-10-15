@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,13 +40,7 @@ public class CustomerController {
     public Customer getUserByUsername(@PathVariable("username") String username) {
         return customerService.getCustomerByUsername(username);
     }
-
-    @PostMapping(path="/{username}")
-    public void addGreenPoints(@PathVariable("username") String username, @RequestBody Integer amount){
-        customerService.addGreenPoints(username, amount);
-//        return username + " amount:" + amount.toString();
-    }
-
+    
     @GetMapping
     public List<Customer> getAllUsers() {
         return customerService.findAll();

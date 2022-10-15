@@ -41,31 +41,26 @@ public class CustomerService {
         return customerRepository.findByEmail(email).get();
     }
 
-    public void addGreenPoints(String username, Integer amount){
-        if (customerRepository.findByUsername(username).isEmpty()) {
-            throw new UserNotFoundException("Username not found");
-        }
-        Customer customer = customerRepository.findByUsername(username).get();
-        Integer newBalance = customer.getGreenPts() + amount;
-        customer.setGreenPts(newBalance);
-        customerRepository.save(customer);
-    }
     public List<Customer> findAll() {
         return customerRepository.findAll();
     }
 
     public Customer updateCustomer(String username, UpdateCustomerDTO updateCustomerDTO) {
 
-        // Check if new username is already taken
-        if (merchantRepository.existsByUsername(updateCustomerDTO.getUsername()) || customerRepository.existsByUsername(updateCustomerDTO.getUsername())) {
-            throw new AlreadyExistsException("Username");
-        }
+        // // Check if new username is already taken
+        // if (merchantRepository.existsByUsername(updateCustomerDTO.getUsername()) || customerRepository.existsByUsername(updateCustomerDTO.getUsername())) {
+        //     throw new AlreadyExistsException("Username");
+        // }
 
         Customer customer = this.getCustomerByUsername(username);
         
         // Updating Customer
-        ModelMapper mapper = new ModelMapper();
-        mapper.map(updateCustomerDTO, customer);
+        // ModelMapper mapper = new ModelMapper();
+        // mapper.map(updateCustomerDTO, customer);
+
+        // if (updateCustomerDTO.getGreenPoints() != null) {
+            customer.setGreenPoints(1000);
+        // }
         customerRepository.save(customer);
 
         return customer;

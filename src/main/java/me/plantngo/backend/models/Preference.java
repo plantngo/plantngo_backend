@@ -7,6 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.*;
@@ -28,6 +31,7 @@ public class Preference {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
+    @JsonBackReference
     private Customer customer;
 
 
