@@ -6,6 +6,8 @@ import java.util.Optional;
 import me.plantngo.backend.DTO.*;
 import me.plantngo.backend.models.Voucher;
 import me.plantngo.backend.repositories.VoucherRepository;
+
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -124,7 +126,7 @@ public class ShopService {
         // Updating category
         Category category = tempCategory.get();
         ModelMapper mapper = new ModelMapper();
-
+        mapper.getConfiguration().setSkipNullEnabled(true);
         mapper.map(updateCategoryDTO, category);;
 
         // In case we need to call it before method ends
@@ -197,7 +199,7 @@ public class ShopService {
 
         // Updating product
         ModelMapper mapper = new ModelMapper();
-
+        mapper.getConfiguration().setSkipNullEnabled(true);
         mapper.map(updateProductDTO, product);
 
         // In case we need to call it before method ends

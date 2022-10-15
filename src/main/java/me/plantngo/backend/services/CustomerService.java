@@ -47,21 +47,19 @@ public class CustomerService {
 
     public Customer updateCustomer(String username, UpdateCustomerDTO updateCustomerDTO) {
 
-        // // Check if new username is already taken
-        // if (merchantRepository.existsByUsername(updateCustomerDTO.getUsername()) || customerRepository.existsByUsername(updateCustomerDTO.getUsername())) {
-        //     throw new AlreadyExistsException("Username");
-        // }
+        // Check if new username is already taken
+        if (merchantRepository.existsByUsername(updateCustomerDTO.getUsername()) || customerRepository.existsByUsername(updateCustomerDTO.getUsername())) {
+            throw new AlreadyExistsException("Username");
+        }
 
         Customer customer = this.getCustomerByUsername(username);
         
         // Updating Customer
-        // ModelMapper mapper = new ModelMapper();
-        // mapper.map(updateCustomerDTO, customer);
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setSkipNullEnabled(true);
+        mapper.map(updateCustomerDTO, customer);
 
-        // if (updateCustomerDTO.getGreenPoints() != null) {
-            customer.setGreenPoints(1000);
-        // }
-        customerRepository.save(customer);
+        customerRepository.saveAndFlush(customer);
 
         return customer;
     }

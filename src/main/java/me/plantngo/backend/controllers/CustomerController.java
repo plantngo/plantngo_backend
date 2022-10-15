@@ -12,11 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.models.Response;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import me.plantngo.backend.DTO.UpdateCustomerDTO;
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.services.CustomerService;
@@ -47,7 +46,8 @@ public class CustomerController {
     }
 
     @PutMapping(path="/{username}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable("username") String username, @RequestBody UpdateCustomerDTO updateCustomerDTO) {
+    public ResponseEntity<Customer> updateCustomer(@RequestBody UpdateCustomerDTO updateCustomerDTO, 
+                                                @PathVariable("username") String username) {
         Customer customer = customerService.updateCustomer(username, updateCustomerDTO);
         return new ResponseEntity<>(customer, HttpStatus.OK);
     }

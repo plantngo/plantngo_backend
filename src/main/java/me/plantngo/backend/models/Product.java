@@ -66,7 +66,7 @@ public class Product {
     private List<OrderItem> orderItem;
     
     @ManyToMany
-    @JoinTable(name="product promotions",
+    @JoinTable(name="product_promotions",
             joinColumns= @JoinColumn(name="product_id"),
             inverseJoinColumns=
             @JoinColumn(name="promotions_id"))

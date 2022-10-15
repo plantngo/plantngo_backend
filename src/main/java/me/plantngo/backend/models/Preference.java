@@ -34,5 +34,4 @@ public class Preference {
     @JsonBackReference
     private Customer customer;
 
-
 }
