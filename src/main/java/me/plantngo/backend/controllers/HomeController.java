@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class HomeController {
     @GetMapping
-    public String homePage(){
+    public String homePage() {
         return "Health Check Endpoint";
     }
 
