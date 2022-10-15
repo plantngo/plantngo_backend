@@ -47,9 +47,5 @@ public class MerchantController {
         return merchantService.findMerchantsInRange(latitude, longitude);
     }
 
-
-
-  
-
 }
 

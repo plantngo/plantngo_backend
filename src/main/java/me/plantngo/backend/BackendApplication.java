@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.repositories.CustomerRepository;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 public class BackendApplication {
