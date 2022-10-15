@@ -1,5 +1,6 @@
 package me.plantngo.backend.models;
 
+import java.net.URL;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -47,7 +48,7 @@ public class Product {
     private double carbonEmission;
 
     // @NotNull
-    private String imageUrl;
+    private URL imageUrl;
 
     // @NotNull
     private String flavourType;
@@ -60,5 +61,6 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<OrderItem> orderItem;
+    
 
 }
