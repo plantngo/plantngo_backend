@@ -40,11 +40,11 @@ public class CustomerController {
         return customerService.getCustomerByUsername(username);
     }
 
-    @PostMapping(path="/{username}")
-    public void addGreenPoints(@PathVariable("username") String username, @RequestBody Integer amount){
-        customerService.addGreenPoints(username, amount);
-//        return username + " amount:" + amount.toString();
-    }
+//    @PostMapping(path="/{username}")
+//    public void addGreenPoints(@PathVariable("username") String username, @RequestBody Integer amount){
+//        customerService.addGreenPoints(username, amount);
+////        return username + " amount:" + amount.toString();
+//    }
 
     @GetMapping
     public List<Customer> getAllUsers() {
