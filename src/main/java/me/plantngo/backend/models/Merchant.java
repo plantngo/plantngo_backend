@@ -82,6 +82,10 @@ public class Merchant {
         @JsonManagedReference // Serializes this side
         private List<Category> categories;
 
+        @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
+        @JsonManagedReference
+        private List<Promotion> promotions;
+
         /*
                 for merchant, authority can only be MERCHANT
         */

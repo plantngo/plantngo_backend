@@ -10,13 +10,17 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.*;
@@ -36,23 +40,24 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity
-@Table(name = "promotions")
+@Table(name = "promotion")
 public class Promotion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
-    @Column(name = "Promotions_Merchant_Id")
-    private Integer merchant_Id;
+    @ManyToOne
+    @JoinColumn(name = "merchant_id")
+    @JsonBackReference
+    private Merchant merchant;
 
     @NotBlank
     private String promocode;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private List<Product> product;
+    @ManyToMany(mappedBy = "productPromotions")
+    @JsonBackReference
+    private List<Product> promoProducts;
 
     @NotNull
     private Double promoValue;

@@ -2,6 +2,7 @@ package me.plantngo.backend.models;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -9,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -62,5 +65,13 @@ public class Product {
     @JsonIgnore
     private List<OrderItem> orderItem;
     
+    @ManyToMany
+    @JoinTable(name="product promotions",
+            joinColumns= @JoinColumn(name="product_id"),
+            inverseJoinColumns=
+            @JoinColumn(name="promotions_id"))
+    @JsonManagedReference
+    private Set<Voucher> productPromotions;
+
 
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import me.plantngo.backend.exceptions.PromotionNotFoundException;
+import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Promotion;
 import me.plantngo.backend.repositories.PromotionRepository;
 
@@ -34,6 +35,10 @@ public class PromotionService {
 
     public List<Promotion> getAllPromotions() {
         return promotionRepository.findAll();
+    }
+
+    public List<Promotion> getPromotionsByMercahnt(Merchant merchant) {
+        return promotionRepository.findByMerchant(merchant);
     }
 
     
