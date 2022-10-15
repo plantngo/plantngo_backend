@@ -42,7 +42,9 @@ public class Order {
 
     private Double totalPrice;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Boolean isDineIn;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<OrderItem> orderItems;
 
@@ -51,4 +53,8 @@ public class Order {
     @JsonBackReference
     private Customer customer;
     
+    @ManyToOne
+    @JoinColumn(name = "merchant_id", nullable = false)
+    @JsonBackReference
+    private Merchant merchant;
 }

@@ -91,4 +91,8 @@ public class Merchant {
         @OneToMany(mappedBy = "merchant", orphanRemoval = true, cascade = CascadeType.ALL)
         @JsonIgnore
         private List<Voucher> vouchers;
+
+        @OneToMany(mappedBy = "merchant", orphanRemoval = true, cascade = CascadeType.ALL)
+        @JsonManagedReference
+        private List<Order> order;
 }

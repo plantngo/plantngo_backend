@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import me.plantngo.backend.DTO.PlaceOrderDTO;
+import me.plantngo.backend.DTO.UpdateOrderItemDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
 import me.plantngo.backend.models.Order;
@@ -51,46 +52,25 @@ public class OrderController {
     
     @PostMapping(path = "/{orderId}")
     public ResponseEntity<Order> addToOrder(@RequestBody @Valid PlaceOrderDTO placeOrderDTO, @PathVariable("orderId") Integer orderId) {
-        Order order = null;
-        try {
-            order = orderService.addOrderItemToOrder(placeOrderDTO, orderId);
-            return new ResponseEntity<>(order, HttpStatus.CREATED);
-        } catch (UserNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (AlreadyExistsException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        Order order = orderService.addOrderItemToOrder(placeOrderDTO, orderId);
+        return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
     
     @PutMapping(path = "/{orderId}")
-    public ResponseEntity<String> updateOrder(@RequestBody @Valid PlaceOrderDTO placeOrderDTO, @PathVariable("orderId") Integer orderId) {
-        try {
-            orderService.updateOrderItemInOrder(placeOrderDTO, orderId);
-            return new ResponseEntity<>("Item updated", HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<String> updateOrder(@RequestBody @Valid UpdateOrderItemDTO updateOrderItemDTO, @PathVariable("orderId") Integer orderId) {
+        orderService.updateOrderItemInOrder(updateOrderItemDTO, orderId);
+        return new ResponseEntity<>("Item updated", HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "/{orderId}")
     public ResponseEntity<String> deleteOrder(@PathVariable("orderId") Integer orderId) {
-        try {
-            orderService.deleteOrder(orderId);
-            return new ResponseEntity<>("Order deleted", HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
-        }
+        orderService.deleteOrder(orderId);
+        return new ResponseEntity<>("Order deleted", HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/{orderId}/{productId}")
     public ResponseEntity<String> deleteOrderItemInOrder(@PathVariable("orderId") Integer orderId, @PathVariable("productId") Integer productId) {
-        try {
-            orderService.deleteOrderItem(orderId, productId);
-            return new ResponseEntity<>("Order Item deleted", HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        orderService.deleteOrderItem(orderId, productId);
+        return new ResponseEntity<>("Order Item deleted", HttpStatus.OK);
     }
 }
