@@ -28,7 +28,7 @@ public class Voucher {
     private Integer id;
 
     @NotNull(message = "value cannot be null")
-    private Double value;
+    private Integer value;
 
     /*
     type can be P (percentage-discount) or F (flat-discount)

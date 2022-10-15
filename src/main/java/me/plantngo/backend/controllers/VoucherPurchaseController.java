@@ -99,6 +99,17 @@ public class VoucherPurchaseController {
         }
     }
 
+    @PostMapping(path="/{username}/purchase-voucher")
+    public ResponseEntity<String> purchaseVouchers(@PathVariable("username") String customerUsername){
+        try{
+            Customer customer = customerService.getCustomerByUsername(customerUsername);
+            voucherPurchaseService.purchaseVouchers(customer);
+            return new ResponseEntity<>("Purchase successful!", HttpStatus.OK);
+        } catch (UserNotFoundException e){
+            return new ResponseEntity<>("User does not exist", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @DeleteMapping(path="/{username}/my-vouchers")
     public ResponseEntity<String> deleteOwnedVoucher(@PathVariable("username") String customerUsername,
                                                  @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {

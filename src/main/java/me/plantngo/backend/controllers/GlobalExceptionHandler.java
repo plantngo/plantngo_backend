@@ -1,5 +1,6 @@
 package me.plantngo.backend.controllers;
 
+import me.plantngo.backend.exceptions.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,12 +13,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.security.core.AuthenticationException;
-
-import me.plantngo.backend.exceptions.ErrorModel;
-import me.plantngo.backend.exceptions.FailedRegistrationException;
-import me.plantngo.backend.exceptions.InvalidUserTypeException;
-import me.plantngo.backend.exceptions.NotExistException;
-import me.plantngo.backend.exceptions.UserNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -64,6 +59,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorModel error = new ErrorModel(HttpStatus.NOT_FOUND, "Not Found.", ex.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InsufficientBalanceException.class)
+    private ResponseEntity<ErrorModel> handleNotExist(InsufficientBalanceException ex) {
+        ErrorModel error = new ErrorModel(HttpStatus.BAD_REQUEST, "Not Found.", ex.getMessage());
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
     
 }

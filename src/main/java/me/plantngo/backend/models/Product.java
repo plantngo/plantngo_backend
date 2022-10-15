@@ -33,11 +33,11 @@ import lombok.*;
 @Entity
 @Table(name = "product")
 public class Product {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    
+
     @NotNull
     private String name;
 
@@ -58,20 +58,17 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    @JsonBackReference // Prevents infinite loop by not serializing this when sending GET request for merchants
+    @JsonBackReference // Prevents infinite loop by not serializing this when sending GET request for
+                       // merchants
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<OrderItem> orderItem;
-    
+
     @ManyToMany
-    @JoinTable(name="product promotions",
-            joinColumns= @JoinColumn(name="product_id"),
-            inverseJoinColumns=
-            @JoinColumn(name="promotions_id"))
+    @JoinTable(name = "product_promotions", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "promotions_id"))
     @JsonManagedReference
     private Set<Voucher> productPromotions;
-
 
 }
