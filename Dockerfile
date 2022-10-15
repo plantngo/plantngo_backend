@@ -6,6 +6,6 @@ WORKDIR /opt/app
 
 COPY . .
 
-RUN ./mvnw install 
+RUN ./mvnw install -DskipTests
 
 CMD ["./mvnw", "spring-boot:run"]
