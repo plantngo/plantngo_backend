@@ -92,7 +92,7 @@ public class VoucherPurchaseService {
 
     public void purchaseVouchers(Customer customer){
         Set<Voucher> vouchersInCart = customer.getVouchersCart();
-        Integer balanceGreenPts = customer.getGreenPts() == null? 0 : customer.getGreenPts();
+        Integer balanceGreenPts = customer.getGreenPoints() == null? 0 : customer.getGreenPoints();
         Integer totalCost = 0;
         for (Voucher v: vouchersInCart){
             totalCost += v.getValue();
@@ -111,7 +111,7 @@ public class VoucherPurchaseService {
         }
 
 
-        customer.setGreenPts(customer.getGreenPts() - totalCost);
+        customer.setGreenPoints(customer.getGreenPoints() - totalCost);
 
         customerRepository.save(customer);
     }
