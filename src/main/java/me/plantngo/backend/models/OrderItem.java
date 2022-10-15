@@ -24,7 +24,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "order_items")
 public class OrderItem {
@@ -34,12 +34,13 @@ public class OrderItem {
     private Integer id;
 
     @NotNull
+    @EqualsAndHashCode.Include
     private Integer productId;
 
     @NotNull
-    @EqualsAndHashCode.Exclude
     private Integer quantity;
 
+    @NotNull
     private Double price;
 
     @ManyToOne
@@ -50,5 +51,6 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name = "product_id")
     @JsonIgnore
+    @EqualsAndHashCode.Include
     private Product product;
 }

@@ -17,4 +17,10 @@ public class PlaceOrderDTO {
 
     @NotNull
     private Integer quantity;
+
+    @NotNull
+    private Boolean isDineIn;
+
+    @NotNull
+    private String merchantName;
 }
