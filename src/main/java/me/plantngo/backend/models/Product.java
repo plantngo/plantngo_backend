@@ -19,11 +19,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.*;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @ToString
@@ -33,11 +36,11 @@ import lombok.*;
 @Entity
 @Table(name = "product")
 public class Product {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    
+
     @NotNull
     private String name;
 
@@ -58,20 +61,16 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    @JsonBackReference // Prevents infinite loop by not serializing this when sending GET request for merchants
+    @JsonBackReference // Prevents infinite loop by not serializing this when sending GET request for
+                       // merchants
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<OrderItem> orderItem;
-    
-    @ManyToMany
-    @JoinTable(name="product_promotions",
-            joinColumns= @JoinColumn(name="product_id"),
-            inverseJoinColumns=
-            @JoinColumn(name="promotions_id"))
-    @JsonManagedReference
-    private Set<Voucher> productPromotions;
 
+    @ManyToMany
+    @JoinTable(name = "product_promotions", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "promotions_id"))
+    private Set<Promotion> productPromotions;
 
 }

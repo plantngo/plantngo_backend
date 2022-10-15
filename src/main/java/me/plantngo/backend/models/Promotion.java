@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.*;
 
-
 /**
  * Promotion class
  * 
@@ -49,19 +48,18 @@ public class Promotion {
 
     @ManyToOne
     @JoinColumn(name = "merchant_id")
-    @JsonBackReference
+    @JsonBackReference(value = "merchant_promotion")
     private Merchant merchant;
 
     @NotBlank
     private String promocode;
 
     @ManyToMany(mappedBy = "productPromotions")
-    @JsonBackReference
     private List<Product> promoProducts;
 
     @NotNull
     private Double promoValue;
 
     private URL url;
-    
+
 }
