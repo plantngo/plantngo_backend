@@ -17,11 +17,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/store")
+@Api(value = "Voucher Controller", description = "Operations pertaining to Voucher creation by Merchants and purchase by Customers")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class VoucherPurchaseController {
 
@@ -37,21 +41,26 @@ public class VoucherPurchaseController {
         this.shopService = shopService;
         this.merchantService = merchantService;
     }
+
+    @ApiOperation(value = "Get all existing Vouchers")
     @GetMapping(path="")
     public List<Voucher> getAllVouchers() {
         return voucherPurchaseService.getAllVouchers();
     }
 
+    @ApiOperation(value = "Get all Vouchers owned by a Customer")
     @GetMapping(path="/{username}/my-vouchers")
     public List<Voucher> getAllOwnedVouchers(@PathVariable("username") String customerUsername) {
         return voucherPurchaseService.getAllOwnedVouchers(customerUsername);
     }
 
+    @ApiOperation(value = "Get all Vouchers in a Customer's cart")
     @GetMapping(path="/{username}/my-cart")
     public List<Voucher> getAllInCartVouchers(@PathVariable("username") String customerUsername) {
         return voucherPurchaseService.getAllInCartVouchers(customerUsername);
     }
 
+    @ApiOperation(value = "Add a Voucher to Customer's cart")
     @PostMapping(path="/{username}/my-cart")
     public ResponseEntity<String> addToCart(@PathVariable("username") String customerUsername,
                                             @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {
@@ -69,6 +78,7 @@ public class VoucherPurchaseController {
         }
     }
 
+    @ApiOperation(value = "Delete a Voucher from Customer's cart")
     @DeleteMapping(path="/{username}/my-cart")
     public ResponseEntity<String> deleteFromCart(@PathVariable("username") String customerUsername,
                                                  @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {
@@ -82,6 +92,7 @@ public class VoucherPurchaseController {
         }
     }
 
+    @ApiOperation(value = "Add Voucher to Customer's model")
     @PostMapping(path="/{username}/my-vouchers")
     public ResponseEntity<String> addOwnedVoucher(@PathVariable("username") String customerUsername,
                                             @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {
@@ -99,6 +110,7 @@ public class VoucherPurchaseController {
         }
     }
 
+    @ApiOperation(value = "Handles Customer's Voucher purchase")
     @PostMapping(path="/{username}/purchase-voucher")
     public ResponseEntity<String> purchaseVouchers(@PathVariable("username") String customerUsername){
         try{
@@ -110,6 +122,7 @@ public class VoucherPurchaseController {
         }
     }
 
+    @ApiOperation(value = "Delete Voucher from Customer's inventory")
     @DeleteMapping(path="/{username}/my-vouchers")
     public ResponseEntity<String> deleteOwnedVoucher(@PathVariable("username") String customerUsername,
                                                  @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {
