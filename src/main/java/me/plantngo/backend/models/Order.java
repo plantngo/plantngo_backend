@@ -27,14 +27,14 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity
-@Table(name = "order")
+@Table(name = "ordering")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull
-    @Column(name = "Orders_Customer_Id")
+    @Column(name = "ordering_customer_id")
     private Integer customer_Id;
 
     private Double totalPrice;
