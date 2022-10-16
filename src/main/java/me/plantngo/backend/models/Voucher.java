@@ -51,9 +51,11 @@ public class Voucher {
     @NotNull
     private Integer merchantId;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "ownedVouchers")
     private List<Customer> customersThatOwn;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "vouchersCart")
     private List<Customer> customersInCart;
 }
