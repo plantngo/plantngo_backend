@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import me.plantngo.backend.models.Promotion;
 import me.plantngo.backend.services.PromotionService;
 
@@ -16,6 +18,7 @@ import me.plantngo.backend.services.PromotionService;
 
 @RestController()
 @RequestMapping(path = "api/v1/promotion")
+@Api(value = "Promotion Controller", description = "Operations pertaining to Merchant promotions")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PromotionController {
 
@@ -26,11 +29,13 @@ public class PromotionController {
         this.promotionService = promotionService;
     }
 
+    @ApiOperation(value = "Get all existing Promotions")
     @GetMapping
     public List<Promotion> getAllPromotions(){
         return promotionService.getAllPromotions();
     }
 
+    @ApiOperation(value = "Get a Promotion given its promocode")
     @GetMapping(value="/{promocode}")
     public Promotion getPromotion(@PathVariable("promocode") String promocode) {
         return promotionService.getPromotionByPromocode(promocode);
