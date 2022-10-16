@@ -1,4 +1,4 @@
-package me.plantngo.backend.jwt;
+package me.plantngo.backend.config.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

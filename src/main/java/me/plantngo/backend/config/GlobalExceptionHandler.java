@@ -1,4 +1,4 @@
-package me.plantngo.backend.controllers;
+package me.plantngo.backend.config;
 
 import me.plantngo.backend.exceptions.*;
 import org.springframework.beans.factory.annotation.Value;

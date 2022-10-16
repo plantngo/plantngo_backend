@@ -31,8 +31,8 @@ public class IngredientController {
         return emissionService.getAllIngredients();
     }
 
-    @GetMapping(path="/{emission}")
-    public Double getEmission(@PathVariable("emission") String id) {
-        return emissionService.calculateEmissions(id);
+    @GetMapping(path="/generate")
+    public void generateEmissions(@PathVariable("emission") String id) {
+        emissionService.populateRepository();
     }
 }
