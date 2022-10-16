@@ -64,7 +64,7 @@ public class EmissionService {
         }
     }
 
-    public Double calculateEmissions(String ingredientId) {
+    private Double calculateEmissions(String ingredientId) {
 
         RestTemplate restTemplate = new RestTemplate();
 
