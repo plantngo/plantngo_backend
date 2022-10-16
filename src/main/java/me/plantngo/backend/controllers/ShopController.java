@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping(path = "api/v1/merchant")
+@Api(value = "Shop Controller", description = "Operations pertaining to Merchant's Online Shop")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ShopController {
 
@@ -41,18 +44,21 @@ public class ShopController {
         this.merchantService = merchantService;
     }
 
-    @GetMapping(path = "/{merchantName}/vouchers/{id}")
+    @ApiOperation(value = "Get a Voucher given its Id")
+    @GetMapping(path="/{merchantName}/vouchers/{id}")
     public Voucher getVoucher(@PathVariable("merchantName") String merchantName, @PathVariable("id") Integer id) {
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
         return shopService.getVoucher(merchant, id);
     }
 
-    @GetMapping(path = "/{merchantName}/vouchers")
+    @ApiOperation(value = "Get all Vouchers created by a Merchant")
+    @GetMapping(path="/{merchantName}/vouchers")
     public List<Voucher> getAllVouchersFromMerchantName(@PathVariable("merchantName") String merchantName) {
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
         return shopService.getAllVouchersFromMerchant(merchant);
     }
 
+    @ApiOperation(value = "Create a Voucher for a given Merchant")
     @PostMapping(path = "/{merchantName}/vouchers")
     public ResponseEntity<String> addVoucher(@PathVariable("merchantName") String merchantName,
             @Valid @RequestBody VoucherDTO voucherDTO) {
@@ -67,6 +73,7 @@ public class ShopController {
         }
     }
 
+    @ApiOperation(value = "Update an existing Voucher by a Merchant")
     @PutMapping(path = "/{merchantName}/vouchers/{voucherId}")
     public ResponseEntity<String> updateVoucher(@PathVariable("merchantName") String merchantName,
             @PathVariable("voucherId") Integer voucherId,
@@ -82,6 +89,7 @@ public class ShopController {
         }
     }
 
+    @ApiOperation(value = "Delete a Voucher by a Merchant given its Id")
     @DeleteMapping(path = "/{merchantName}/vouchers/{voucherId}")
     public ResponseEntity<String> deleteVoucher(@PathVariable("merchantName") String merchantName,
             @PathVariable("voucherId") Integer voucherId) {
@@ -97,6 +105,7 @@ public class ShopController {
         }
     }
 
+    @ApiOperation(value = "Add a food category for a Merchant")
     @PostMapping(path = "/{merchantName}")
     public ResponseEntity<String> addCategory(@PathVariable("merchantName") String merchantName,
             @Valid @RequestBody CategoryDTO categoryDTO) {
@@ -113,6 +122,7 @@ public class ShopController {
         }
     }
 
+    @ApiOperation(value = "Update an existing food category by a Merchant")
     @PutMapping(path = "/{merchantName}/{categoryName}")
     public ResponseEntity<String> updateCategory(@PathVariable("merchantName") String merchantName,
             @PathVariable("categoryName") String categoryName,
@@ -130,6 +140,7 @@ public class ShopController {
         }
     }
 
+    @ApiOperation(value = "Delete a food category by a Merchant")
     @DeleteMapping(path = "/{merchantName}/{categoryName}")
     public ResponseEntity<String> deleteCategory(@PathVariable("merchantName") String merchantName,
             @PathVariable("categoryName") String categoryName) {
@@ -145,6 +156,7 @@ public class ShopController {
         }
     }
 
+    @ApiOperation(value = "Add a product for a Merchant")
     @PostMapping(path = "/{merchantName}/{categoryName}")
     public ResponseEntity<String> addProduct(@PathVariable("merchantName") String merchantName,
             @PathVariable("categoryName") String categoryName,
@@ -164,7 +176,8 @@ public class ShopController {
         }
 
     }
-
+    
+    @ApiOperation(value = "Update an existing Product by a Merchant")
     @PutMapping(path = "/{merchantName}/{categoryName}/{productName}")
     public ResponseEntity<String> updateProduct(@PathVariable("merchantName") String merchantName,
             @PathVariable("categoryName") String categoryName,
@@ -186,6 +199,7 @@ public class ShopController {
 
     }
 
+    @ApiOperation(value = "Delete an existing Product by a Merchant")
     @DeleteMapping(path = "/{merchantName}/{categoryName}/{productName}")
     public ResponseEntity<String> deleteProduct(@PathVariable("merchantName") String merchantName,
             @PathVariable("categoryName") String categoryName,

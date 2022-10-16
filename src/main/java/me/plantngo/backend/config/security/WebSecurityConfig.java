@@ -1,7 +1,5 @@
-package me.plantngo.backend.security;
+package me.plantngo.backend.config.security;
 
-import me.plantngo.backend.jwt.JwtProvider;
-import me.plantngo.backend.jwt.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +15,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import me.plantngo.backend.config.jwt.JwtProvider;
+import me.plantngo.backend.config.jwt.JwtRequestFilter;
 
 @Configuration
 @EnableWebSecurity

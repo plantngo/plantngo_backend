@@ -17,7 +17,9 @@ public class UpdateCustomerDTO {
 
     private String password;
 
-    private List<Preference> preferences;
+    // WIP
+    // private List<Preference> preferences;
 
     private Integer greenPoints;
 }
+

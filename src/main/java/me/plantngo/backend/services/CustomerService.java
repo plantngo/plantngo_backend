@@ -44,15 +44,6 @@ public class CustomerService {
         return optionalCustomer.get();
     }
 
-//    public void addGreenPoints(String username, Integer amount){
-//        if (customerRepository.findByUsername(username).isEmpty()) {
-//            throw new UserNotFoundException("Username not found");
-//        }
-//        Customer customer = customerRepository.findByUsername(username).get();
-//        Integer newBalance = customer.getGreenPts() + amount;
-//        customer.setGreenPts(newBalance);
-//        customerRepository.save(customer);
-//    }
     public List<Customer> findAll() {
         return customerRepository.findAll();
     }
@@ -68,8 +59,10 @@ public class CustomerService {
         
         // Updating Customer
         ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setSkipNullEnabled(true);
         mapper.map(updateCustomerDTO, customer);
-        customerRepository.save(customer);
+
+        customerRepository.saveAndFlush(customer);
 
         return customer;
     }
