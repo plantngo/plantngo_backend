@@ -1,4 +1,4 @@
-# Plant&Go
+# Plant&Go Backend
 [![Production Tests](https://github.com/plantngo/plantngo_backend/actions/workflows/production-test-suite.yml/badge.svg?branch=main&event=push)](https://github.com/plantngo/plantngo_backend/actions/workflows/production-test-suite.yml)<br>[![Production ECS Deployment](https://github.com/plantngo/plantngo_backend/actions/workflows/production-ecs-deployment.yml/badge.svg?branch=main&event=push)](https://github.com/plantngo/plantngo_backend/actions/workflows/production-ecs-deployment.yml)
 
 ## Dependencies
