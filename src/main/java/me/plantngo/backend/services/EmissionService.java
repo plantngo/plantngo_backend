@@ -42,6 +42,7 @@ public class EmissionService {
     }
 
     private void populateRepository() {
+        ingredientRepository.deleteAll();
         RestTemplate restTemplate = new RestTemplate();
 
         String url = "https://app.myemissions.green/api/v1/calculator/foods/?limit=1000";
