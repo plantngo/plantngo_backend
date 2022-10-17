@@ -13,9 +13,6 @@ import me.plantngo.backend.models.Promotion;
 public interface PromotionRepository extends JpaRepository<Promotion, Integer>{
     
     Optional<Promotion> findById(Integer id);
-    Optional<Promotion> findByPromocode(String promocode);
     List<Promotion> findByMerchant(Merchant merchant);
-    Boolean existsByPromocode(String promocode);
 
-    
 }

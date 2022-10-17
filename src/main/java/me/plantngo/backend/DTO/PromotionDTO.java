@@ -1,21 +1,32 @@
 package me.plantngo.backend.DTO;
 
-import java.net.URL;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.*;
+import me.plantngo.backend.models.Product;
 
 @Data
 @AllArgsConstructor
 public class PromotionDTO {
 
     @NotBlank
-    private String promocode;
+    private String description;
+
+    @NotBlank
+    private String bannerUrl;
 
     @NotNull
-    private Double promoValue;
+    private Double percentageDiscount;
 
-    private URL url;
+    @NotBlank
+    private String startDate;
+
+    @NotBlank
+    private String endDate;
+
+    @NotNull
+    List<Product> products;
 }

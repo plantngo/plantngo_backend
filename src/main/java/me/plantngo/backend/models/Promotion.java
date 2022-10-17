@@ -39,20 +39,26 @@ public class Promotion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank
+    String description;
+
     @ManyToOne
     @JoinColumn(name = "merchant_id")
     @JsonBackReference(value = "merchant_promotion")
     private Merchant merchant;
 
-    @NotBlank
-    private String promocode;
-
     @ManyToMany(mappedBy = "productPromotions")
     private List<Product> promoProducts;
 
     @NotNull
-    private Double promoValue;
+    private Date startDate;
 
-    private URL url;
+    @NotNull
+    private Date endDate;
+
+    @NotNull
+    private Double percentageDiscount;
+
+    private URL bannerUrl;
 
 }
