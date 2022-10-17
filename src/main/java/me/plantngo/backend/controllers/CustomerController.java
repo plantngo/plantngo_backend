@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.models.Response;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import me.plantngo.backend.DTO.UpdateCustomerDTO;
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.services.CustomerService;
@@ -25,6 +26,7 @@ import javax.validation.Valid;
 
 @RestController()
 @RequestMapping(path = "api/v1/customer")
+@Api(value = "Customer Controller", description = "Operations pertaining to Customer Model")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class CustomerController {
 
@@ -35,37 +37,29 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping(path = "/{username}")
-    // @PreAuthorize("authentication.principal.username == #username ||
-    // hasRole('ADMIN')")
+    @ApiOperation(value = "Get a specific Customer given their Username")
+    @GetMapping(path="/{username}")
+    //@PreAuthorize("authentication.principal.username == #username || hasRole('ADMIN')")
     public Customer getUserByUsername(@PathVariable("username") String username) {
         return customerService.getCustomerByUsername(username);
     }
-
-    // @PostMapping(path = "/{username}")
-    // public void addGreenPoints(@PathVariable("username") String username, @RequestBody Integer amount) {
-    //     customerService.addGreenPoints(username, amount);
-    //     // return username + " amount:" + amount.toString();
-    // }
-//    @PostMapping(path="/{username}")
-//    public void addGreenPoints(@PathVariable("username") String username, @RequestBody Integer amount){
-//        customerService.addGreenPoints(username, amount);
-////        return username + " amount:" + amount.toString();
-//    }
-
+    
+    @ApiOperation(value = "Get all registered Customers")
     @GetMapping
     public List<Customer> getAllUsers() {
         return customerService.findAll();
     }
 
-    @PutMapping(path = "/{username}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable("username") String username,
-            @RequestBody UpdateCustomerDTO updateCustomerDTO) {
+    @ApiOperation(value = "Edit a registered Customer's fields")
+    @PutMapping(path="/{username}")
+    public ResponseEntity<Customer> updateCustomer(@RequestBody UpdateCustomerDTO updateCustomerDTO, 
+                                                @PathVariable("username") String username) {
         Customer customer = customerService.updateCustomer(username, updateCustomerDTO);
         return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/{username}")
+    @ApiOperation(value = "Delete a registered Customer given their Username")
+    @DeleteMapping(path="/{username}")
     public ResponseEntity<String> deleteCustomer(@PathVariable("username") String username) {
         customerService.deleteCustomer(username);
         return new ResponseEntity<>("Customer deleted!", HttpStatus.OK);

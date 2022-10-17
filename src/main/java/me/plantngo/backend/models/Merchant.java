@@ -62,7 +62,7 @@ public class Merchant {
         private Double latitude;
 
         // @NotNull
-        private Double longtitude;
+        private Double longitude;
 
         // @NotNull
         private String cuisineType;

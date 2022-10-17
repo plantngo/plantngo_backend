@@ -1,4 +1,4 @@
-package me.plantngo.backend.jwt;
+package me.plantngo.backend.config.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import me.plantngo.backend.services.UserDetailsService;

@@ -38,7 +38,7 @@ public class RegistrationDTO {
 
     private Double latitude;
 
-    private Double longtitude;
+    private Double longitude;
 
     private String cuisineType;
 
