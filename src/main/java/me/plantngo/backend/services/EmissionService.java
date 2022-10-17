@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -37,12 +41,11 @@ public class EmissionService {
     }
 
     public List<Ingredient> getAllIngredients() {
-        populateRepository();
         return ingredientRepository.findAll();
     }
 
-    private void populateRepository() {
-        ingredientRepository.deleteAll();
+    // @PostConstruct
+    public void populateRepository() {
         RestTemplate restTemplate = new RestTemplate();
 
         String url = "https://app.myemissions.green/api/v1/calculator/foods/?limit=1000";
@@ -56,12 +59,12 @@ public class EmissionService {
             ingredient.setIngredientId(r.getId());
             ingredient.setCategory(r.getCategory());
             ingredient.setName(r.getName());
-            // ingredient.setEmissionPerGram(this.calculateEmissions(r.getId()));
+            ingredient.setEmissionPerGram(this.calculateEmissions(r.getId()));
             ingredientRepository.save(ingredient);
         }
     }
 
-    public Double calculateEmissions(String ingredientId) {
+    private Double calculateEmissions(String ingredientId) {
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -81,13 +84,14 @@ public class EmissionService {
 
         HttpEntity<APIPostDTO> entity = new HttpEntity<>(apiPostDTO, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = null;
         String jsonBody = null;
-
-        if (response.getStatusCodeValue() == 201) {
+        
+        try {
+            response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             jsonBody = response.getBody();
-        } else {
-            return null;
+        } catch (HttpStatusCodeException e) {
+            return 0.0;
         }
 
         JsonArray objectArr = JsonParser.parseString(jsonBody).getAsJsonObject().get("ingredients").getAsJsonArray();

@@ -2,7 +2,7 @@ package me.plantngo.backend.services;
 
 import me.plantngo.backend.exceptions.FailedRegistrationException;
 import me.plantngo.backend.exceptions.InvalidUserTypeException;
-import me.plantngo.backend.jwt.JwtProvider;
+
 import org.modelmapper.ModelMapper;
 import javax.security.auth.login.FailedLoginException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.DTO.RegistrationDTO;
+import me.plantngo.backend.config.jwt.JwtProvider;
 import me.plantngo.backend.DTO.LoginDTO;
 import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
