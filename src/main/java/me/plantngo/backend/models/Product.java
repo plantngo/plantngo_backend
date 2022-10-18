@@ -14,7 +14,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -51,7 +50,7 @@ public class Product {
     private String description;
 
     @NotNull
-    private double carbonEmission;
+    private Double carbonEmission;
 
     // @NotNull
     private URL imageUrl;
@@ -61,8 +60,8 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    @JsonBackReference // Prevents infinite loop by not serializing this when sending GET request for
-                       // merchants
+    @JsonBackReference("product_category") // Prevents infinite loop by not serializing this when sending GET request
+    // for merchants
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
@@ -70,7 +69,11 @@ public class Product {
     private List<OrderItem> orderItem;
 
     @ManyToMany
-    @JoinTable(name = "product_promotions", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "promotions_id"))
+    @JoinTable(name = "product_promotion", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "promotion_id"))
     private Set<Promotion> productPromotions;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @EqualsAndHashCode.Exclude
+    private Set<ProductIngredient> productIngredients;
 }

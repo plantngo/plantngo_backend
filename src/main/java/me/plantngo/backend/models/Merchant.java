@@ -12,14 +12,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @ToString
@@ -65,7 +62,7 @@ public class Merchant {
         private Double latitude;
 
         // @NotNull
-        private Double longtitude;
+        private Double longitude;
 
         // @NotNull
         private String cuisineType;
@@ -76,8 +73,10 @@ public class Merchant {
         // @NotNull
         private String operatingHours;
 
+        private Double carbonRating;
+
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
-        @JsonManagedReference // Serializes this side
+        @JsonManagedReference("merchant_category") // Serializes this side
         private List<Category> categories;
 
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)

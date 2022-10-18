@@ -29,7 +29,7 @@ import javax.validation.Valid;
 @Api(value = "Customer Controller", description = "Operations pertaining to Customer Model")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class CustomerController {
-    
+
     private final CustomerService customerService;
 
     @Autowired
@@ -65,4 +65,3 @@ public class CustomerController {
         return new ResponseEntity<>("Customer deleted!", HttpStatus.OK);
     }
 }
-

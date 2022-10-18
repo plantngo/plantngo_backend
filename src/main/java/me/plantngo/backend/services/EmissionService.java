@@ -28,6 +28,7 @@ import me.plantngo.backend.DTO.APIPostDTO;
 import me.plantngo.backend.DTO.APIResponseDTO;
 import me.plantngo.backend.DTO.APIResultDTO;
 import me.plantngo.backend.models.Ingredient;
+import me.plantngo.backend.models.ProductIngredient;
 import me.plantngo.backend.repositories.IngredientRepository;
 
 @Service
@@ -101,4 +102,5 @@ public class EmissionService {
 
         return emissions;
     }
+
 }

@@ -21,10 +21,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
 		<!-- <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hateoas</artifactId>
 		</dependency> -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -61,6 +63,7 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency> -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
@@ -70,11 +73,7 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
 		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+
 		<dependency>
   			<groupId>org.modelmapper.extensions</groupId>
   			<artifactId>modelmapper-spring</artifactId>
@@ -98,8 +97,15 @@
 			<artifactId>gson</artifactId>
 			<version>2.9.1</version>
 		</dependency>
-	</dependencies>
 
+
+		<dependency>
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		</dependency>
+
+	</dependencies>
+	
 	<build>
 		<plugins>
 			<plugin>

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,11 @@ public class CustomerControllerTest {
     @AfterEach
     void tearDown() {
         // clear the database after each test
+        customerRepository.deleteAll();
+    }
+
+    @BeforeEach
+    void setUp() {
         customerRepository.deleteAll();
     }
 

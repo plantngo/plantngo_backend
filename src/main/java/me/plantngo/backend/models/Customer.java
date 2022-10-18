@@ -9,10 +9,8 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import lombok.*;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
@@ -44,6 +42,7 @@ public class Customer {
         private String password;
 
         @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+        @JsonManagedReference(value = "customer_preference")
         private List<Preference> preferences;
 
         private Integer greenPoints = 0;
