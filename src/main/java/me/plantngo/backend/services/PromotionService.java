@@ -26,12 +26,6 @@ public class PromotionService {
         return promotionRepository.findById(id).get();
     }
 
-    public Promotion getPromotionByPromocode(String promocode){
-        if (!promotionRepository.existsByPromocode(promocode)){
-            throw new PromotionNotFoundException("Promocode " + promocode + " does not exist.");
-        }
-        return promotionRepository.findByPromocode(promocode).get();
-    }
 
     public List<Promotion> getAllPromotions() {
         return promotionRepository.findAll();

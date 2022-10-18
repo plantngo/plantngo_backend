@@ -34,12 +34,6 @@ public class PromotionController {
     public List<Promotion> getAllPromotions(){
         return promotionService.getAllPromotions();
     }
-
-    @ApiOperation(value = "Get a Promotion given its promocode")
-    @GetMapping(value="/{promocode}")
-    public Promotion getPromotion(@PathVariable("promocode") String promocode) {
-        return promotionService.getPromotionByPromocode(promocode);
-    }
     
 
     // @GetMapping(path = "/{customerName}")
