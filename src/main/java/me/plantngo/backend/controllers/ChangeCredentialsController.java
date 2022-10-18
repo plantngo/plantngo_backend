@@ -54,30 +54,11 @@ public class ChangeCredentialsController {
         verifyLogin(changeCredentialsDTO);
 
         String newUsername = changeCredentialsDTO.getNewUsername();
-        if(newUsername == null || newUsername.isBlank()) return new ResponseEntity<>("newUsername cannot be blank", HttpStatus.BAD_REQUEST);
+        if(newUsername == null || newUsername.isBlank()) throw new IllegalArgumentException("New username should not be blank.");
 
-        String oldUsername = changeCredentialsDTO.getUsername();
+        changeCredentialService.validateNewUsername(newUsername, changeCredentialsDTO.getUserType());
 
-        //check if username is already taken
-        try{
-            if(changeCredentialsDTO.getUserType() == 'C')
-                customerService.getCustomerByUsername(newUsername);
-            else
-                merchantService.getMerchantByUsername(newUsername);
-
-            throw new AlreadyExistsException("Username already taken");
-        } catch (UserNotFoundException e){}
-
-        //change username
-
-        if(changeCredentialsDTO.getUserType() == 'C') {
-            Customer customer = customerService.getCustomerByUsername(oldUsername);
-            return changeCredentialService.replaceCustomerUsername(customer, newUsername);
-        }
-        else {
-            Merchant merchant = merchantService.getMerchantByUsername(oldUsername);
-            return changeCredentialService.replaceMerchantUsername(merchant, newUsername);
-        }
+        return changeCredentialService.replaceUsername(changeCredentialsDTO.getUsername(), newUsername, changeCredentialsDTO.getUserType());
     }
 
     @ApiOperation(value = "Updates password of a Customer or a Merchant",
@@ -86,17 +67,7 @@ public class ChangeCredentialsController {
     public ResponseEntity<String> changePassword(@Valid @RequestBody ChangeCredentialsDTO changeCredentialsDTO){
         verifyLogin(changeCredentialsDTO);
 
-        String newPassword = changeCredentialsDTO.getNewPassword();
-        String username = changeCredentialsDTO.getUsername();
-
-        if(changeCredentialsDTO.getUserType() == 'C') {
-            Customer customer = customerService.getCustomerByUsername(username);
-            return changeCredentialService.replaceCustomerPassword(customer, newPassword);
-        }
-        else {
-            Merchant merchant = merchantService.getMerchantByUsername(username);
-            return changeCredentialService.replaceMerchantPassword(merchant, newPassword);
-        }
+        return changeCredentialService.replacePassword(changeCredentialsDTO.getUsername(), changeCredentialsDTO.getNewPassword(), changeCredentialsDTO.getUserType());
     }
 
     public void verifyLogin(ChangeCredentialsDTO changeCredentialsDTO){
