@@ -2,9 +2,12 @@ package me.plantngo.backend.controllers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import me.plantngo.backend.DTO.ChangeCredentialsDTO;
 import me.plantngo.backend.DTO.LoginDTO;
 import me.plantngo.backend.DTO.VoucherPurchaseDTO;
+import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.models.Merchant;
@@ -43,6 +46,9 @@ public class ChangeCredentialsController {
 
     @ApiOperation(value = "Updates username of a Customer or a Merchant",
             notes = "New username must not already be used")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Username successfully changed to {username}"),
+            @ApiResponse(code = 400, message = "Input fields invalid or username already taken")})
     @PutMapping("/username")
     public ResponseEntity<String> changeUsername(@Valid @RequestBody ChangeCredentialsDTO changeCredentialsDTO){
         verifyLogin(changeCredentialsDTO);
@@ -59,21 +65,18 @@ public class ChangeCredentialsController {
             else
                 merchantService.getMerchantByUsername(newUsername);
 
-            return new ResponseEntity<>("username already taken", HttpStatus.CONFLICT);
+            throw new AlreadyExistsException("Username already taken");
         } catch (UserNotFoundException e){}
 
         //change username
-        try {
-            if(changeCredentialsDTO.getUserType() == 'C') {
-                Customer customer = customerService.getCustomerByUsername(oldUsername);
-                return changeCredentialService.replaceCustomerUsername(customer, newUsername);
-            }
-            else {
-                Merchant merchant = merchantService.getMerchantByUsername(oldUsername);
-                return changeCredentialService.replaceMerchantUsername(merchant, newUsername);
-            }
-        } catch(UserNotFoundException e){
-            return new ResponseEntity<>("User does not exist.", HttpStatus.BAD_REQUEST);
+
+        if(changeCredentialsDTO.getUserType() == 'C') {
+            Customer customer = customerService.getCustomerByUsername(oldUsername);
+            return changeCredentialService.replaceCustomerUsername(customer, newUsername);
+        }
+        else {
+            Merchant merchant = merchantService.getMerchantByUsername(oldUsername);
+            return changeCredentialService.replaceMerchantUsername(merchant, newUsername);
         }
     }
 
@@ -85,17 +88,14 @@ public class ChangeCredentialsController {
 
         String newPassword = changeCredentialsDTO.getNewPassword();
         String username = changeCredentialsDTO.getUsername();
-        try {
-            if(changeCredentialsDTO.getUserType() == 'C') {
-                Customer customer = customerService.getCustomerByUsername(username);
-                return changeCredentialService.replaceCustomerPassword(customer, newPassword);
-            }
-            else {
-                Merchant merchant = merchantService.getMerchantByUsername(username);
-                return changeCredentialService.replaceMerchantPassword(merchant, newPassword);
-            }
-        } catch(UserNotFoundException e){
-            return new ResponseEntity<>("User does not exist.", HttpStatus.BAD_REQUEST);
+
+        if(changeCredentialsDTO.getUserType() == 'C') {
+            Customer customer = customerService.getCustomerByUsername(username);
+            return changeCredentialService.replaceCustomerPassword(customer, newPassword);
+        }
+        else {
+            Merchant merchant = merchantService.getMerchantByUsername(username);
+            return changeCredentialService.replaceMerchantPassword(merchant, newPassword);
         }
     }
 

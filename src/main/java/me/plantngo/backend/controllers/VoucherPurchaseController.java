@@ -1,12 +1,7 @@
 package me.plantngo.backend.controllers;
 
-import me.plantngo.backend.DTO.VoucherDTO;
 import me.plantngo.backend.DTO.VoucherPurchaseDTO;
-import me.plantngo.backend.exceptions.AlreadyExistsException;
-import me.plantngo.backend.exceptions.NotExistException;
-import me.plantngo.backend.exceptions.UserNotFoundException;
 import me.plantngo.backend.models.Customer;
-import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Voucher;
 import me.plantngo.backend.services.CustomerService;
 import me.plantngo.backend.services.MerchantService;
@@ -64,76 +59,58 @@ public class VoucherPurchaseController {
     @PostMapping(path="/{username}/my-cart")
     public ResponseEntity<String> addToCart(@PathVariable("username") String customerUsername,
                                             @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {
-        try{
-            Customer customer = customerService.getCustomerByUsername(customerUsername);
-            Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
-            voucherPurchaseService.addToCart(customer, voucher);
-            return new ResponseEntity<>("Added to Cart.", HttpStatus.OK);
-        } catch (UserNotFoundException e){
-            return new ResponseEntity<>("User does not exist.", HttpStatus.BAD_REQUEST);
-        } catch (NotExistException e){
-            return new ResponseEntity<>("Voucher does not exist.", HttpStatus.BAD_REQUEST);
-        } catch (AlreadyExistsException e){
-            return new ResponseEntity<>("Voucher already added to cart.", HttpStatus.BAD_REQUEST);
-        }
+
+        Customer customer = customerService.getCustomerByUsername(customerUsername);
+        Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
+        voucherPurchaseService.addToCart(customer, voucher);
+        return new ResponseEntity<>("Added to Cart.", HttpStatus.OK);
+
     }
 
     @ApiOperation(value = "Delete a Voucher from Customer's cart")
     @DeleteMapping(path="/{username}/my-cart")
     public ResponseEntity<String> deleteFromCart(@PathVariable("username") String customerUsername,
                                                  @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {
-        try {
-            Customer customer = customerService.getCustomerByUsername(customerUsername);
-            Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
-            voucherPurchaseService.deleteFromCart(customer, voucher);
-            return new ResponseEntity<>("Deleted from Cart.", HttpStatus.OK);
-        } catch (NotExistException e){
-            return new ResponseEntity<>("Voucher not found.", HttpStatus.BAD_REQUEST);
-        }
+
+        Customer customer = customerService.getCustomerByUsername(customerUsername);
+        Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
+        voucherPurchaseService.deleteFromCart(customer, voucher);
+        return new ResponseEntity<>("Deleted from Cart.", HttpStatus.OK);
+
     }
 
     @ApiOperation(value = "Add Voucher to Customer's model")
     @PostMapping(path="/{username}/my-vouchers")
     public ResponseEntity<String> addOwnedVoucher(@PathVariable("username") String customerUsername,
                                             @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {
-        try{
-            Customer customer = customerService.getCustomerByUsername(customerUsername);
-            Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
-            voucherPurchaseService.addOwnedVoucher(customer, voucher);
-            return new ResponseEntity<>("Successfully added.", HttpStatus.OK);
-        } catch (UserNotFoundException e){
-            return new ResponseEntity<>("User does not exist.", HttpStatus.BAD_REQUEST);
-        } catch (NotExistException e){
-            return new ResponseEntity<>("Voucher does not exist.", HttpStatus.BAD_REQUEST);
-        } catch (AlreadyExistsException e){
-            return new ResponseEntity<>("Voucher already owned.", HttpStatus.BAD_REQUEST);
-        }
+
+        Customer customer = customerService.getCustomerByUsername(customerUsername);
+        Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
+        voucherPurchaseService.addOwnedVoucher(customer, voucher);
+        return new ResponseEntity<>("Successfully added.", HttpStatus.OK);
+
     }
 
     @ApiOperation(value = "Handles Customer's Voucher purchase")
     @PostMapping(path="/{username}/purchase-voucher")
     public ResponseEntity<String> purchaseVouchers(@PathVariable("username") String customerUsername){
-        try{
-            Customer customer = customerService.getCustomerByUsername(customerUsername);
-            voucherPurchaseService.purchaseVouchers(customer);
-            return new ResponseEntity<>("Purchase successful!", HttpStatus.OK);
-        } catch (UserNotFoundException e){
-            return new ResponseEntity<>("User does not exist", HttpStatus.BAD_REQUEST);
-        }
+
+        Customer customer = customerService.getCustomerByUsername(customerUsername);
+        voucherPurchaseService.purchaseVouchers(customer);
+        return new ResponseEntity<>("Purchase successful!", HttpStatus.OK);
+
     }
 
     @ApiOperation(value = "Delete Voucher from Customer's inventory")
     @DeleteMapping(path="/{username}/my-vouchers")
     public ResponseEntity<String> deleteOwnedVoucher(@PathVariable("username") String customerUsername,
                                                  @Valid @RequestBody VoucherPurchaseDTO voucherPurchaseDTO) {
-        try {
-            Customer customer = customerService.getCustomerByUsername(customerUsername);
-            Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
-            voucherPurchaseService.deleteOwnedVoucher(customer, voucher);
-            return new ResponseEntity<>("Successfully removed.", HttpStatus.OK);
-        } catch (NotExistException e){
-            return new ResponseEntity<>("Voucher not found.", HttpStatus.BAD_REQUEST);
-        }
+
+        Customer customer = customerService.getCustomerByUsername(customerUsername);
+        Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
+        voucherPurchaseService.deleteOwnedVoucher(customer, voucher);
+        return new ResponseEntity<>("Successfully removed.", HttpStatus.OK);
+
     }
 
 }
