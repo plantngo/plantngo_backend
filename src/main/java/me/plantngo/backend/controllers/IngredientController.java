@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import me.plantngo.backend.DTO.APIPostDTO;
 import me.plantngo.backend.DTO.APIResponseDTO;
 import me.plantngo.backend.models.Ingredient;
+import me.plantngo.backend.models.ProductIngredient;
 import me.plantngo.backend.services.EmissionService;
 
 @RestController
@@ -22,7 +23,7 @@ import me.plantngo.backend.services.EmissionService;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class IngredientController {
 
-    private EmissionService emissionService;
+    private final EmissionService emissionService;
 
     @Autowired
     public IngredientController(EmissionService emissionService) {
@@ -37,7 +38,8 @@ public class IngredientController {
 
     @ApiOperation(value = "Temporary endpoint to scrape data from myemissions.green and create + store Ingredient objects in local Repository")
     @GetMapping(path="/generate")
-    public void generateEmissions(@PathVariable("emission") String id) {
+    public void generateEmissions() {
         emissionService.populateRepository();
     }
+
 }

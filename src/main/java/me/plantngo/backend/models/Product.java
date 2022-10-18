@@ -51,7 +51,7 @@ public class Product {
     private String description;
 
     @NotNull
-    private double carbonEmission;
+    private Double carbonEmission;
 
     // @NotNull
     private URL imageUrl;
@@ -73,4 +73,8 @@ public class Product {
     @JoinTable(name = "product_promotions", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "promotions_id"))
     private Set<Promotion> productPromotions;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @EqualsAndHashCode.Exclude
+    private Set<ProductIngredient> productIngredients;
 }
