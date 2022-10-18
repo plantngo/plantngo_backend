@@ -20,10 +20,6 @@ public class ChangeCredentialsDTO {
     @NotBlank(message = "Username cannot be blank")
     String username;
 
-    @Email(message = "Must be a valid email")
-    @NotBlank(message = "Email cannot be blank")
-    String email;
-
     @NotBlank(message = "Password cannot be blank")
     String password;
 

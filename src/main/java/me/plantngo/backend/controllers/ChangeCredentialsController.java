@@ -3,10 +3,12 @@ package me.plantngo.backend.controllers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import me.plantngo.backend.DTO.ChangeCredentialsDTO;
+import me.plantngo.backend.DTO.LoginDTO;
 import me.plantngo.backend.DTO.VoucherPurchaseDTO;
 import me.plantngo.backend.exceptions.UserNotFoundException;
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.models.Merchant;
+import me.plantngo.backend.services.AuthService;
 import me.plantngo.backend.services.ChangeCredentialService;
 import me.plantngo.backend.services.CustomerService;
 import me.plantngo.backend.services.MerchantService;
@@ -26,18 +28,25 @@ public class ChangeCredentialsController {
     private CustomerService customerService;
     private MerchantService merchantService;
     private ChangeCredentialService changeCredentialService;
+    private AuthService authService;
 
     @Autowired
-    public ChangeCredentialsController(CustomerService customerService, MerchantService merchantService, ChangeCredentialService changeCredentialService){
+    public ChangeCredentialsController(CustomerService customerService,
+                                       MerchantService merchantService,
+                                       ChangeCredentialService changeCredentialService,
+                                       AuthService authService){
         this.customerService = customerService;
         this.merchantService = merchantService;
         this.changeCredentialService = changeCredentialService;
+        this.authService = authService;
     }
 
     @ApiOperation(value = "Updates username of a Customer or a Merchant",
             notes = "New username must not already be used")
     @PutMapping("/username")
     public ResponseEntity<String> changeUsername(@Valid @RequestBody ChangeCredentialsDTO changeCredentialsDTO){
+        verifyLogin(changeCredentialsDTO);
+
         String newUsername = changeCredentialsDTO.getNewUsername();
         if(newUsername == null || newUsername.isBlank()) return new ResponseEntity<>("newUsername cannot be blank", HttpStatus.BAD_REQUEST);
 
@@ -71,7 +80,27 @@ public class ChangeCredentialsController {
     @ApiOperation(value = "Updates password of a Customer or a Merchant",
             notes = "New username must not already be used")
     @PutMapping("/password")
-    public ResponseEntity<String> changePassword(){
-        return null;
+    public ResponseEntity<String> changePassword(@Valid @RequestBody ChangeCredentialsDTO changeCredentialsDTO){
+        verifyLogin(changeCredentialsDTO);
+
+        String newPassword = changeCredentialsDTO.getNewPassword();
+        String username = changeCredentialsDTO.getUsername();
+        try {
+            if(changeCredentialsDTO.getUserType() == 'C') {
+                Customer customer = customerService.getCustomerByUsername(username);
+                return changeCredentialService.replaceCustomerPassword(customer, newPassword);
+            }
+            else {
+                Merchant merchant = merchantService.getMerchantByUsername(username);
+                return changeCredentialService.replaceMerchantPassword(merchant, newPassword);
+            }
+        } catch(UserNotFoundException e){
+            return new ResponseEntity<>("User does not exist.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public void verifyLogin(ChangeCredentialsDTO changeCredentialsDTO){
+        LoginDTO loginDTO = new LoginDTO(changeCredentialsDTO.getUsername(), changeCredentialsDTO.getPassword());
+        authService.authenticateUser(loginDTO);
     }
 }
