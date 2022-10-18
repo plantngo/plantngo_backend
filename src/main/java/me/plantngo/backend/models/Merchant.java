@@ -73,6 +73,8 @@ public class Merchant {
         // @NotNull
         private String operatingHours;
 
+        private Double carbonRating;
+
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
         @JsonManagedReference("merchant_category") // Serializes this side
         private List<Category> categories;

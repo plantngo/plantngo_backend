@@ -13,6 +13,7 @@ import me.plantngo.backend.DTO.ProductIngredientDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.models.Ingredient;
+import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Product;
 import me.plantngo.backend.models.ProductIngredient;
 import me.plantngo.backend.repositories.IngredientRepository;
@@ -58,6 +59,10 @@ public class ProductService {
                 .orElseThrow(() -> new NotExistException("Product Ingredient"));
     }
 
+    public List<Product> getAllProductsByMerchant(String merchantName) {
+        return productRepository.findByCategoryMerchantUsernameOrderByCarbonEmission(merchantName);
+    }
+
     public ProductIngredient addProductIngredient(Integer productId, @Valid ProductIngredientDTO productIngredientDTO) {
         Product product = this.getProductById(productId);
         Ingredient ingredient = this.getIngredientByName(productIngredientDTO.getName());
@@ -74,6 +79,8 @@ public class ProductService {
         // Save all the new values in product
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
         product.setProductIngredients(productIngredients);
+        Merchant merchant = product.getCategory().getMerchant();
+        merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         // Add ProductIngredient to Repo + Update Product in Repo
         productIngredientRepository.save(productIngredient);
@@ -97,6 +104,8 @@ public class ProductService {
         productIngredients.add(productIngredient);
         product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
+        Merchant merchant = product.getCategory().getMerchant();
+        merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         // Add ProductIngredient to Repo + Update Product in Repo
         productIngredientRepository.save(productIngredient);
@@ -118,8 +127,22 @@ public class ProductService {
         productIngredients.remove(productIngredient);
         product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
+        Merchant merchant = product.getCategory().getMerchant();
+        merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         productRepository.save(product);
+    }
+
+    private Double calculateCarbonRating(Product product) {
+        List<Product> products = product.getCategory().getProducts();
+        double totalCarbonEmissions = 0.0;
+        int size = products.size();
+
+        for (Product p : products) {
+            totalCarbonEmissions += p.getCarbonEmission();
+        }
+
+        return Double.valueOf(totalCarbonEmissions / size);
     }
 
     private Double calculateTotalEmissions(Set<ProductIngredient> productIngredients) {

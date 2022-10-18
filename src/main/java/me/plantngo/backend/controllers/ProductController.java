@@ -47,7 +47,13 @@ public class ProductController {
     @GetMapping(path = "/{productId}")
     public Product getProduct(@PathVariable("productId") Integer productId) {
         return productService.getProductById(productId);
-    } 
+    }
+
+    @ApiOperation(value = "Get all registed Products by Merchant given their name, in ascending order of carbon emissions")
+    @GetMapping(path = "/merchant/{merchantName}")
+    public List<Product> getAllProductsByMerchant(@PathVariable("merchantName") String merchantName) {
+        return productService.getAllProductsByMerchant(merchantName);
+    }
 
     @ApiOperation(value = "Add Ingredient to Product")
     @PostMapping(path = "/{productId}")
@@ -80,4 +86,5 @@ public class ProductController {
     public List<ProductIngredient> getAllProductIngredients() {
         return productService.getAllProductIngredients();
     }
+
 }
