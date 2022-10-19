@@ -54,6 +54,11 @@ public class ProductService {
                 .orElseThrow(() -> new NotExistException("Product"));
     }
 
+    public Product getProductByNameAndMerchantName(String productName, String merchantName) {
+        return productRepository.findByNameAndCategoryMerchantUsername(productName, merchantName)
+                .orElseThrow(() -> new NotExistException("Product"));
+    }
+
     public Ingredient getIngredientByName(String name) {
         return ingredientRepository.findByName(name)
                 .orElseThrow(() -> new NotExistException("Ingredient"));
@@ -119,6 +124,19 @@ public class ProductService {
         return productIngredient;
     }
 
+    public void deleteAllProductIngredients(String merchantName, String productName) {
+        Product product = this.getProductByNameAndMerchantName(productName, merchantName);
+
+        Set<ProductIngredient> productIngredients = product.getProductIngredients();
+        productIngredients.clear();
+
+        product.setProductIngredients(productIngredients);
+        product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
+        Merchant merchant = product.getCategory().getMerchant();
+        merchant.setCarbonRating(this.calculateCarbonRating(product));
+
+        productRepository.save(product);
+    }
 
     public void deleteProductIngredient(String merchantName, String productName,  String productIngredientName) {
         Product product = this.getProductByName(productName);
