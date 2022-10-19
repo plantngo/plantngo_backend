@@ -44,6 +44,10 @@ public class ProductService {
         return productIngredientRepository.findAll();
     }
 
+    public List<ProductIngredient> getProductIngredientsByMerchantAndProduct(String merchantName, String productName) {
+        return productIngredientRepository.findByProductNameAndProductCategoryMerchantUsername(productName, merchantName);
+    }
+
     public Product getProductById(Integer productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new NotExistException("Product"));

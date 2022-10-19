@@ -51,6 +51,14 @@ public class ProductController {
         return productService.getProductById(productId);
     }
 
+    @ApiOperation(value = "Get all Product Ingredients By Merchant And Product")
+    @GetMapping(path = "/{merchantName}/{productName}")
+    public List<ProductIngredient> getProductIngredientsByMerchantAndProduct(@PathVariable("merchantName") String merchantName,
+                                                                            @PathVariable("productName") String productName) {
+        
+        return productService.getProductIngredientsByMerchantAndProduct(merchantName, productName);
+    }
+
     @ApiOperation(value = "Get all registed Products by Merchant given their name, in ascending order of carbon emissions")
     @GetMapping(path = "/merchant/{merchantName}")
     public List<Product> getAllProductsByMerchant(@PathVariable("merchantName") String merchantName) {
@@ -94,11 +102,6 @@ public class ProductController {
         
         productService.deleteAllProductIngredients(merchantName, productName);
         return new ResponseEntity<>("All Product Ingredient deleted!", HttpStatus.OK);
-    }
-
-    @GetMapping(path = "/test")
-    public List<ProductIngredient> getAllProductIngredients() {
-        return productService.getAllProductIngredients();
     }
 
 }
