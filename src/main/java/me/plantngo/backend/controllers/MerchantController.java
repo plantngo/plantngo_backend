@@ -2,15 +2,13 @@ package me.plantngo.backend.controllers;
 
 import java.util.List;
 
-import org.aspectj.apache.bcel.classfile.Module.Require;
+import me.plantngo.backend.DTO.UpdateCustomerDetailsDTO;
+import me.plantngo.backend.DTO.UpdateMerchantDetailsDTO;
+import me.plantngo.backend.models.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,6 +48,14 @@ public class MerchantController {
         double latitude = 0;
         double longitude = 0;
         return merchantService.findMerchantsInRange(latitude, longitude);
+    }
+
+    @ApiOperation(value = "Edit a registered Merchant's fields")
+    @PutMapping(path="/{username}")
+    public ResponseEntity<Merchant> updateMerchant(@RequestBody UpdateMerchantDetailsDTO updateMerchantDetailsDTO,
+                                                   @PathVariable("username") String username) {
+        Merchant merchant = merchantService.updateMerchant(username, updateMerchantDetailsDTO);
+        return new ResponseEntity<>(merchant, HttpStatus.OK);
     }
 
 }
