@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 public class UpdateProductDTO {
 
-    @NotNull
     private String name;
 
     private Double price;
@@ -20,4 +19,6 @@ public class UpdateProductDTO {
     private String imageUrl;
 
     private String flavourType;
+
+    private String category;
 }
