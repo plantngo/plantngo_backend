@@ -20,7 +20,6 @@ public class ProductDTO {
     @NotBlank
     private String description;
 
-    @NotNull
     private Double carbonEmission;
 
     // @NotNull
