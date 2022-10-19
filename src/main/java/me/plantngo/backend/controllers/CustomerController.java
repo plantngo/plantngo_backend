@@ -2,6 +2,7 @@ package me.plantngo.backend.controllers;
 
 import java.util.List;
 
+import me.plantngo.backend.DTO.UpdateCustomerDetailsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import me.plantngo.backend.DTO.UpdateCustomerDTO;
+import me.plantngo.backend.DTO.UpdateMerchantDetailsDTO;
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.services.CustomerService;
 
@@ -52,9 +53,9 @@ public class CustomerController {
 
     @ApiOperation(value = "Edit a registered Customer's fields")
     @PutMapping(path="/{username}")
-    public ResponseEntity<Customer> updateCustomer(@RequestBody UpdateCustomerDTO updateCustomerDTO, 
-                                                @PathVariable("username") String username) {
-        Customer customer = customerService.updateCustomer(username, updateCustomerDTO);
+    public ResponseEntity<Customer> updateCustomer(@RequestBody UpdateCustomerDetailsDTO updateCustomerDetailsDTO,
+                                                   @PathVariable("username") String username) {
+        Customer customer = customerService.updateCustomer(username, updateCustomerDetailsDTO);
         return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 

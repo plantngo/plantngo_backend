@@ -3,11 +3,12 @@ package me.plantngo.backend.services;
 import java.util.List;
 import java.util.Optional;
 
+import me.plantngo.backend.DTO.UpdateCustomerDetailsDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import me.plantngo.backend.DTO.UpdateCustomerDTO;
+import me.plantngo.backend.DTO.UpdateMerchantDetailsDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
@@ -48,10 +49,10 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public Customer updateCustomer(String username, UpdateCustomerDTO updateCustomerDTO) {
+    public Customer updateCustomer(String username, UpdateCustomerDetailsDTO updateCustomerDetailsDTO) {
 
         // Check if new username is already taken
-        if (merchantRepository.existsByUsername(updateCustomerDTO.getUsername()) || customerRepository.existsByUsername(updateCustomerDTO.getUsername())) {
+        if (merchantRepository.existsByUsername(updateCustomerDetailsDTO.getUsername()) || customerRepository.existsByUsername(updateCustomerDetailsDTO.getUsername())) {
             throw new AlreadyExistsException("Username");
         }
 
@@ -60,7 +61,7 @@ public class CustomerService {
         // Updating Customer
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setSkipNullEnabled(true);
-        mapper.map(updateCustomerDTO, customer);
+        mapper.map(updateCustomerDetailsDTO, customer);
 
         customerRepository.saveAndFlush(customer);
 
