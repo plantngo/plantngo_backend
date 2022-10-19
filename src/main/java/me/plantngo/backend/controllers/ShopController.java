@@ -105,76 +105,98 @@ public class ShopController {
         }
     }
 
-    // @ApiOperation(value = "Add a food category for a Merchant")
-    // @PostMapping(path = "/{merchantName}")
-    // public ResponseEntity<String> addCategory(@PathVariable("merchantName") String merchantName,
-    //         @Valid @RequestBody CategoryDTO categoryDTO) {
-
-    //     try {
-    //         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
-    //         shopService.addCategory(merchant, categoryDTO);
-    //         return new ResponseEntity<>("Category Added!", HttpStatus.CREATED);
-    //     } catch (UserNotFoundException e) {
-    //         System.out.println(e.getMessage());
-    //         return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
-    //     } catch (AlreadyExistsException e) {
-    //         return new ResponseEntity<>("Category already exists for this merchant!", HttpStatus.BAD_REQUEST);
-    //     }
-    // }
-
-    // @ApiOperation(value = "Update an existing food category by a Merchant")
-    // @PutMapping(path = "/{merchantName}/{categoryName}")
-    // public ResponseEntity<String> updateCategory(@PathVariable("merchantName") String merchantName,
-    //         @PathVariable("categoryName") String categoryName,
-    //         @Valid @RequestBody UpdateCategoryDTO updateCategoryDTO) {
-    //     try {
-    //         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
-    //         shopService.updateCategory(merchant, categoryName, updateCategoryDTO);
-    //         return new ResponseEntity<>("Category updated!", HttpStatus.OK);
-    //     } catch (UserNotFoundException e) {
-    //         return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
-    //     } catch (AlreadyExistsException e) {
-    //         return new ResponseEntity<>("Category with the new name already exists!", HttpStatus.BAD_REQUEST);
-    //     } catch (NotExistException e) {
-    //         return new ResponseEntity<>("Category doesn't exist!", HttpStatus.BAD_REQUEST);
-    //     }
-    // }
-
-    // @ApiOperation(value = "Delete a food category by a Merchant")
-    // @DeleteMapping(path = "/{merchantName}/{categoryName}")
-    // public ResponseEntity<String> deleteCategory(@PathVariable("merchantName") String merchantName,
-    //         @PathVariable("categoryName") String categoryName) {
-
-    //     try {
-    //         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
-    //         shopService.deleteCategory(merchant, categoryName);
-    //         return new ResponseEntity<>("Category deleted!", HttpStatus.OK);
-    //     } catch (UserNotFoundException e) {
-    //         return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
-    //     } catch (NotExistException e) {
-    //         return new ResponseEntity<>("Category under merchant doesn't exist!", HttpStatus.BAD_REQUEST);
-    //     }
-    // }
-
-    @ApiOperation(value = "Add a Product for a Merchant")
+    @ApiOperation(value = "Add a food category for a Merchant")
     @PostMapping(path = "/{merchantName}")
-    public ResponseEntity<Product> addProduct(@PathVariable("merchantName") String merchantName,
+    public ResponseEntity<String> addCategory(@PathVariable("merchantName") String merchantName,
+            @Valid @RequestBody CategoryDTO categoryDTO) {
+
+        try {
+            Merchant merchant = merchantService.getMerchantByUsername(merchantName);
+            shopService.addCategory(merchant, categoryDTO);
+            return new ResponseEntity<>("Category Added!", HttpStatus.CREATED);
+        } catch (UserNotFoundException e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
+        } catch (AlreadyExistsException e) {
+            return new ResponseEntity<>("Category already exists for this merchant!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @ApiOperation(value = "Update an existing food category by a Merchant")
+    @PutMapping(path = "/{merchantName}/{categoryName}")
+    public ResponseEntity<String> updateCategory(@PathVariable("merchantName") String merchantName,
+            @PathVariable("categoryName") String categoryName,
+            @Valid @RequestBody UpdateCategoryDTO updateCategoryDTO) {
+        try {
+            Merchant merchant = merchantService.getMerchantByUsername(merchantName);
+            shopService.updateCategory(merchant, categoryName, updateCategoryDTO);
+            return new ResponseEntity<>("Category updated!", HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
+        } catch (AlreadyExistsException e) {
+            return new ResponseEntity<>("Category with the new name already exists!", HttpStatus.BAD_REQUEST);
+        } catch (NotExistException e) {
+            return new ResponseEntity<>("Category doesn't exist!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @ApiOperation(value = "Delete a food category by a Merchant")
+    @DeleteMapping(path = "/{merchantName}/{categoryName}")
+    public ResponseEntity<String> deleteCategory(@PathVariable("merchantName") String merchantName,
+            @PathVariable("categoryName") String categoryName) {
+
+        try {
+            Merchant merchant = merchantService.getMerchantByUsername(merchantName);
+            shopService.deleteCategory(merchant, categoryName);
+            return new ResponseEntity<>("Category deleted!", HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
+        } catch (NotExistException e) {
+            return new ResponseEntity<>("Category under merchant doesn't exist!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @ApiOperation(value = "Add a product for a Merchant")
+    @PostMapping(path = "/{merchantName}/{categoryName}")
+    public ResponseEntity<String> addProduct(@PathVariable("merchantName") String merchantName,
+            @PathVariable("categoryName") String categoryName,
             @Valid @RequestBody ProductDTO productDTO) {
 
+        try {
             Merchant merchant = merchantService.getMerchantByUsername(merchantName);
-            Product product = shopService.addProduct(merchant, productDTO);
-            return new ResponseEntity<>(product, HttpStatus.CREATED);
+            shopService.addProduct(merchant, categoryName, productDTO);
+            return new ResponseEntity<>("Product Added!", HttpStatus.CREATED);
+        } catch (NotExistException e) {
+            return new ResponseEntity<>("Category under merchant doesn't exist!", HttpStatus.BAD_REQUEST);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
+        } catch (AlreadyExistsException e) {
+            return new ResponseEntity<>("Product already exists under this category for this merchant!",
+                    HttpStatus.BAD_REQUEST);
+        }
+
     }
     
     @ApiOperation(value = "Update an existing Product by a Merchant")
-    @PutMapping(path = "/{merchantName}/{productName}")
-    public ResponseEntity<Product> updateProduct(@PathVariable("merchantName") String merchantName,
+    @PutMapping(path = "/{merchantName}/{categoryName}/{productName}")
+    public ResponseEntity<String> updateProduct(@PathVariable("merchantName") String merchantName,
+            @PathVariable("categoryName") String categoryName,
             @PathVariable("productName") String productName,
             @Valid @RequestBody UpdateProductDTO updateProductDTO) {
-
+        try {
             Merchant merchant = merchantService.getMerchantByUsername(merchantName);
-            Product product = shopService.updateProduct(merchant, productName, updateProductDTO);
-            return new ResponseEntity<>(product, HttpStatus.OK);
+            Category category = shopService.getCategory(merchant, categoryName);
+
+            shopService.updateProduct(category, productName, updateProductDTO);
+            return new ResponseEntity<>("Product updated!", HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
+        } catch (AlreadyExistsException e) {
+            return new ResponseEntity<>("Product with the new name already exists!", HttpStatus.BAD_REQUEST);
+        } catch (NotExistException e) {
+            return new ResponseEntity<>("Category or Product doesn't exist!", HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @ApiOperation(value = "Delete an existing Product by a Merchant")
@@ -183,8 +205,15 @@ public class ShopController {
             @PathVariable("categoryName") String categoryName,
             @PathVariable("productName") String productName) {
 
+        try {
             Merchant merchant = merchantService.getMerchantByUsername(merchantName);
-            shopService.deleteProduct(merchant, categoryName, productName);
+            Product product = shopService.getProduct(merchant, categoryName, productName);
+            shopService.deleteProduct(product);
             return new ResponseEntity<>("Product deleted!", HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("Merchant doesn't exist!", HttpStatus.BAD_REQUEST);
+        } catch (NotExistException e) {
+            return new ResponseEntity<>("Product under category doesn't exist!", HttpStatus.BAD_REQUEST);
+        }
     }
 }
