@@ -13,6 +13,7 @@ import me.plantngo.backend.models.Product;
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     Optional<Product> findByNameAndCategory(String name, Category category);
+    Optional<Product> findByNameAndCategoryMerchantUsername(String name, String merchantName);
     Optional<Product> findById(Integer id);
     Optional<Product> findByName(String name);
     Boolean existsByName(String name);

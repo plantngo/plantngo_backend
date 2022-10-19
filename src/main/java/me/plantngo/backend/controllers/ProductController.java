@@ -87,6 +87,15 @@ public class ProductController {
         return new ResponseEntity<>("Product Ingredient deleted!", HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Delete All Ingredients in specific Product")
+    @DeleteMapping(path = "/{merchantName}/{productName}")
+    public ResponseEntity<String> deleteAllProductIngredients(@PathVariable("merchantName") String merchantName,
+                                                        @PathVariable("productName") String productName) {
+        
+        productService.deleteAllProductIngredients(merchantName, productName);
+        return new ResponseEntity<>("All Product Ingredient deleted!", HttpStatus.OK);
+    }
+
     @GetMapping(path = "/test")
     public List<ProductIngredient> getAllProductIngredients() {
         return productService.getAllProductIngredients();
