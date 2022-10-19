@@ -23,7 +23,7 @@ public class PromotionService {
         if (!promotionRepository.findById(id).isEmpty()) {
             throw new PromotionNotFoundException("Id " + id + " does not exist.");
         }
-        return promotionRepository.findById(id).get();
+        return promotionRepository.findById(id).get();  
     }
 
 

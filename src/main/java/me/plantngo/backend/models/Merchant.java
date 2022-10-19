@@ -76,8 +76,8 @@ public class Merchant {
         private Double carbonRating;
 
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
-        @JsonManagedReference("merchant_category") // Serializes this side
-        private List<Category> categories;
+        @JsonManagedReference(value = "merchant_products") // Serializes this side
+        private List<Product> products;
 
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
         @JsonManagedReference(value = "merchant_promotion")

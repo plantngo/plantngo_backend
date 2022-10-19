@@ -52,6 +52,9 @@ public class Product {
     @NotNull
     private Double carbonEmission;
 
+    @NotNull
+    private String category;
+
     // @NotNull
     private URL imageUrl;
 
@@ -59,10 +62,10 @@ public class Product {
     private String flavourType;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    @JsonBackReference("product_category") // Prevents infinite loop by not serializing this when sending GET request
+    @JoinColumn(name = "merchant_id", nullable = false)
+    @JsonBackReference("product_merchant") // Prevents infinite loop by not serializing this when sending GET request
     // for merchants
-    private Category category;
+    private Merchant merchant;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore

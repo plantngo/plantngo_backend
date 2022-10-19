@@ -3,6 +3,8 @@ package me.plantngo.backend.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import me.plantngo.backend.DTO.*;
 import me.plantngo.backend.models.Voucher;
 import me.plantngo.backend.repositories.VoucherRepository;
@@ -14,10 +16,8 @@ import org.springframework.stereotype.Service;
 
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
-import me.plantngo.backend.models.Category;
 import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Product;
-import me.plantngo.backend.repositories.CategoryRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 import me.plantngo.backend.repositories.ProductRepository;
 
@@ -25,16 +25,15 @@ import me.plantngo.backend.repositories.ProductRepository;
 public class ShopService {
     
     private ProductRepository productRepository;
+
     private MerchantRepository merchantRepository;
-    private CategoryRepository categoryRepository;
 
     private VoucherRepository voucherRepository;
 
     @Autowired
-    public ShopService(ProductRepository productRepository, MerchantRepository merchantRepository, CategoryRepository categoryRepository, VoucherRepository voucherRepository) {
+    public ShopService(ProductRepository productRepository, MerchantRepository merchantRepository, VoucherRepository voucherRepository) {
         this.productRepository = productRepository;
         this.merchantRepository = merchantRepository;
-        this.categoryRepository = categoryRepository;
         this.voucherRepository = voucherRepository;
     }
 
@@ -88,113 +87,95 @@ public class ShopService {
         Voucher voucher = voucherRepository.findByIdAndMerchant(voucherId, merchant).get();
         voucherRepository.delete(voucher);
     }
-    public Category addCategory(Merchant merchant, CategoryDTO categoryDTO) {
+    // public Category addCategory(Merchant merchant, CategoryDTO categoryDTO) {
 
-        Category category = this.categoryMapToEntity(categoryDTO, merchant);
+    //     Category category = this.categoryMapToEntity(categoryDTO, merchant);
 
-        // Check to see if same category under merchant already exists
-        if (categoryRepository.existsByNameAndMerchant(category.getName(), merchant)) {
-            throw new AlreadyExistsException();
-        }
+    //     // Check to see if same category under merchant already exists
+    //     if (categoryRepository.existsByNameAndMerchant(category.getName(), merchant)) {
+    //         throw new AlreadyExistsException();
+    //     }
 
-        categoryRepository.save(category);
+    //     categoryRepository.save(category);
 
-        return category;
-    }
+    //     return category;
+    // }
 
-    public Category getCategory(Merchant merchant, String categoryName) {
-        Optional<Category> tempCategory = categoryRepository.findByNameAndMerchant(categoryName, merchant);
-        if (tempCategory.isEmpty()) {
-            throw new NotExistException();
-        }
-        return tempCategory.get();
-    }
+    // public Category getCategory(Merchant merchant, String categoryName) {
+    //     Optional<Category> tempCategory = categoryRepository.findByNameAndMerchant(categoryName, merchant);
+    //     if (tempCategory.isEmpty()) {
+    //         throw new NotExistException();
+    //     }
+    //     return tempCategory.get();
+    // }
     
-    public Category updateCategory(Merchant merchant, String categoryName, UpdateCategoryDTO updateCategoryDTO) {
+    // public Category updateCategory(Merchant merchant, String categoryName, UpdateCategoryDTO updateCategoryDTO) {
 
-        // Check to see if category exists under merchant
-        Optional<Category> tempCategory = categoryRepository.findByNameAndMerchant(categoryName, merchant);
-        if (tempCategory.isEmpty()) {
-            throw new NotExistException();
-        }
+    //     // Check to see if category exists under merchant
+    //     Optional<Category> tempCategory = categoryRepository.findByNameAndMerchant(categoryName, merchant);
+    //     if (tempCategory.isEmpty()) {
+    //         throw new NotExistException();
+    //     }
 
-        // If changing category name, check to see if another category with that name already exists
-        if (!updateCategoryDTO.getName().equals(categoryName) && categoryRepository.existsByName(updateCategoryDTO.getName())) {
-            throw new AlreadyExistsException();
-        }
+    //     // If changing category name, check to see if another category with that name already exists
+    //     if (!updateCategoryDTO.getName().equals(categoryName) && categoryRepository.existsByName(updateCategoryDTO.getName())) {
+    //         throw new AlreadyExistsException();
+    //     }
 
-        // Updating category
-        Category category = tempCategory.get();
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setSkipNullEnabled(true);
-        mapper.map(updateCategoryDTO, category);;
+    //     // Updating category
+    //     Category category = tempCategory.get();
+    //     ModelMapper mapper = new ModelMapper();
+    //     mapper.getConfiguration().setSkipNullEnabled(true);
+    //     mapper.map(updateCategoryDTO, category);;
 
-        // In case we need to call it before method ends
-        categoryRepository.saveAndFlush(category);
+    //     // In case we need to call it before method ends
+    //     categoryRepository.saveAndFlush(category);
 
-        return category;
+    //     return category;
+    // }
+
+    // public void deleteCategory(Merchant merchant, String categoryName) {
+    //     // Check to see if same category under merchant already exists
+    //     if (categoryRepository.findByNameAndMerchant(categoryName, merchant).isEmpty()) {
+    //         throw new NotExistException();
+    //     }
+
+    //     Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
+    //     categoryRepository.delete(category);
+    // }
+
+    public Product getProductByMerchantAndName(Merchant merchant, String productName) {
+        return productRepository.findByNameAndMerchant(productName, merchant)
+                .orElseThrow(() -> new NotExistException("Product"));
     }
 
-    public void deleteCategory(Merchant merchant, String categoryName) {
-        // Check to see if same category under merchant already exists
-        if (categoryRepository.findByNameAndMerchant(categoryName, merchant).isEmpty()) {
-            throw new NotExistException();
-        }
-
-        Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
-        categoryRepository.delete(category);
+    public List<Product> getAllProductsByMerchant(String merchantName) {
+        return productRepository.findByMerchantUsername(merchantName);
     }
 
-    public Product getProduct(Merchant merchant, String categoryName, String productName) {
-        Category category = this.getCategory(merchant, categoryName);
-        Optional<Product> tempProduct = productRepository.findByNameAndCategory(productName, category);
-        if (tempProduct.isEmpty()) {
-            throw new NotExistException();
-        }
-        return tempProduct.get();
-    }
-
-    public Product addProduct(Merchant merchant, String categoryName, ProductDTO productDTO) {
-
-        // Check to see if category exists
-        if (!categoryRepository.existsByNameAndMerchant(categoryName, merchant)) {
-            throw new NotExistException();
-        }
-
-        Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
-        List<Product> productList = category.getProducts();
+    public Product addProduct(Merchant merchant, ProductDTO productDTO) {
 
         // Check to see if product with same name already exists in category
-        for (Product p : productList) {
-            if (p.getName().equals(productDTO.getName())) {
-                throw new AlreadyExistsException();
-            }
+        if (productRepository.existsByNameAndMerchantAndCategory(productDTO.getName(), merchant, productDTO.getCategory())) {
+            throw new AlreadyExistsException("Product");
         }
 
         // Creating  & Saving Product object
-        Product product = this.productMapToEntity(productDTO, category);
+        Product product = this.productMapToEntity(productDTO, merchant);
 
         productRepository.save(product);
 
         return product;
     }
 
-    public Product updateProduct(Category category, String productName, UpdateProductDTO updateProductDTO) {
+    public Product updateProduct(Merchant merchant, String productName, UpdateProductDTO updateProductDTO) {
         
         // Check to see if product exists under category
-        Optional<Product> tempProduct = productRepository.findByNameAndCategory(productName, category);
-        if (tempProduct.isEmpty()) {
-            throw new NotExistException();
-        }
+        Product product = this.getProductByMerchantAndName(merchant, productName);
 
-        // If changing product name, check to see if another product with that name already exists in the category
-        List<Product> productList = category.getProducts();
-        Product product = tempProduct.get();
-
-        for (Product p : productList) {
-            if (p.getName().equals(updateProductDTO.getName()) && p != product) {
-                throw new AlreadyExistsException();
-            }
+        // If changing category, check if product with similar name already exists in that category
+        if (updateProductDTO.getCategory() != null && productRepository.existsByNameAndMerchantAndCategory(productName, merchant, updateProductDTO.getCategory())) {
+            throw new AlreadyExistsException("Product");
         }
 
         // Updating product
@@ -208,8 +189,12 @@ public class ShopService {
         return product;
     }
 
-    public void deleteProduct(Product product) {
-        productRepository.delete(product);
+    @Transactional
+    public void deleteProduct(Merchant merchant, String categoryName, String productName) {
+        if (!productRepository.existsByNameAndMerchantAndCategory(productName, merchant, categoryName)) {
+            throw new NotExistException("Product");
+        }
+        productRepository.deleteByNameAndMerchantAndCategory(productName, merchant, categoryName);
     }
 
     // public List<Product> getAllProductsByMerchant(Merchant merchant) {
@@ -225,21 +210,22 @@ public class ShopService {
 
         return voucher;
     }
-    private Category categoryMapToEntity(CategoryDTO categoryDTO, Merchant merchant) {
-        ModelMapper mapper = new ModelMapper();
+    // private Category categoryMapToEntity(CategoryDTO categoryDTO, Merchant merchant) {
+    //     ModelMapper mapper = new ModelMapper();
 
-        Category category = mapper.map(categoryDTO, Category.class);
-        category.setMerchant(merchant);
+    //     Category category = mapper.map(categoryDTO, Category.class);
+    //     category.setMerchant(merchant);
 
-        return category;
-    }
+    //     return category;
+    // }
 
-    private Product productMapToEntity(ProductDTO productDTO, Category category) {
+    private Product productMapToEntity(ProductDTO productDTO, Merchant merchant) {
         ModelMapper mapper = new ModelMapper();
 
         Product product = mapper.map(productDTO, Product.class);
-        product.setCategory(category);
+        product.setMerchant(merchant);
 
         return product;
     }
+
 }

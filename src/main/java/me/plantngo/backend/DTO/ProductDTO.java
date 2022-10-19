@@ -2,7 +2,6 @@ package me.plantngo.backend.DTO;
 
 import java.net.URL;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.*;
@@ -17,10 +16,13 @@ public class ProductDTO {
     @NotNull
     private Double price;
 
-    @NotBlank
+    @NotNull
     private String description;
 
     private Double carbonEmission;
+
+    @NotNull
+    private String category;
 
     // @NotNull
     private URL imageUrl;

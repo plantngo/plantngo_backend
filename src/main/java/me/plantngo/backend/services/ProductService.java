@@ -60,7 +60,7 @@ public class ProductService {
     }
 
     public List<Product> getAllProductsByMerchant(String merchantName) {
-        return productRepository.findByCategoryMerchantUsernameOrderByCarbonEmission(merchantName);
+        return productRepository.findByMerchantUsernameOrderByCarbonEmission(merchantName);
     }
 
     public ProductIngredient addProductIngredient(Integer productId, @Valid ProductIngredientDTO productIngredientDTO) {
@@ -77,9 +77,9 @@ public class ProductService {
         productIngredients.add(productIngredient);
 
         // Save all the new values in product
-        product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
         product.setProductIngredients(productIngredients);
-        Merchant merchant = product.getCategory().getMerchant();
+        product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
+        Merchant merchant = product.getMerchant();
         merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         // Add ProductIngredient to Repo + Update Product in Repo
@@ -104,7 +104,7 @@ public class ProductService {
         productIngredients.add(productIngredient);
         product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
-        Merchant merchant = product.getCategory().getMerchant();
+        Merchant merchant = product.getMerchant();
         merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         // Add ProductIngredient to Repo + Update Product in Repo
@@ -127,14 +127,14 @@ public class ProductService {
         productIngredients.remove(productIngredient);
         product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
-        Merchant merchant = product.getCategory().getMerchant();
+        Merchant merchant = product.getMerchant();
         merchant.setCarbonRating(this.calculateCarbonRating(product));
 
-        productRepository.save(product);
+        productIngredientRepository.save(productIngredient);
     }
 
     private Double calculateCarbonRating(Product product) {
-        List<Product> products = product.getCategory().getProducts();
+        List<Product> products = product.getMerchant().getProducts();
         double totalCarbonEmissions = 0.0;
         int size = products.size();
 
