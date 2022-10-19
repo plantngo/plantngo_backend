@@ -49,24 +49,29 @@ public class ProductService {
                 .orElseThrow(() -> new NotExistException("Product"));
     }
 
+    public Product getProductByName(String productName) {
+        return productRepository.findByName(productName)
+                .orElseThrow(() -> new NotExistException("Product"));
+    }
+
     public Ingredient getIngredientByName(String name) {
         return ingredientRepository.findByName(name)
                 .orElseThrow(() -> new NotExistException("Ingredient"));
     }
 
-    public ProductIngredient getProductIngredientByIngredientAndProduct(Ingredient ingredient, Product product) {
-        return productIngredientRepository.findByIngredientAndProduct(ingredient, product)
+    public ProductIngredient getProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername(Ingredient ingredient, Product product, String merchantName) {
+        return productIngredientRepository.findByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName)
                 .orElseThrow(() -> new NotExistException("Product Ingredient"));
     }
 
     public List<Product> getAllProductsByMerchant(String merchantName) {
-        return productRepository.findByMerchantUsernameOrderByCarbonEmission(merchantName);
+        return productRepository.findByCategoryMerchantUsernameOrderByCarbonEmission(merchantName);
     }
 
-    public ProductIngredient addProductIngredient(Integer productId, @Valid ProductIngredientDTO productIngredientDTO) {
-        Product product = this.getProductById(productId);
+    public ProductIngredient addProductIngredient(String merchantName, String productName, @Valid ProductIngredientDTO productIngredientDTO) {
+        Product product = this.getProductByName(productName);
         Ingredient ingredient = this.getIngredientByName(productIngredientDTO.getName());
-        if (productIngredientRepository.existsByIngredientAndProduct(ingredient, product)) {
+        if (productIngredientRepository.existsByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName)) {
             throw new AlreadyExistsException("Product Ingredient");
         }
 
@@ -77,9 +82,9 @@ public class ProductService {
         productIngredients.add(productIngredient);
 
         // Save all the new values in product
-        product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
-        Merchant merchant = product.getMerchant();
+        product.setProductIngredients(productIngredients);
+        Merchant merchant = product.getCategory().getMerchant();
         merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         // Add ProductIngredient to Repo + Update Product in Repo
@@ -88,12 +93,13 @@ public class ProductService {
         return productIngredient;
     }
 
-    public ProductIngredient updateProductIngredient(Integer productId,
+    public ProductIngredient updateProductIngredient(String merchantName,
+            String productName,
             @Valid ProductIngredientDTO productIngredientDTO) {
 
-        Product product = this.getProductById(productId);
+        Product product = this.getProductByName(productName);
         Ingredient ingredient = this.getIngredientByName(productIngredientDTO.getName());
-        ProductIngredient productIngredient =  this.getProductIngredientByIngredientAndProduct(ingredient, product);
+        ProductIngredient productIngredient =  this.getProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName);
 
         // Set new servingQty
         productIngredient.setServingQty(productIngredientDTO.getServingQty());
@@ -104,7 +110,7 @@ public class ProductService {
         productIngredients.add(productIngredient);
         product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
-        Merchant merchant = product.getMerchant();
+        Merchant merchant = product.getCategory().getMerchant();
         merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         // Add ProductIngredient to Repo + Update Product in Repo
@@ -114,10 +120,10 @@ public class ProductService {
     }
 
 
-    public void deleteProductIngredient(Integer productId, String productIngredientName) {
-        Product product = this.getProductById(productId);
+    public void deleteProductIngredient(String merchantName, String productName,  String productIngredientName) {
+        Product product = this.getProductByName(productName);
         Ingredient ingredient = this.getIngredientByName(productIngredientName);
-        ProductIngredient productIngredient = this.getProductIngredientByIngredientAndProduct(ingredient, product);
+        ProductIngredient productIngredient = this.getProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName);
 
         Set<ProductIngredient> productIngredients = product.getProductIngredients();
         if (!productIngredients.contains(productIngredient)) {
@@ -127,14 +133,14 @@ public class ProductService {
         productIngredients.remove(productIngredient);
         product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
-        Merchant merchant = product.getMerchant();
+        Merchant merchant = product.getCategory().getMerchant();
         merchant.setCarbonRating(this.calculateCarbonRating(product));
 
-        productIngredientRepository.save(productIngredient);
+        productRepository.save(product);
     }
 
     private Double calculateCarbonRating(Product product) {
-        List<Product> products = product.getMerchant().getProducts();
+        List<Product> products = product.getCategory().getProducts();
         double totalCarbonEmissions = 0.0;
         int size = products.size();
 

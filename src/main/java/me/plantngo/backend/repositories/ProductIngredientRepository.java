@@ -14,4 +14,7 @@ public interface ProductIngredientRepository extends JpaRepository<ProductIngred
     
     Optional<ProductIngredient> findByIngredientAndProduct(Ingredient ingredient, Product product);
     boolean existsByIngredientAndProduct(Ingredient ingredient, Product product);
+    Optional<ProductIngredient> findByIngredientAndProductAndProductCategoryMerchantUsername(Ingredient ingredient, Product product, String username);
+    boolean existsByIngredientAndProductAndProductCategoryMerchantUsername(Ingredient ingredient, Product product, String username);
+    
 }
