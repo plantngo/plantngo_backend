@@ -1,5 +1,8 @@
 package me.plantngo.backend.services;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,8 +49,42 @@ public class EmissionService {
         return ingredientRepository.findAll();
     }
 
+    public List<Ingredient> populateRepository() {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode arrNode = null;
+        List<Ingredient> outputList = new ArrayList<>();
+
+        try {
+            arrNode = mapper.readTree(new URL("https://assets.plateupfortheplanet.org/carbon-calculator/JSON/ingredients-updated.json"));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        if (arrNode.isArray()) {
+            for (JsonNode objNode : arrNode) {
+                Ingredient ingredient = this.createAndSaveIngredient(objNode);
+                outputList.add(ingredient);
+            }
+        }
+
+        return outputList;
+    }
+
+    private Ingredient createAndSaveIngredient(JsonNode objNode) {
+        Ingredient ingredient = new Ingredient();
+        ingredient.setCategory(objNode.get("Group").asText());
+        ingredient.setEmissionPerGram(objNode.get("Unknown").asDouble() / 1000);
+        ingredient.setName(objNode.get("FOOD").asText());
+        ingredient.setIngredientId(null);
+        ingredientRepository.saveAndFlush(ingredient);
+
+        return ingredient;
+    }
+
     // @PostConstruct
-    public void populateRepository() {
+    public void populateRepositoryMyEmissions() {
         RestTemplate restTemplate = new RestTemplate();
 
         String url = "https://app.myemissions.green/api/v1/calculator/foods/?limit=1000";
@@ -64,11 +101,6 @@ public class EmissionService {
             ingredient.setEmissionPerGram(this.calculateEmissions(r.getId()));
             ingredientRepository.save(ingredient);
         }
-    }
-
-    @Async
-    public void callStop() {
-        
     }
 
     private Double calculateEmissions(String ingredientId) {
