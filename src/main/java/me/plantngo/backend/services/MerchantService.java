@@ -49,6 +49,13 @@ public class MerchantService {
         return merchantRepository.findByEmail(email).get();
     }
 
+    public Merchant getMerchantByCompany(String company) {
+        if (merchantRepository.findByCompany(company).isEmpty()) {
+            throw new UserNotFoundException("Company not found");
+        }
+        return merchantRepository.findByCompany(company).get();
+    }
+
     public List<Merchant> findAll() {
         return merchantRepository.findAll();
     }

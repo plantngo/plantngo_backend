@@ -27,6 +27,6 @@ public class PromotionDTO {
     @NotBlank
     private String endDate;
 
-    @NotNull
+    
     List<Product> products;
 }

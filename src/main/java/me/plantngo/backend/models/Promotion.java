@@ -1,7 +1,8 @@
 package me.plantngo.backend.models;
 
 import java.net.URL;
-import java.util.*;
+import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,7 +41,7 @@ public class Promotion {
     private Integer id;
 
     @NotBlank
-    String description;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "merchant_id")
@@ -50,15 +51,16 @@ public class Promotion {
     @ManyToMany(mappedBy = "productPromotions")
     private List<Product> promoProducts;
 
-    @NotNull
-    private Date startDate;
+    @NotBlank
+    private String startDate;
 
-    @NotNull
-    private Date endDate;
+    @NotBlank
+    private String endDate;
 
     @NotNull
     private Double percentageDiscount;
 
-    private URL bannerUrl;
+    @NotBlank
+    private String bannerUrl;
 
 }
