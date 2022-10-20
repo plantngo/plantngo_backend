@@ -1,6 +1,7 @@
 package me.plantngo.backend.services;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.AbstractConverter;
@@ -13,16 +14,19 @@ import me.plantngo.backend.DTO.PromotionDTO;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.exceptions.PromotionNotFoundException;
 import me.plantngo.backend.models.Merchant;
+import me.plantngo.backend.models.Product;
 import me.plantngo.backend.models.Promotion;
 import me.plantngo.backend.repositories.PromotionRepository;
 
 @Service
 public class PromotionService {
     private PromotionRepository promotionRepository;
+    private final ProductService productService;
 
     @Autowired
-    public PromotionService(PromotionRepository promotionRepository) {
+    public PromotionService(PromotionRepository promotionRepository, ProductService productService) {
         this.promotionRepository = promotionRepository;
+        this.productService = productService;
     }
 
     public Promotion getPromotionById(Integer id) {
@@ -43,11 +47,19 @@ public class PromotionService {
     public Promotion addPromotion(PromotionDTO promotionDTO, Merchant merchant) {
 
         Promotion promotion = this.promotionMapToEntity(promotionDTO, merchant);
-
+        
         // promotion.setMerchantId(merchant.getId());
         promotionRepository.save(promotion);
 
         return promotion;
+    }
+
+    private List<Product> returnProductList(List<Integer> productIds){
+        List<Product> result = new ArrayList<>();
+        for(Integer productId : productIds){
+            result.add(productService.getProductById(productId));
+        }
+        return result;
     }
 
     public void deletePromotion(Integer promotionId) {
@@ -81,9 +93,10 @@ public class PromotionService {
         promotion.setPercentageDiscount(promotionDTO.getPercentageDiscount());
         promotion.setStartDate(promotionDTO.getStartDate());
         promotion.setEndDate(promotionDTO.getEndDate());
-        promotion.setPromoProducts(promotionDTO.getProducts());
+        promotion.setPromoProducts(returnProductList(promotionDTO.getProductIds()));
 
         promotionRepository.save(promotion);
+        
         return promotion;
     }
 

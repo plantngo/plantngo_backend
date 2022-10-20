@@ -28,5 +28,5 @@ public class PromotionDTO {
     private String endDate;
 
     
-    List<Product> products;
+    List<Integer> productIds;
 }
