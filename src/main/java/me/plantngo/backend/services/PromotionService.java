@@ -29,7 +29,7 @@ public class PromotionService {
         if (!promotionRepository.findById(id).isEmpty()) {
             throw new PromotionNotFoundException("PromotionId " + id + " does not exist.");
         }
-        return promotionRepository.findById(id).get();
+        return promotionRepository.findById(id).get();  
     }
 
     public List<Promotion> getAllPromotions() {
