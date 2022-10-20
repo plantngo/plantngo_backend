@@ -48,6 +48,7 @@ public class EmissionService {
         return ingredientRepository.findAll();
     }
 
+    @PostConstruct
     public List<Ingredient> populateRepository() {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode arrNode = null;
