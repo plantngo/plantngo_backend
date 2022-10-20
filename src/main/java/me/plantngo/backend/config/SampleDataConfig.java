@@ -27,6 +27,7 @@ public class SampleDataConfig {
                     0,
                     null,
                     null,
+                    null,
                     null);
             Customer cust2 = new Customer(
                     null,
@@ -35,6 +36,7 @@ public class SampleDataConfig {
                     "Password123!",
                     null,
                     0,
+                    null,
                     null,
                     null,
                     null);

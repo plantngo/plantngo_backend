@@ -65,4 +65,8 @@ public class Customer {
         @NotNull(message = "AUTHORITY cannot be null, choose CUSTOMER or ADMIN")
         private final String AUTHORITY = "CUSTOMER";
 
+        @JsonIgnore
+        @Size(min = 16, max = 16)
+        private String resetPasswordToken;
+
 }
