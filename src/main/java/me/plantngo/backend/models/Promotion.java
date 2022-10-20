@@ -60,7 +60,7 @@ public class Promotion {
     @NotNull
     private Double percentageDiscount;
 
-    @NotBlank
+    // @NotBlank
     private String bannerUrl;
 
 }

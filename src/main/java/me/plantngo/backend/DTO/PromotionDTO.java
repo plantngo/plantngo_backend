@@ -15,7 +15,7 @@ public class PromotionDTO {
     @NotBlank
     private String description;
 
-    @NotBlank
+    // @NotBlank
     private String bannerUrl;
 
     @NotNull

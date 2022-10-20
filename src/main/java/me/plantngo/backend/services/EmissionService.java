@@ -55,13 +55,14 @@ public class EmissionService {
         List<Ingredient> outputList = new ArrayList<>();
 
         try {
-            arrNode = mapper.readTree(new URL("https://assets.plateupfortheplanet.org/carbon-calculator/JSON/ingredients-updated.json"));
+            arrNode = mapper.readTree(
+                    new URL("https://assets.plateupfortheplanet.org/carbon-calculator/JSON/ingredients-updated.json"));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         if (arrNode.isArray()) {
             for (JsonNode objNode : arrNode) {
                 Ingredient ingredient = this.createAndSaveIngredient(objNode);
@@ -116,7 +117,8 @@ public class EmissionService {
         // set `accept` header
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        APIIngredientDTO apiIngredientDTO = new APIIngredientDTO(ingredientId, "17b6249c-cbda-4e59-b575-018f7781c68c", "1");
+        APIIngredientDTO apiIngredientDTO = new APIIngredientDTO(ingredientId, "17b6249c-cbda-4e59-b575-018f7781c68c",
+                "1");
         List<APIIngredientDTO> apiIngredientDTOs = new ArrayList<>();
         apiIngredientDTOs.add(apiIngredientDTO);
         APIPostDTO apiPostDTO = new APIPostDTO(apiIngredientDTOs, 1);
@@ -125,7 +127,7 @@ public class EmissionService {
 
         ResponseEntity<String> response = null;
         String jsonBody = null;
-        
+
         try {
             response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             jsonBody = response.getBody();

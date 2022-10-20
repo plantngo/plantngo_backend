@@ -35,48 +35,47 @@ public class PromotionController {
     private final MerchantService merchantService;
 
     @Autowired
-    public PromotionController(PromotionService promotionService, MerchantService merchantService){
+    public PromotionController(PromotionService promotionService, MerchantService merchantService) {
         this.promotionService = promotionService;
         this.merchantService = merchantService;
     }
 
     @ApiOperation(value = "Get all existing Promotions")
     @GetMapping
-    public List<Promotion> getAllPromotions(){
+    public List<Promotion> getAllPromotions() {
         return promotionService.getAllPromotions();
     }
 
     @ApiOperation(value = "Create a Promotion")
-    @PostMapping(path = "/{merchantCompany}")
-    public ResponseEntity<String> addPromotion(@RequestBody @Valid PromotionDTO promotionDTO, @PathVariable("merchantCompany") String merchantCompany) {
-        Merchant merchant = merchantService.getMerchantByCompany(merchantCompany);
-        promotionService.addPromotion(promotionDTO, merchant);
-        return new ResponseEntity<>("Promotion created", HttpStatus.CREATED);
+    @PostMapping(path = "/{merchantName}")
+    public ResponseEntity<Promotion> addPromotion(@RequestBody @Valid PromotionDTO promotionDTO,
+            @PathVariable("merchantName") String merchantName) {
+        Merchant merchant = merchantService.getMerchantByUsername(merchantName);
+        Promotion promotion = promotionService.addPromotion(promotionDTO, merchant);
+        return new ResponseEntity<>(promotion, HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "Get Merchant Promotions")
-    @GetMapping(path = "/{merchantCompany}")
-    public List<Promotion> getAllPromotions(@PathVariable("merchantCompany") String merchantCompany){
-        List<Promotion> promotion = promotionService.getPromotionsByMerchant(merchantService.getMerchantByCompany(merchantCompany));
+    @GetMapping(path = "/{merchantName}")
+    public List<Promotion> getAllPromotions(@PathVariable("merchantName") String merchantName) {
+        List<Promotion> promotion = promotionService
+                .getPromotionsByMerchant(merchantService.getMerchantByUsername(merchantName));
         return promotion;
     }
 
     @ApiOperation(value = "Delete a Merchant's Promotion given its Id")
-    @DeleteMapping(path = "/{merchantCompany}/{promotionId}")
+    @DeleteMapping(path = "/{promotionId}")
     public ResponseEntity<String> deletePromotion(@PathVariable("promotionId") Integer promotionId) {
         promotionService.deletePromotion(promotionId);
         return new ResponseEntity<>("Promotion deleted", HttpStatus.OK);
     }
-      
-    
+
     @ApiOperation(value = "Update an existing Promotion")
-    @PutMapping(path = "/{merchantCompany}/{promotionId}")
-    public ResponseEntity<String> updatePromotion(@RequestBody @Valid PromotionDTO promotionDTO, @PathVariable("promotionId") Integer promotionId) {
+    @PutMapping(path = "/{promotionId}")
+    public ResponseEntity<String> updatePromotion(@RequestBody @Valid PromotionDTO promotionDTO,
+            @PathVariable("promotionId") Integer promotionId) {
         promotionService.updatePromotion(promotionDTO, promotionId);
         return new ResponseEntity<>("Promotion updated", HttpStatus.CREATED);
     }
-
-
-    
 
 }
