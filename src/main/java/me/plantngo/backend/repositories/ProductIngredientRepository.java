@@ -1,5 +1,6 @@
 package me.plantngo.backend.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,8 @@ public interface ProductIngredientRepository extends JpaRepository<ProductIngred
     
     Optional<ProductIngredient> findByIngredientAndProduct(Ingredient ingredient, Product product);
     boolean existsByIngredientAndProduct(Ingredient ingredient, Product product);
+    Optional<ProductIngredient> findByIngredientAndProductAndProductCategoryMerchantUsername(Ingredient ingredient, Product product, String username);
+    boolean existsByIngredientAndProductAndProductCategoryMerchantUsername(Ingredient ingredient, Product product, String username);
+    List<ProductIngredient> findByProductNameAndProductCategoryMerchantUsername(String productName, String merchantName);
+    
 }
