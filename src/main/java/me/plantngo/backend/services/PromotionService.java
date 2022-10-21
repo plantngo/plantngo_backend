@@ -33,7 +33,7 @@ public class PromotionService {
         if (!promotionRepository.findById(id).isEmpty()) {
             throw new PromotionNotFoundException("PromotionId " + id + " does not exist.");
         }
-        return promotionRepository.findById(id).get();  
+        return promotionRepository.findById(id).get();
     }
 
     public List<Promotion> getAllPromotions() {
@@ -47,16 +47,16 @@ public class PromotionService {
     public Promotion addPromotion(PromotionDTO promotionDTO, Merchant merchant) {
 
         Promotion promotion = this.promotionMapToEntity(promotionDTO, merchant);
-        
+
         // promotion.setMerchantId(merchant.getId());
         promotionRepository.save(promotion);
 
         return promotion;
     }
 
-    private List<Product> returnProductList(List<Integer> productIds){
+    private List<Product> returnProductList(List<Integer> productIds) {
         List<Product> result = new ArrayList<>();
-        for(Integer productId : productIds){
+        for (Integer productId : productIds) {
             result.add(productService.getProductById(productId));
         }
         return result;
@@ -85,18 +85,17 @@ public class PromotionService {
     }
 
     public Promotion updatePromotion(PromotionDTO promotionDTO, Integer promotionId) {
-       
-        Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new NotExistException("Promotion"));
-    
+
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new NotExistException("Promotion"));
+
         promotion.setDescription(promotionDTO.getDescription());
         promotion.setBannerUrl(promotionDTO.getBannerUrl());
-        promotion.setPercentageDiscount(promotionDTO.getPercentageDiscount());
         promotion.setStartDate(promotionDTO.getStartDate());
         promotion.setEndDate(promotionDTO.getEndDate());
-        promotion.setPromoProducts(returnProductList(promotionDTO.getProductIds()));
 
         promotionRepository.save(promotion);
-        
+
         return promotion;
     }
 

@@ -18,15 +18,10 @@ public class PromotionDTO {
     // @NotBlank
     private String bannerUrl;
 
-    @NotNull
-    private Double percentageDiscount;
-
     @NotBlank
     private String startDate;
 
     @NotBlank
     private String endDate;
 
-    
-    List<Integer> productIds;
 }
