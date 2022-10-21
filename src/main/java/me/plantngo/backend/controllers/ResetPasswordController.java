@@ -28,6 +28,6 @@ public class ResetPasswordController {
     @ApiOperation("checks the reset password token for a user, deleting if a match is found")
     @PostMapping("/")
     public ResponseEntity<String> checkAndDeleteIfCorrectResetPasswordToken(@RequestBody ResetPasswordDTO resetPasswordDTO){
-        return null;
+        return resetPasswordService.checkAndDeleteIfCorrectResetPasswordToken(resetPasswordDTO.getUsername(), resetPasswordDTO.getUserType(), resetPasswordDTO.getResetPasswordToken());
     }
 }

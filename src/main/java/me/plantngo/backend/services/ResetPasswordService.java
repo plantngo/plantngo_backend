@@ -10,6 +10,7 @@ import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -53,8 +54,34 @@ public class ResetPasswordService {
         }
     }
 
-    public ResponseEntity<String> checkAndDeleteIfCorrectResetPasswordToken(String username, String email, String resetPasswordToken){
-        return null;
+    public ResponseEntity<String> checkAndDeleteIfCorrectResetPasswordToken(String username, Character userType, String resetPasswordToken){
+        if(userType == 'C') {
+            Customer customer = getCustomerByUsername(username);
+
+            if(customer.getResetPasswordToken() == null) throw new NotExistException("Reset password token");
+
+            //wrong token
+            if(!customer.getResetPasswordToken().equals(resetPasswordToken)) throw new IllegalArgumentException("Reset password token is incorrect. Please try again.");
+
+            customer.setResetPasswordToken(null);
+            customerRepository.saveAndFlush(customer);
+
+            return new ResponseEntity<>("Token is correct.", HttpStatus.OK);
+        } else if(userType == 'M') {
+            Merchant merchant = getMerchantByUsername(username);
+
+            if(merchant.getResetPasswordToken() == null) throw new NotExistException("Reset password token");
+
+            //wrong token
+            if(!merchant.getResetPasswordToken().equals(resetPasswordToken)) throw new IllegalArgumentException("Reset password token is incorrect. Please try again.");
+
+            merchant.setResetPasswordToken(null);
+            merchantRepository.saveAndFlush(merchant);
+
+            return new ResponseEntity<>("Token is correct.", HttpStatus.OK);
+        } else {
+            throw new InvalidUserTypeException();
+        }
     }
 
     private Customer getCustomerByUsername(String username){
