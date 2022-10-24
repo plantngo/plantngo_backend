@@ -43,3 +43,6 @@ src/main/java/me/plantngo/backend/.DS_Store
 
 # Testing
 h2_data/
+
+# Secret Env Variables
+.env
