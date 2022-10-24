@@ -1,39 +1,44 @@
 package me.plantngo.backend.config;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import me.plantngo.backend.DTO.CategoryDTO;
+import me.plantngo.backend.DTO.ProductDTO;
 import me.plantngo.backend.DTO.RegistrationDTO;
-import me.plantngo.backend.models.Preference;
+import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.services.AuthService;
+import me.plantngo.backend.services.MerchantService;
+import me.plantngo.backend.services.ShopService;
 
 @Configuration
-public class SampleDataConfig implements CommandLineRunner {
+public class SampleDataConfig {
 
     @Autowired
     private AuthService authService;
+    @Autowired
+    private ShopService shopService;
+    @Autowired
+    private MerchantService merchantService;
 
-    @Override
-    public void run(String... args) throws Exception {
+    @Bean
+    CommandLineRunner commandLineRunner() {
+        return args -> {
 
-        // create sample customers
-        List<RegistrationDTO> customerList = createCustomers();
-        for (RegistrationDTO customer : customerList) {
-            authService.registerUser(customer);
-        }
+            createCustomers();
+            createMerchants();
+            createMerchantCategories();
+            createMerchantProducts();
 
-        // create sample merchants
-        List<RegistrationDTO> merchantList = createMerchants();
-        for (RegistrationDTO merchant : merchantList) {
-            authService.registerUser(merchant);
-        }
+        };
     }
 
-    public static List<RegistrationDTO> createCustomers() {
-        ArrayList<RegistrationDTO> customerList = new ArrayList<>();
+    public void createCustomers() {
         RegistrationDTO customer1 = new RegistrationDTO(
                 "soonann",
                 "soonann@example.com",
@@ -49,6 +54,7 @@ public class SampleDataConfig implements CommandLineRunner {
                 null,
                 null,
                 null);
+
         RegistrationDTO customer2 = new RegistrationDTO(
                 "gabriel",
                 "gabriel@example.com",
@@ -64,13 +70,13 @@ public class SampleDataConfig implements CommandLineRunner {
                 null,
                 null,
                 null);
-        customerList.addAll(List.of(customer1, customer2));
+        authService.registerUser(customer1);
+        authService.registerUser(customer2);
 
-        return customerList;
     }
 
-    public static List<RegistrationDTO> createMerchants() {
-        ArrayList<RegistrationDTO> merchantList = new ArrayList<>();
+    public void createMerchants() {
+
         RegistrationDTO merchantPizzaHut = new RegistrationDTO(
                 "pizzahut",
                 "pizzahut@example.com",
@@ -117,10 +123,92 @@ public class SampleDataConfig implements CommandLineRunner {
                 4,
                 "10:00AM - 20:00PM");
 
-        merchantList.addAll(List.of(merchantPizzaHut, merchantFairPrice, merchantJoieVege));
+        authService.registerUser(merchantPizzaHut);
+        authService.registerUser(merchantFairPrice);
+        authService.registerUser(merchantJoieVege);
 
-        return merchantList;
+    }
 
+    public void createMerchantCategories() {
+        Merchant pizzaHut = merchantService.getMerchantByUsername("pizzahut");
+        CategoryDTO pizzaHutCat1 = new CategoryDTO("Pizza");
+        shopService.addCategory(pizzaHut, pizzaHutCat1);
+
+        Merchant fairPrice = merchantService.getMerchantByUsername("fairprice");
+        CategoryDTO fairPriceCat1 = new CategoryDTO("Groceries");
+        CategoryDTO fairPriceCat2 = new CategoryDTO("Snacks");
+        shopService.addCategory(fairPrice, fairPriceCat1);
+        shopService.addCategory(fairPrice, fairPriceCat2);
+
+        Merchant joieVege = merchantService.getMerchantByUsername("joievege");
+        CategoryDTO joieVegeCat1 = new CategoryDTO("Fine Dining");
+        shopService.addCategory(joieVege, joieVegeCat1);
+    }
+
+    public void createMerchantProducts() throws MalformedURLException {
+        Merchant pizzaHut = merchantService.getMerchantByUsername("pizzahut");
+        ProductDTO pizzaHutProduct1 = new ProductDTO("Cheesy 7 Beyond Supreme - Regular Pan",
+                34.90,
+                "Cheesy 7 meets Beyond Meat™! Made with Beyond Meat's plant based Italian Sausage Crumbles which leaves a hint of herbs and spice aroma, with capsicums, onions and mushrooms, on a bed of our signature sweet sauce and seven wondrous cheeses!",
+                10.0,
+                new URL("https://static.phdvasia.com/sg1/menu/single/desktop_thumbnail_0bd9658b-d8eb-438d-bc2c-fef8afa1b71e.jpg"),
+                "Savoury & Cheesy");
+        ProductDTO pizzaHutProduct2 = new ProductDTO("Cheesy 7 Beyond Supreme - Regular Cheesy Stuffed Crust",
+                43.40,
+                "Cheesy 7 meets Beyond Meat™! Made with Beyond Meat's plant based Italian Sausage Crumbles which leaves a hint of herbs and spice aroma, with capsicums, onions and mushrooms, on a bed of our signature sweet sauce and seven wondrous cheeses!",
+                45.0,
+                new URL("https://static.phdvasia.com/sg1/menu/single/desktop_thumbnail_0bd9658b-d8eb-438d-bc2c-fef8afa1b71e.jpg"),
+                "Savoury & Cheesy");
+        ProductDTO pizzaHutProduct3 = new ProductDTO("Cheesy 7 Beyond Supreme - Large Pan",
+                40.90,
+                "Cheesy 7 meets Beyond Meat™! Made with Beyond Meat's plant based Italian Sausage Crumbles which leaves a hint of herbs and spice aroma, with capsicums, onions and mushrooms, on a bed of our signature sweet sauce and seven wondrous cheeses!",
+                40.0,
+                new URL("https://static.phdvasia.com/sg1/menu/single/desktop_thumbnail_0bd9658b-d8eb-438d-bc2c-fef8afa1b71e.jpg"),
+                "Savoury & Cheesy");
+        shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct1);
+        shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct2);
+        shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct3);
+
+        Merchant fairPrice = merchantService.getMerchantByUsername("fairprice");
+        ProductDTO fairPriceProduct1 = new ProductDTO("The Vegetarian Butcher Vegan Meal - Chickened Out Chunks", 7.95,
+                "The Vegetarian Butcher Vegan Meal - Chickened Out Chunks", 10.0,
+                new URL("https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/13208081_XL1_20220722.jpg?w=1200&q=70"),
+                "Plain");
+        ProductDTO fairPriceProduct2 = new ProductDTO("Heinz Vegan Seriously Good Garlic Aioli Mayonnaise", 8.95,
+                "Heinz Vegan Seriously Good Garlic Aioli Mayonnaise", 10.0,
+                new URL("https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/90094302_XL1_20210816.jpg?w=1200&q=70"),
+                "Sour");
+        ProductDTO fairPriceProduct3 = new ProductDTO("Hey! Chips - Broccoli (100% Natural, Gluten-Free, Vegan)",
+                4.90,
+                "Hey! Chips - Broccoli (100% Natural, Gluten-Free, Vegan)",
+                10.0,
+                new URL("https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/90045450_XL1_20211018.jpg?w=1200&q=70"),
+                "Salty");
+        ProductDTO fairPriceProduct4 = new ProductDTO("Hey! Chips - Banana (100% Natural, Gluten-Free, Vegan)", 4.90,
+                "Hey! Chips - Banana (100% Natural, Gluten-Free, Vegan)",
+                10.0,
+                new URL("https://media.nedigital.sg/fairprice/fpol/media/images/product/L/90045446_L1_20211018.jpg?q=60"),
+                "Salty");
+        ProductDTO fairPriceProduct5 = new ProductDTO("Hey! Chips - Bulk (100% Natural, Gluten-Free, Vegan)", 33.90,
+                "Hey! Chips - Bulk (100% Natural, Gluten-Free, Vegan", 10.0,
+                new URL("https://media.nedigital.sg/fairprice/fpol/media/images/product/L/90027875_L1_20211018.jpg?q=60"),
+                "Salty");
+
+        shopService.addProduct(fairPrice, "Groceries", fairPriceProduct1);
+        shopService.addProduct(fairPrice, "Groceries", fairPriceProduct2);
+        shopService.addProduct(fairPrice, "Groceries", fairPriceProduct3);
+        shopService.addProduct(fairPrice, "Groceries", fairPriceProduct4);
+        shopService.addProduct(fairPrice, "Groceries", fairPriceProduct5);
+
+        Merchant joieVege = merchantService.getMerchantByUsername("joievege");
+        ProductDTO joieVegeProduct1 = new ProductDTO("4 Course Set", 38.00, "Including 1 Drink of Choice", 10.0,
+                new URL("https://static.wixstatic.com/media/591a97_20e12d8438d84db48839fb893ed60072~mv2.jpg/v1/fit/w_467,h_571,q_90/591a97_20e12d8438d84db48839fb893ed60072~mv2.jpg"),
+                "Savoury");
+        ProductDTO joieVegeProduct2 = new ProductDTO("5 Course Set", 58.00, "Including 1 Drink of Choice", 12.0,
+                new URL("https://static.wixstatic.com/media/591a97_49f940ea3868444b9867202f9002610c~mv2.jpg/v1/fit/w_467,h_693,q_90/591a97_49f940ea3868444b9867202f9002610c~mv2.jpg"),
+                "Savoury");
+        shopService.addProduct(joieVege, "Fine Dining", joieVegeProduct1);
+        shopService.addProduct(joieVege, "Fine Dining", joieVegeProduct2);
     }
 
 }
