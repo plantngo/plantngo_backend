@@ -79,7 +79,10 @@ public class EmissionService {
         ingredient.setEmissionPerGram(objNode.get("Unknown").asDouble() / 1000);
         ingredient.setName(objNode.get("FOOD").asText());
         ingredient.setIngredientId(null);
-        ingredientRepository.saveAndFlush(ingredient);
+
+        if (!ingredientRepository.existsByName(ingredient.getName())) {
+            ingredientRepository.save(ingredient);
+        }
 
         return ingredient;
     }
