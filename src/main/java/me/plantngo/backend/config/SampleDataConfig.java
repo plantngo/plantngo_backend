@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import me.plantngo.backend.DTO.CategoryDTO;
 import me.plantngo.backend.DTO.ProductDTO;
 import me.plantngo.backend.DTO.RegistrationDTO;
+import me.plantngo.backend.DTO.VoucherDTO;
 import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.services.AuthService;
 import me.plantngo.backend.services.MerchantService;
@@ -34,6 +35,7 @@ public class SampleDataConfig {
                         createMerchants();
                         createMerchantCategories();
                         createMerchantProducts();
+                        createVouchers();
 
                 };
         }
@@ -214,6 +216,57 @@ public class SampleDataConfig {
                                 "Savoury");
                 shopService.addProduct(joieVege, "Fine Dining", joieVegeProduct1);
                 shopService.addProduct(joieVege, "Fine Dining", joieVegeProduct2);
+        }
+
+        private void createVouchers() {
+                Merchant pizzaHut = merchantService.getMerchantByUsername("pizzahut");
+                VoucherDTO pizzaHutVoucher1 = new VoucherDTO(
+                                100.0,
+                                'F',
+                                10.0,
+                                "$10 off sides @ PizzaHut");
+                VoucherDTO pizzaHutVoucher2 = new VoucherDTO(
+                                150.0,
+                                'P',
+                                0.15,
+                                "15% off total bill @ PizzaHut");
+                VoucherDTO pizzaHutVoucher3 = new VoucherDTO(
+                                200.0,
+                                'P',
+                                0.20,
+                                "20% off all sides @ PizzaHut");
+                shopService.addVoucher(pizzaHut, pizzaHutVoucher1);
+                shopService.addVoucher(pizzaHut, pizzaHutVoucher2);
+                shopService.addVoucher(pizzaHut, pizzaHutVoucher3);
+
+                Merchant fairPrice = merchantService.getMerchantByUsername("fairprice");
+                VoucherDTO fairPriceVoucher1 = new VoucherDTO(
+                                50.0,
+                                'F',
+                                0.0,
+                                "Free Hey Chips! - Banana Flavoured @ Fairprice");
+                VoucherDTO fairPriceVoucher2 = new VoucherDTO(
+                                300,
+                                'F',
+                                0.0,
+                                "Free Hey Chips - Bulk (6) @ Fairprice ");
+                VoucherDTO fairPriceVoucher3 = new VoucherDTO(
+                                500.0,
+                                'F',
+                                0.0,
+                                "1-1 all Fruits Purchased (max 5 fruits)");
+                shopService.addVoucher(fairPrice, fairPriceVoucher1);
+                shopService.addVoucher(fairPrice, fairPriceVoucher2);
+                shopService.addVoucher(fairPrice, fairPriceVoucher3);
+
+                Merchant joieVege = merchantService.getMerchantByUsername("joievege");
+                VoucherDTO joieVegeVoucher1 = new VoucherDTO(
+                                1500.0,
+                                'P',
+                                15.0,
+                                "15% off 5 Course Set Meal");
+                shopService.addVoucher(joieVege, joieVegeVoucher1);
+
         }
 
 }
