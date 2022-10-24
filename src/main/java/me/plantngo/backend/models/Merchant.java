@@ -73,6 +73,8 @@ public class Merchant {
         // @NotNull
         private String operatingHours;
 
+        private Double carbonRating;
+
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
         @JsonManagedReference("merchant_category") // Serializes this side
         private List<Category> categories;
@@ -93,4 +95,8 @@ public class Merchant {
         @OneToMany(mappedBy = "merchant", orphanRemoval = true, cascade = CascadeType.ALL)
         @JsonManagedReference("merchant_order")
         private List<Order> order;
+
+        @JsonIgnore
+        @Size(min = 16, max = 16)
+        private String resetPasswordToken;
 }

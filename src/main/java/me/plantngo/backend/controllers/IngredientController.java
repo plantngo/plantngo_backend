@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import me.plantngo.backend.DTO.APIPostDTO;
@@ -38,8 +40,8 @@ public class IngredientController {
 
     @ApiOperation(value = "Temporary endpoint to scrape data from myemissions.green and create + store Ingredient objects in local Repository")
     @GetMapping(path="/generate")
-    public void generateEmissions() {
-        emissionService.populateRepository();
+    public List<Ingredient> generateEmissions() {
+        return emissionService.populateRepository();
     }
 
 }

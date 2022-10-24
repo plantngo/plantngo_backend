@@ -6,21 +6,16 @@ import java.net.URI;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import me.plantngo.backend.BackendApplication;
 import me.plantngo.backend.models.Customer;
@@ -62,7 +57,7 @@ public class CustomerControllerTest {
         URI uri = new URI(rootUrl + port + apiUrl);
         Customer customer = new Customer(1, "John Doe", "john.doe@example.com", "Password12345!",
                 new ArrayList<Preference>(), 1000, new HashSet<Voucher>(), new HashSet<Voucher>(),
-                new ArrayList<Order>());
+                new ArrayList<Order>(), null);
         customerRepository.save(customer);
 
         ResponseEntity<Customer[]> result = restTemplate.getForEntity(uri, Customer[].class);

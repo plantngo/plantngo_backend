@@ -32,7 +32,6 @@ public class ProductIngredient {
 
     @ManyToOne
     @JoinColumn(name = "ingredient_id")
-    @JsonIgnore
     private Ingredient ingredient;
 
     @ManyToOne

@@ -1,5 +1,8 @@
 package me.plantngo.backend.services;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,8 +48,44 @@ public class EmissionService {
         return ingredientRepository.findAll();
     }
 
+    @PostConstruct
+    public List<Ingredient> populateRepository() {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode arrNode = null;
+        List<Ingredient> outputList = new ArrayList<>();
+
+        try {
+            arrNode = mapper.readTree(
+                    new URL("https://assets.plateupfortheplanet.org/carbon-calculator/JSON/ingredients-updated.json"));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (arrNode.isArray()) {
+            for (JsonNode objNode : arrNode) {
+                Ingredient ingredient = this.createAndSaveIngredient(objNode);
+                outputList.add(ingredient);
+            }
+        }
+
+        return outputList;
+    }
+
+    private Ingredient createAndSaveIngredient(JsonNode objNode) {
+        Ingredient ingredient = new Ingredient();
+        ingredient.setCategory(objNode.get("Group").asText());
+        ingredient.setEmissionPerGram(objNode.get("Unknown").asDouble() / 1000);
+        ingredient.setName(objNode.get("FOOD").asText());
+        ingredient.setIngredientId(null);
+        ingredientRepository.saveAndFlush(ingredient);
+
+        return ingredient;
+    }
+
     // @PostConstruct
-    public void populateRepository() {
+    public void populateRepositoryMyEmissions() {
         RestTemplate restTemplate = new RestTemplate();
 
         String url = "https://app.myemissions.green/api/v1/calculator/foods/?limit=1000";
@@ -78,7 +117,8 @@ public class EmissionService {
         // set `accept` header
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        APIIngredientDTO apiIngredientDTO = new APIIngredientDTO(ingredientId, "17b6249c-cbda-4e59-b575-018f7781c68c", "1");
+        APIIngredientDTO apiIngredientDTO = new APIIngredientDTO(ingredientId, "17b6249c-cbda-4e59-b575-018f7781c68c",
+                "1");
         List<APIIngredientDTO> apiIngredientDTOs = new ArrayList<>();
         apiIngredientDTOs.add(apiIngredientDTO);
         APIPostDTO apiPostDTO = new APIPostDTO(apiIngredientDTOs, 1);
@@ -87,7 +127,7 @@ public class EmissionService {
 
         ResponseEntity<String> response = null;
         String jsonBody = null;
-        
+
         try {
             response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             jsonBody = response.getBody();

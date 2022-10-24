@@ -13,6 +13,7 @@ public interface MerchantRepository extends JpaRepository<Merchant, Integer>{
     Optional<Merchant> findByUsername(String username);
     Optional<Merchant> findById(Integer id);
     Optional<Merchant> findByEmail(String email);
+    Optional<Merchant> findByCompany(String company);
     Boolean existsByEmail(String email);
     Boolean existsByUsername(String username);
     

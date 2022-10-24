@@ -70,5 +70,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    private ResponseEntity<ErrorModel> handleIllegalArgument(IllegalArgumentException ex) {
+        ErrorModel error = new ErrorModel(HttpStatus.BAD_REQUEST, "Illegal argument(s).", ex.getMessage());
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    private ResponseEntity<ErrorModel> handleDuplication(AlreadyExistsException ex) {
+        ErrorModel error = new ErrorModel(HttpStatus.BAD_REQUEST, "Already exists.", ex.getMessage());
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
     
 }
