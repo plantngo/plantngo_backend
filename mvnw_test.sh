@@ -5,7 +5,7 @@
 ./mvnw test
 
 # runs only one class of tests
-./mvnw -Dtest=<ExampleServiceTest> test
+# ./mvnw -Dtest=<ExampleServiceTest> test
 
 # runs only one method of a specified class of tests
-./mvnw -Dtest=<ExampleServiceTest>#<exampleMethod> test
+# ./mvnw -Dtest=<ExampleServiceTest>#<exampleMethod> test
