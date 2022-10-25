@@ -95,4 +95,8 @@ public class Merchant {
         @OneToMany(mappedBy = "merchant", orphanRemoval = true, cascade = CascadeType.ALL)
         @JsonManagedReference("merchant_order")
         private List<Order> order;
+
+        @JsonIgnore
+        @Size(min = 16, max = 16)
+        private String resetPasswordToken;
 }

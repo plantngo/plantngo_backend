@@ -31,7 +31,7 @@ import me.plantngo.backend.services.ProductService;
 @Api(value = "Product Controller", description = "Allows Merchants to add Ingredients to their Product and automatically generate a carbon emission value")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ProductController {
-    
+
     private final ProductService productService;
 
     @Autowired
@@ -53,9 +53,10 @@ public class ProductController {
 
     @ApiOperation(value = "Get all Product Ingredients By Merchant And Product")
     @GetMapping(path = "/{merchantName}/{productName}")
-    public List<ProductIngredient> getProductIngredientsByMerchantAndProduct(@PathVariable("merchantName") String merchantName,
-                                                                            @PathVariable("productName") String productName) {
-        
+    public List<ProductIngredient> getProductIngredientsByMerchantAndProduct(
+            @PathVariable("merchantName") String merchantName,
+            @PathVariable("productName") String productName) {
+
         return productService.getProductIngredientsByMerchantAndProduct(merchantName, productName);
     }
 
@@ -68,29 +69,31 @@ public class ProductController {
     @ApiOperation(value = "Add Ingredient to Product")
     @PostMapping(path = "/{merchantName}/{productName}")
     public ResponseEntity<ProductIngredient> addProductIngredient(@PathVariable("merchantName") String merchantName,
-                                                                @PathVariable("productName") String productName, 
-                                                                @Valid @RequestBody ProductIngredientDTO productIngredientDTO) {
+            @PathVariable("productName") String productName,
+            @Valid @RequestBody ProductIngredientDTO productIngredientDTO) {
 
-        ProductIngredient productIngredient = productService.addProductIngredient(merchantName, productName, productIngredientDTO);
+        ProductIngredient productIngredient = productService.addProductIngredient(merchantName, productName,
+                productIngredientDTO);
         return new ResponseEntity<>(productIngredient, HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "Update Ingredient in Product")
     @PutMapping(path = "/{merchantName}/{productName}")
     public ResponseEntity<ProductIngredient> updateProductIngredient(@PathVariable("merchantName") String merchantName,
-                                                                @PathVariable("productName") String productName, 
-                                                                @Valid @RequestBody ProductIngredientDTO productIngredientDTO) {
-        
-        ProductIngredient productIngredient = productService.updateProductIngredient(merchantName, productName, productIngredientDTO);
+            @PathVariable("productName") String productName,
+            @Valid @RequestBody ProductIngredientDTO productIngredientDTO) {
+
+        ProductIngredient productIngredient = productService.updateProductIngredient(merchantName, productName,
+                productIngredientDTO);
         return new ResponseEntity<>(productIngredient, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Delete Ingredient in Product")
     @DeleteMapping(path = "/{merchantName}/{productName}/{productIngredientName}")
     public ResponseEntity<String> deleteProductIngredient(@PathVariable("merchantName") String merchantName,
-                                                        @PathVariable("productName") String productName, 
-                                                        @PathVariable("productIngredientName") String productIngredientName) {
-        
+            @PathVariable("productName") String productName,
+            @PathVariable("productIngredientName") String productIngredientName) {
+
         productService.deleteProductIngredient(merchantName, productName, productIngredientName);
         return new ResponseEntity<>("Product Ingredient deleted!", HttpStatus.OK);
     }
@@ -98,8 +101,8 @@ public class ProductController {
     @ApiOperation(value = "Delete All Ingredients in specific Product")
     @DeleteMapping(path = "/{merchantName}/{productName}")
     public ResponseEntity<String> deleteAllProductIngredients(@PathVariable("merchantName") String merchantName,
-                                                        @PathVariable("productName") String productName) {
-        
+            @PathVariable("productName") String productName) {
+
         productService.deleteAllProductIngredients(merchantName, productName);
         return new ResponseEntity<>("All Product Ingredient deleted!", HttpStatus.OK);
     }

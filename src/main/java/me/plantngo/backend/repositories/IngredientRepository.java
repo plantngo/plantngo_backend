@@ -11,4 +11,5 @@ import me.plantngo.backend.models.Ingredient;
 public interface IngredientRepository extends JpaRepository<Ingredient, Integer> {
     
     Optional<Ingredient> findByName(String name);
+    Boolean existsByName(String name);
 }

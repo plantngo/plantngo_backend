@@ -68,9 +68,7 @@ public class Product {
     @JsonIgnore
     private List<OrderItem> orderItem;
 
-    @ManyToMany
-    @JoinTable(name = "product_promotion", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "promotion_id"))
-    private Set<Promotion> productPromotions;
+
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
