@@ -11,14 +11,11 @@ The Plant&Go Project consists of two parts:
 Plant&Go is a mobile application that encourages the pursuit of a sustainable diet.
 
 ## Usage
-This repository only contains the Backend Server built for the [Plant&Go Frontend Mobile Application](https://github.com/plantngo/plantngo_frontend).
+This repository only contains the Backend Server built for the [Plant&Go Frontend Mobile Application](https://github.com/plantngo/plantngo_frontend). 
 
-If you wish to download the Mobile Application, you can refer to [Plant&Go Frontend Mobile Application's Github Repository](https://github.com/plantngo/plantngo_frontend), the pre-built `.apk` and `.ipa` uses our Demo Server at [https://github.com/plantngo/plantngo_backend](https://github.com/plantngo/plantngo_backend)
+It is recommended that you download the Mobile Application, you can refer to [Plant&Go Frontend Mobile Application's Github Repository](https://github.com/plantngo/plantngo_frontend). It contains the pre-built `.apk` and `.ipa` which uses our Demo Server at [https://github.com/plantngo/plantngo_backend](https://github.com/plantngo/plantngo_backend)
 
-Alternatively, you may also interface with the Demo Server with tools such as [PostMan](https://www.postman.com/), [Insomnia](https://insomnia.rest/) or [VS Code Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client). 
-
-You can refer to the API Documentation for this Project is on Swagger at [https://plantngo.potatovault.com/swagger-ui/#/](https://plantngo.potatovault.com/swagger-ui/#/) for the API Documentation.
-
+The above way is the fastest way to get started, but if you would still like to host the Backend Server youself, you can refer to the [Setup](#setup) section for detailed guides.
 
 > This project is a demo application, please do not enter any sensitive or important data on this platform.
 
@@ -48,6 +45,18 @@ After cloning the project, you will need to `cd` into the project directory. Ope
 # change directory into the project
 cd plantngo_backed
 ```
+
+## Configuring Environment Variables
+
+This section covers the fastest way to get setup the environment file to enable the project to work properly.
+
+1. Rename the `sample.env` file in the root of the project directory to `.env`
+![](./.github/README/1-rename-sample-env.png)
+2. Create an outlook account or use an existing outlook account
+![](./.github/README/2-create-outlook-account.png)
+3. Edit the renamed `.env` file's MAIL_USERNAME variable to your new email address, and MAIL_PASSWORD variable to the password for your email account.
+![](./.github/README/3-environment-variable.png)
+
 
 ## Running
 
