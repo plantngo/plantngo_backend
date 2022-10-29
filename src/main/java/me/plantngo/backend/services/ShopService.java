@@ -208,9 +208,11 @@ public class ShopService {
     }
 
     public void deleteProduct(Product product) {
-        productRepository.delete(product);
+        Category category = product.getCategory();
+        category.getProducts().remove(product);
+        productRepository.deleteById(product.getId());
     }
-
+    
     // public List<Product> getAllProductsByMerchant(Merchant merchant) {
     //     return productRepository.findByMerchant(merchant);
     // }
@@ -242,4 +244,5 @@ public class ShopService {
 
         return product;
     }
+
 }
