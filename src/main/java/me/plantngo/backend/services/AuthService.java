@@ -61,14 +61,14 @@ public class AuthService {
 
     public ResponseEntity<String> registerUser(RegistrationDTO registrationDTO) {
         if (registrationDTO.getUserType() == 'C') {
-            return registerCustomer(registrationDTO);
+            return this.registerCustomer(registrationDTO);
         } else if (registrationDTO.getUserType() == 'M') {
-            return registerMerchant(registrationDTO);
+            return this.registerMerchant(registrationDTO);
         }
         throw new InvalidUserTypeException();
     }
 
-    public ResponseEntity<String> registerCustomer(RegistrationDTO registrationDTO) {
+    private ResponseEntity<String> registerCustomer(RegistrationDTO registrationDTO) {
 
         // Check if email is already in use
         if (customerRepository.existsByEmail(registrationDTO.getEmail())
@@ -89,7 +89,7 @@ public class AuthService {
         return new ResponseEntity<>("Customer registered!", HttpStatus.CREATED);
     }
 
-    public ResponseEntity<String> registerMerchant(RegistrationDTO registrationDTO) {
+    private ResponseEntity<String> registerMerchant(RegistrationDTO registrationDTO) {
 
         // Check if email is already in use
         if (merchantRepository.existsByEmail(registrationDTO.getEmail())
