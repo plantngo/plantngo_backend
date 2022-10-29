@@ -58,4 +58,5 @@ public class Promotion {
     // @NotBlank
     private String bannerUrl;
 
+    private Integer clicks;
 }

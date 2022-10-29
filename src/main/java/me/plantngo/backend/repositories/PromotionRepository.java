@@ -15,4 +15,5 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer>{
     Optional<Promotion> findById(Integer id);
     List<Promotion> findByMerchant(Merchant merchant);
 
+
 }
