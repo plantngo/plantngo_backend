@@ -7,10 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import me.plantngo.backend.models.Customer;
+import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Order;
+import me.plantngo.backend.models.OrderStatus;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     Optional<Order> findById(Integer id);
-    List<Order> findAllByCustomer(Customer customer);
+    List<Order> findAllByCustomerUsername(String username);
+    List<Order> findAllByMerchantUsername(String username);
+    List<Order> findAllByMerchantUsernameAndOrderStatus(String username, OrderStatus orderStatus);
 }
