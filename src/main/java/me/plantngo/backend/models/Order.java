@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,17 +31,17 @@ import lombok.*;
 @Entity
 @Table(name = "ordering")
 public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
-    @Column(name = "ordering_customer_id")
-    private Integer customer_Id;
-
     private Double totalPrice;
 
     private Boolean isDineIn;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -54,4 +56,8 @@ public class Order {
     @JoinColumn(name = "merchant_id", nullable = false)
     @JsonBackReference(value = "merchant_order")
     private Merchant merchant;
+
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
 }

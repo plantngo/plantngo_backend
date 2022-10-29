@@ -15,15 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import me.plantngo.backend.DTO.PlaceOrderDTO;
+import me.plantngo.backend.DTO.OrderDTO;
+import me.plantngo.backend.DTO.UpdateOrderDTO;
 import me.plantngo.backend.DTO.UpdateOrderItemDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
 import me.plantngo.backend.models.Order;
+import me.plantngo.backend.models.OrderItem;
 import me.plantngo.backend.services.OrderService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,17 +57,17 @@ public class OrderController {
     }
     
     @ApiOperation(value = "Add a new Order Item to an existing Order, create a new Order if none exists")
-    @PostMapping(path = "/{orderId}")
-    public ResponseEntity<Order> addToOrder(@RequestBody @Valid PlaceOrderDTO placeOrderDTO, @PathVariable("orderId") Integer orderId) {
-        Order order = orderService.addOrderItemToOrder(placeOrderDTO, orderId);
+    @PostMapping(path = "/{customerName}")
+    public ResponseEntity<Order> addToOrder(@RequestBody @Valid OrderDTO placeOrderDTO, @PathVariable("customerName") String customerName) {
+        Order order = orderService.addOrder(placeOrderDTO, customerName);
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
     
-    @ApiOperation(value = "Update an existing Order Item in an Order")
+    @ApiOperation(value = "Update an existing Order's status given the Order Id")
     @PutMapping(path = "/{orderId}")
-    public ResponseEntity<String> updateOrder(@RequestBody @Valid UpdateOrderItemDTO updateOrderItemDTO, @PathVariable("orderId") Integer orderId) {
-        orderService.updateOrderItemInOrder(updateOrderItemDTO, orderId);
-        return new ResponseEntity<>("Item updated", HttpStatus.CREATED);
+    public ResponseEntity<Order> updateOrder(@RequestBody @Valid UpdateOrderDTO updateOrderDTO, @PathVariable("orderId") Integer orderId) {
+        Order order = orderService.updateOrder(updateOrderDTO, orderId);
+        return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Delete an Order given its Id")
