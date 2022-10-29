@@ -3,11 +3,13 @@ package me.plantngo.backend.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -102,6 +104,78 @@ public class ShopServiceTest {
     public void testGetCategory_CategoryExists_ReturnCategory() {
 
         // Arrange
-        
+        Optional<Category> optionalCategory = Optional.of(category);
+        when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(optionalCategory);
+
+        // Act
+        Category responseCategory = shopService.getCategory(merchant, category.getName());
+
+        // Assert
+        assertEquals(category, responseCategory);
+        verify(categoryRepository, times(1)).findByNameAndMerchant(category.getName(), merchant);
+    }
+
+    @Test
+    public void testGetCategory_CategoryNotExist_ThrowNotExistException() {
+
+        // Arrange
+        when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(Optional.empty());
+        String exceptionMsg = "";
+
+        // Act
+        try {
+            Category responseCategory = shopService.getCategory(merchant, category.getName());
+        } catch (Exception e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Category doesn't exist!", exceptionMsg);
+        verify(categoryRepository, times(1)).findByNameAndMerchant(category.getName(), merchant);
+    }
+
+    @Test
+    public void testDeleteCategory_CategoryExists_Success() {
+
+        // Arrange
+        when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(Optional.of(category));
+        doNothing().when(categoryRepository).delete(any(Category.class));
+        String exceptionMsg = "";
+
+        // Act
+        try {
+            shopService.deleteCategory(merchant, category.getName());
+        } catch (Exception e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("", exceptionMsg);
+        verify(categoryRepository, times(2)).findByNameAndMerchant(category.getName(), merchant);
+        verify(categoryRepository, times(1)).delete(category);
+    }
+
+    @Test
+    public void testDeleteCategory_CategoryNotExist_ThrowNotExistException() {
+
+        // Arrange
+        when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(Optional.empty());
+        String exceptionMsg = "";
+
+        // Act
+        try {
+            shopService.deleteCategory(merchant, category.getName());
+        } catch (Exception e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Category doesn't exist!", exceptionMsg);
+        verify(categoryRepository, times(1)).findByNameAndMerchant(category.getName(), merchant);
+
     }
 }

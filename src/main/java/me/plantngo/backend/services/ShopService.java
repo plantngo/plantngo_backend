@@ -104,7 +104,7 @@ public class ShopService {
     public Category getCategory(Merchant merchant, String categoryName) {
         Optional<Category> tempCategory = categoryRepository.findByNameAndMerchant(categoryName, merchant);
         if (tempCategory.isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException("Category");
         }
         return tempCategory.get();
     }
@@ -137,7 +137,7 @@ public class ShopService {
     public void deleteCategory(Merchant merchant, String categoryName) {
         // Check to see if same category under merchant already exists
         if (categoryRepository.findByNameAndMerchant(categoryName, merchant).isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException("Category");
         }
 
         Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
