@@ -29,8 +29,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
-
 @RestController()
 @RequestMapping(path = "api/v1/order")
 @Api(value = "Order Controller", description = "Customer ordering API")
@@ -55,17 +53,43 @@ public class OrderController {
     public List<Order> getOrdersByCustomer(@PathVariable("customerName") String name) {
         return orderService.getOrdersByCustomerName(name);
     }
-    
+
+    @ApiOperation(value = "Get all Orders placed by a Merchant given their Username")
+    @GetMapping(path = "merchant/{merchantName}")
+    public List<Order> getOrdersByMerchant(@PathVariable("merchantName") String name) {
+        return orderService.getOrdersByMerchantName(name);
+    }
+
+    @ApiOperation(value = "Get all Pending Orders placed by a Merchant given their Username")
+    @GetMapping(path = "merchant/{merchantName}/pending")
+    public List<Order> getPendingOrdersByMerchant(@PathVariable("merchantName") String name) {
+        return orderService.getPendingOrdersByMerchantName(name);
+    }
+
+    @ApiOperation(value = "Get all Fulfilled Orders placed by a Merchant given their Username")
+    @GetMapping(path = "merchant/{merchantName}/fulfilled")
+    public List<Order> getFulfilledOrdersByMerchant(@PathVariable("merchantName") String name) {
+        return orderService.getFulfilledOrdersByMerchantName(name);
+    }
+
+    @ApiOperation(value = "Get all Cancelled Orders placed by a Merchant given their Username")
+    @GetMapping(path = "merchant/{merchantName}/cancelled")
+    public List<Order> getCancelledOrdersByMerchant(@PathVariable("merchantName") String name) {
+        return orderService.getCancelledOrdersByMerchantName(name);
+    }
+
     @ApiOperation(value = "Add a new Order Item to an existing Order, create a new Order if none exists")
     @PostMapping(path = "/{customerName}")
-    public ResponseEntity<Order> addToOrder(@RequestBody @Valid OrderDTO placeOrderDTO, @PathVariable("customerName") String customerName) {
+    public ResponseEntity<Order> addToOrder(@RequestBody @Valid OrderDTO placeOrderDTO,
+            @PathVariable("customerName") String customerName) {
         Order order = orderService.addOrder(placeOrderDTO, customerName);
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
-    
+
     @ApiOperation(value = "Update an existing Order's status given the Order Id")
     @PutMapping(path = "/{orderId}")
-    public ResponseEntity<Order> updateOrder(@RequestBody @Valid UpdateOrderDTO updateOrderDTO, @PathVariable("orderId") Integer orderId) {
+    public ResponseEntity<Order> updateOrder(@RequestBody @Valid UpdateOrderDTO updateOrderDTO,
+            @PathVariable("orderId") Integer orderId) {
         Order order = orderService.updateOrder(updateOrderDTO, orderId);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
@@ -79,7 +103,8 @@ public class OrderController {
 
     @ApiOperation(value = "Delete an OrderItem in an existing Order given its Id")
     @DeleteMapping(path = "/{orderId}/{productId}")
-    public ResponseEntity<String> deleteOrderItemInOrder(@PathVariable("orderId") Integer orderId, @PathVariable("productId") Integer productId) {
+    public ResponseEntity<String> deleteOrderItemInOrder(@PathVariable("orderId") Integer orderId,
+            @PathVariable("productId") Integer productId) {
         orderService.deleteOrderItem(orderId, productId);
         return new ResponseEntity<>("Order Item deleted", HttpStatus.OK);
     }

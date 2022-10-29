@@ -21,13 +21,14 @@ import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Order;
 import me.plantngo.backend.models.OrderItem;
+import me.plantngo.backend.models.OrderStatus;
 import me.plantngo.backend.models.Product;
 import me.plantngo.backend.repositories.OrderRepository;
 import me.plantngo.backend.repositories.ProductRepository;
 
 @Service
 public class OrderService {
-    
+
     private OrderRepository orderRepository;
 
     private CustomerService customerService;
@@ -37,20 +38,38 @@ public class OrderService {
     private MerchantService merchantService;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, CustomerService customerService, ProductRepository productRepository, MerchantService merchantService) {
+    public OrderService(OrderRepository orderRepository, CustomerService customerService,
+            ProductRepository productRepository, MerchantService merchantService) {
         this.orderRepository = orderRepository;
         this.customerService = customerService;
         this.productRepository = productRepository;
         this.merchantService = merchantService;
     }
 
-    public List<Order> getOrdersByCustomerName(String name) {
-        Customer customer = customerService.getCustomerByUsername(name);
-        return orderRepository.findAllByCustomer(customer);
-    }
-
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
+    }
+
+    public List<Order> getOrdersByCustomerName(String name) {
+        return orderRepository.findAllByCustomerUsername(name);
+    }
+
+    public List<Order> getOrdersByMerchantName(String name) {
+        return orderRepository.findAllByMerchantUsername(name);
+    }
+
+    public List<Order> getPendingOrdersByMerchantName(String name) {
+        return orderRepository.findAllByMerchantUsernameAndOrderStatus(name, OrderStatus.PENDING);
+    }
+
+    public List<Order> getFulfilledOrdersByMerchantName(String name) {
+
+        return orderRepository.findAllByMerchantUsernameAndOrderStatus(name, OrderStatus.FULFILLED);
+    }
+
+    public List<Order> getCancelledOrdersByMerchantName(String name) {
+
+        return orderRepository.findAllByMerchantUsernameAndOrderStatus(name, OrderStatus.CANCELLED);
     }
 
     public Order addOrder(OrderDTO placeOrderDTO, String customerName) {
@@ -69,7 +88,7 @@ public class OrderService {
             OrderItem orderItem = this.orderItemMapToEntity(orderItemDTO, order);
             orderItems.add(orderItem);
         }
-        
+
         order.setOrderItems(orderItems);
         order.setTotalPrice(this.getTotalPrice(orderItems));
 
@@ -154,36 +173,39 @@ public class OrderService {
         return totalPrice;
     }
 
-    // private OrderItem getOrderItemFromDTO(PlaceOrderDTO placeOrderDTO, Order order) {
+    // private OrderItem getOrderItemFromDTO(PlaceOrderDTO placeOrderDTO, Order
+    // order) {
 
-    //     // Check if product exists
-    //     Optional<Product> tempProduct = productRepository.findById(placeOrderDTO.getProductId());
-    //     if (tempProduct.isEmpty()) {
-    //         throw new NotExistException("Product");
-    //     }
-    //     Product product = tempProduct.get();
+    // // Check if product exists
+    // Optional<Product> tempProduct =
+    // productRepository.findById(placeOrderDTO.getProductId());
+    // if (tempProduct.isEmpty()) {
+    // throw new NotExistException("Product");
+    // }
+    // Product product = tempProduct.get();
 
-    //     OrderItem orderItem = new OrderItem();
+    // OrderItem orderItem = new OrderItem();
 
-    //     orderItem.setProduct(product);
-    //     orderItem.setOrder(order);
-    //     orderItem.setQuantity(placeOrderDTO.getQuantity());
-    //     orderItem.setPrice(product.getPrice() * placeOrderDTO.getQuantity());
-    //     orderItem.setProductId(product.getId());
+    // orderItem.setProduct(product);
+    // orderItem.setOrder(order);
+    // orderItem.setQuantity(placeOrderDTO.getQuantity());
+    // orderItem.setPrice(product.getPrice() * placeOrderDTO.getQuantity());
+    // orderItem.setProductId(product.getId());
 
-    //     return orderItem;
+    // return orderItem;
     // }
 
-    // private Order getOrderFromDTO(PlaceOrderDTO placeOrderDTO, Customer customer, Merchant merchant, Integer orderId) {
-    //     Optional<Order> tempOrder = orderRepository.findById(orderId);
-    //     Order order = null;
-    //     if (tempOrder.isEmpty()) {
-    //         order = createNewOrderFromDTO(placeOrderDTO, customer, merchant);
-    //     } else {
-    //         order = tempOrder.get();
-    //     }
+    // private Order getOrderFromDTO(PlaceOrderDTO placeOrderDTO, Customer customer,
+    // Merchant merchant, Integer orderId) {
+    // Optional<Order> tempOrder = orderRepository.findById(orderId);
+    // Order order = null;
+    // if (tempOrder.isEmpty()) {
+    // order = createNewOrderFromDTO(placeOrderDTO, customer, merchant);
+    // } else {
+    // order = tempOrder.get();
+    // }
 
-    //     return order;
+    // return order;
     // }
 
     private Order orderMapToEntity(OrderDTO placeOrderDTO, Customer customer, Merchant merchant) {
@@ -198,11 +220,11 @@ public class OrderService {
     }
 
     private OrderItem orderItemMapToEntity(OrderItemDTO orderItemDTO, Order order) {
-        
+
         // Check if product exists
         Product product = productRepository.findById(orderItemDTO.getProductId())
-                            .orElseThrow(() -> new NotExistException("Product"));
-        
+                .orElseThrow(() -> new NotExistException("Product"));
+
         OrderItem orderItem = new OrderItem();
 
         orderItem.setProduct(product);
@@ -214,7 +236,4 @@ public class OrderService {
         return orderItem;
     }
 
-    public List<Order> getOrdersByMerchantName(String name) {
-        return null;
-    }
 }
