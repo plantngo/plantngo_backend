@@ -213,4 +213,8 @@ public class OrderService {
 
         return orderItem;
     }
+
+    public List<Order> getOrdersByMerchantName(String name) {
+        return null;
+    }
 }

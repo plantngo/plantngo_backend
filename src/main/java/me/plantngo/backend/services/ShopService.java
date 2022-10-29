@@ -27,7 +27,6 @@ public class ShopService {
     private ProductRepository productRepository;
     private MerchantRepository merchantRepository;
     private CategoryRepository categoryRepository;
-
     private VoucherRepository voucherRepository;
 
     @Autowired
@@ -94,7 +93,7 @@ public class ShopService {
 
         // Check to see if same category under merchant already exists
         if (categoryRepository.existsByNameAndMerchant(category.getName(), merchant)) {
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException("Category");
         }
 
         categoryRepository.save(category);

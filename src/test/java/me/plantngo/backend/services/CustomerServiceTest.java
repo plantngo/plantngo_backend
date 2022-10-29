@@ -41,7 +41,7 @@ public class CustomerServiceTest {
         Customer cust3 = new Customer();
         cust3.setUsername("Tom Cruise");
         Customer cust4 = new Customer();
-        cust4.setUsername("Arnold Schwarzenegger");;
+        cust4.setUsername("Arnold Schwarzenegger");
         List<Customer> customerList = List.of(cust1, cust2, cust3, cust4);
 
         when(customerRepository.findAll()).thenReturn(customerList);
