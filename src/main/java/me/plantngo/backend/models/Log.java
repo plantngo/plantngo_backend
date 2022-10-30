@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "quest")
+@Table(name = "log")
 public class Log {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

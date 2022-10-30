@@ -53,7 +53,9 @@ public class Quest {
     @NotNull
     private Boolean isEnded;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "")
-    private Set<Customer> customersThatHaveCompleted;
+    //TODO: relation with customer
+
+//    @JsonIgnore
+//    @ManyToMany(mappedBy = "")
+//    private Set<Customer> customersThatHaveCompleted;
 }
