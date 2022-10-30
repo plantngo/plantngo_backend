@@ -119,14 +119,14 @@ public class ShopService {
 
         // If changing category name, check to see if another category with that name already exists
         if (!updateCategoryDTO.getName().equals(categoryName) && categoryRepository.existsByName(updateCategoryDTO.getName())) {
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException("Category");
         }
 
         // Updating category
         Category category = tempCategory.get();
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setSkipNullEnabled(true);
-        mapper.map(updateCategoryDTO, category);;
+        mapper.map(updateCategoryDTO, category);
 
         // In case we need to call it before method ends
         categoryRepository.saveAndFlush(category);

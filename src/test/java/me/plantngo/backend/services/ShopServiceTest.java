@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import me.plantngo.backend.DTO.CategoryDTO;
+import me.plantngo.backend.DTO.UpdateCategoryDTO;
+import me.plantngo.backend.exceptions.AlreadyExistsException;
+import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.models.Category;
 import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.repositories.CategoryRepository;
@@ -50,12 +54,21 @@ public class ShopServiceTest {
         merchant = new Merchant();
         merchant.setUsername("Daniel");
         merchant.setAddress("42 Spring Crescent");
-        merchant.setCategories(List.of(new Category(1, "Dessert", null, merchant)));
 
         category = new Category();
         category.setName("Food");
         category.setMerchant(merchant);
 
+        List<Category> categoryList = new ArrayList<>();
+        categoryList.add(category);
+        
+        Category category2 = new Category();
+        category2.setName("Dessert");
+        category2.setMerchant(merchant);
+
+        categoryList.add(category2);
+
+        merchant.setCategories(categoryList);
     }
 
     @Test
@@ -127,7 +140,7 @@ public class ShopServiceTest {
         // Act
         try {
             Category responseCategory = shopService.getCategory(merchant, category.getName());
-        } catch (Exception e) {
+        } catch (NotExistException e) {
             exceptionMsg = e.getMessage();
         }
 
@@ -169,7 +182,7 @@ public class ShopServiceTest {
         // Act
         try {
             shopService.deleteCategory(merchant, category.getName());
-        } catch (Exception e) {
+        } catch (NotExistException e) {
             exceptionMsg = e.getMessage();
         }
 
@@ -177,5 +190,54 @@ public class ShopServiceTest {
         assertEquals("Category doesn't exist!", exceptionMsg);
         verify(categoryRepository, times(1)).findByNameAndMerchant(category.getName(), merchant);
 
+    }
+
+    @Test
+    public void testUpdateCategory_CategoryNameAlreadyExists_ThrowAlreadyExistException() {
+
+        // Arrange
+        String exceptionMsg = "";
+        String categoryName = "Food";
+        when(categoryRepository.existsByName(any(String.class)))
+            .thenReturn(true);
+        when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(Optional.of(category));
+        UpdateCategoryDTO updateCategoryDTO = new UpdateCategoryDTO("Dessert");
+
+        // Act
+        try {
+            shopService.updateCategory(merchant, categoryName, updateCategoryDTO);
+        } catch (Exception e) {
+            exceptionMsg = "Category already exists";
+        }
+
+        // Assert
+        assertEquals("Category already exists", exceptionMsg);
+        verify(categoryRepository, times(1)).existsByName(updateCategoryDTO.getName());
+        verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
+    }
+
+    @Test
+    public void testUpdateCategory_CategoryNameValid_Success() {
+
+        // Arrange
+        String categoryName = "Food";
+        when(categoryRepository.existsByName(any(String.class)))
+            .thenReturn(false);
+        when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(Optional.of(category));
+        UpdateCategoryDTO updateCategoryDTO = new UpdateCategoryDTO("Drinks");
+        Category expectedCategory = new Category();
+        expectedCategory.setMerchant(merchant);
+        expectedCategory.setName("Drinks");
+
+        // Act
+        Category responseCategory = shopService.updateCategory(merchant, categoryName, updateCategoryDTO);
+
+        // Assert
+        assertEquals(expectedCategory, responseCategory);
+        verify(categoryRepository, times(1)).existsByName(updateCategoryDTO.getName());
+        verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
+        verify(categoryRepository, times(1)).saveAndFlush(responseCategory);
     }
 }
