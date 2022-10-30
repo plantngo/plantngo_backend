@@ -2,6 +2,7 @@ package me.plantngo.backend.controllers;
 
 import javax.validation.Valid;
 
+import me.plantngo.backend.services.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +29,12 @@ public class AuthController {
 
     private final AuthService authService;
 
-    private final AuthenticationManager authenticationManager;
+    private final LogService logService;
 
     @Autowired
-    public AuthController(AuthService authService, AuthenticationManager authenticationManager) {
+    public AuthController(AuthService authService, LogService logService) {
         this.authService = authService;
-        this.authenticationManager = authenticationManager;
+        this.logService = logService;
     }
 
     @ApiOperation(value = "Register a Customer or Merchant account")
@@ -54,6 +55,7 @@ public class AuthController {
     })
     @PostMapping(path = "/login")
     public ResponseEntity<String> authenticateUser(@Valid @RequestBody LoginDTO loginDTO) {
+        logService.addLog(loginDTO.getUsername(), "login");
         return authService.authenticateUser(loginDTO);
     }
 
