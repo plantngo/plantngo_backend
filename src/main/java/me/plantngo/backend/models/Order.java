@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -36,6 +37,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @JsonSerialize(using = DecimalJsonSerializer.class)
     private Double totalPrice;
 
     private Boolean isDineIn;
