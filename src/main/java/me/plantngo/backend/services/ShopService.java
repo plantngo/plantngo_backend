@@ -27,7 +27,6 @@ public class ShopService {
     private ProductRepository productRepository;
     private MerchantRepository merchantRepository;
     private CategoryRepository categoryRepository;
-
     private VoucherRepository voucherRepository;
 
     @Autowired
@@ -94,7 +93,7 @@ public class ShopService {
 
         // Check to see if same category under merchant already exists
         if (categoryRepository.existsByNameAndMerchant(category.getName(), merchant)) {
-            throw new AlreadyExistsException();
+            throw new AlreadyExistsException("Category");
         }
 
         categoryRepository.save(category);
@@ -105,7 +104,7 @@ public class ShopService {
     public Category getCategory(Merchant merchant, String categoryName) {
         Optional<Category> tempCategory = categoryRepository.findByNameAndMerchant(categoryName, merchant);
         if (tempCategory.isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException("Category");
         }
         return tempCategory.get();
     }
@@ -138,7 +137,7 @@ public class ShopService {
     public void deleteCategory(Merchant merchant, String categoryName) {
         // Check to see if same category under merchant already exists
         if (categoryRepository.findByNameAndMerchant(categoryName, merchant).isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException("Category");
         }
 
         Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
@@ -209,9 +208,11 @@ public class ShopService {
     }
 
     public void deleteProduct(Product product) {
-        productRepository.delete(product);
+        Category category = product.getCategory();
+        category.getProducts().remove(product);
+        productRepository.deleteById(product.getId());
     }
-
+    
     // public List<Product> getAllProductsByMerchant(Merchant merchant) {
     //     return productRepository.findByMerchant(merchant);
     // }
@@ -243,4 +244,5 @@ public class ShopService {
 
         return product;
     }
+
 }
