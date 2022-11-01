@@ -32,6 +32,14 @@ public class QuestController {
     @GetMapping(path="/{id}")
     public Quest getQuest(@PathVariable Integer id) {return questService.getQuest(id);}
 
+    @ApiOperation(value = "Get active quests")
+    @GetMapping(path="/active")
+    public List<Quest> getActiveQuests() {return questService.getActiveQuests();}
+
+    @ApiOperation(value = "Get inactive quests")
+    @GetMapping(path="/inactive")
+    public List<Quest> getInactiveQuests() {return questService.getInactiveQuests();}
+
     @ApiOperation(value = "Create a new quest")
     @PostMapping(path = "")
     public ResponseEntity<String> addQuest(@Valid @RequestBody QuestDTO questDTO) {return questService.addQuest(questDTO);}
@@ -39,4 +47,13 @@ public class QuestController {
     @ApiOperation(value = "Delete a quest by id")
     @DeleteMapping (path="/{id}")
     public ResponseEntity<String> deleteQuest(@PathVariable Integer id) {return questService.deleteQuest(id);}
+
+    @ApiOperation("Refresh a single quest")
+    @PostMapping("/{id}/refresh")
+    public ResponseEntity<String> refreshQuest(@PathVariable Integer id) {return questService.refreshQuest(id);}
+
+    @ApiOperation("Refresh all quests")
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refreshAll() {return questService.refreshAll();}
+
 }

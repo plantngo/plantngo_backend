@@ -50,9 +50,6 @@ public class Quest {
     //@NotNull
     private LocalDateTime endDateTime;
 
-    @NotNull
-    private Boolean isActive = true;
-
     @JsonIgnore
     @ManyToMany(mappedBy = "completedQuests")
     private Set<Customer> customersThatHaveCompleted;

@@ -30,7 +30,7 @@ public class Log {
 
     /*
     type of action needed to be done
-    "order", "purchase voucher", "login" (on separate days)
+    "order", "purchase-voucher", "login" (on separate days)
      */
     @NotNull
     private String type;

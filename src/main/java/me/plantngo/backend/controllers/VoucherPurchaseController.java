@@ -89,7 +89,7 @@ public class VoucherPurchaseController {
         Customer customer = customerService.getCustomerByUsername(customerUsername);
         Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
         voucherPurchaseService.addOwnedVoucher(customer, voucher);
-        logService.addLog(customerUsername, "purchase-voucher");
+        //logService.addLog(customerUsername, "purchase-voucher");
         return new ResponseEntity<>("Successfully added.", HttpStatus.OK);
 
     }
@@ -100,6 +100,7 @@ public class VoucherPurchaseController {
 
         Customer customer = customerService.getCustomerByUsername(customerUsername);
         voucherPurchaseService.purchaseVouchers(customer);
+        logService.addLog(customerUsername, "purchase-voucher");
         return new ResponseEntity<>("Purchase successful!", HttpStatus.OK);
 
     }
