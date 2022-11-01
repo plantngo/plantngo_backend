@@ -25,12 +25,12 @@ public class Quest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
+    //@NotNull
     private LocalDateTime postedDateTime;
 
     /*
     type of action needed to be done
-    "order", "purchase voucher", "login" (on separate days)
+    "order", "purchase-voucher", "login" (on separate days)
      */
     @NotBlank
     private String type;
@@ -47,15 +47,13 @@ public class Quest {
     @NotNull
     private Integer points;
 
-    @NotNull
+    //@NotNull
     private LocalDateTime endDateTime;
 
     @NotNull
-    private Boolean isEnded;
+    private Boolean isActive = true;
 
-    //TODO: relation with customer
-
-//    @JsonIgnore
-//    @ManyToMany(mappedBy = "")
-//    private Set<Customer> customersThatHaveCompleted;
+    @JsonIgnore
+    @ManyToMany(mappedBy = "completedQuests")
+    private Set<Customer> customersThatHaveCompleted;
 }
