@@ -245,4 +245,14 @@ public class OrderService {
         return orderItem;
     }
 
+    public List<Order> getOrdersByCustomerNameAndMerchantName(String customerName, String merchantName) {
+        return orderRepository.findAllByCustomerUsernameAndMerchantUsername(customerName, merchantName);
+    }
+
+    public Order getOrdersByCustomerNameAndMerchantNameAndOrderStatus(String customerName, String merchantName,
+            OrderStatus orderStatus) {
+        return orderRepository.findFirstByCustomerUsernameAndMerchantUsernameAndOrderStatus(customerName, merchantName,
+                orderStatus);
+    }
+
 }

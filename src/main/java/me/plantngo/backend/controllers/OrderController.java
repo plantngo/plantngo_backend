@@ -22,6 +22,7 @@ import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
 import me.plantngo.backend.models.Order;
 import me.plantngo.backend.models.OrderItem;
+import me.plantngo.backend.models.OrderStatus;
 import me.plantngo.backend.services.OrderService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +53,21 @@ public class OrderController {
     @GetMapping(path = "/customer/{customerName}")
     public List<Order> getOrdersByCustomer(@PathVariable("customerName") String name) {
         return orderService.getOrdersByCustomerName(name);
+    }
+
+    @ApiOperation(value = "Get all Orders placed by a Customer at a Merchant")
+    @GetMapping(path = "/customer/{customerName}/merchant/{merchantName}")
+    public List<Order> getOrdersByCustomerAndMerchant(@PathVariable("customerName") String customerName,
+            @PathVariable("merchantName") String merchantName) {
+        return orderService.getOrdersByCustomerNameAndMerchantName(customerName, merchantName);
+    }
+
+    @ApiOperation(value = "Get all Orders placed by a Customer at a Merchant that has a Order Status")
+    @GetMapping(path = "/customer/{customerName}/merchant/{merchantName}/orderStatus/{orderStatus}")
+    public Order getOrderByCustomerAndMerchantAndOrderStatus(@PathVariable("customerName") String customerName,
+            @PathVariable("merchantName") String merchantName, @PathVariable("orderStatus") OrderStatus orderStatus) {
+        return orderService.getOrdersByCustomerNameAndMerchantNameAndOrderStatus(customerName, merchantName,
+                orderStatus);
     }
 
     @ApiOperation(value = "Get all Orders placed by a Merchant given their Username")
