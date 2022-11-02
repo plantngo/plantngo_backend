@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import me.plantngo.backend.services.LogService;
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @Autowired
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, LogService logService) {
         this.orderService = orderService;
     }
 

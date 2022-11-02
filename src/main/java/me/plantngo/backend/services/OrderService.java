@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import me.plantngo.backend.models.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,6 @@ import me.plantngo.backend.DTO.OrderDTO;
 import me.plantngo.backend.DTO.UpdateOrderItemDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
-import me.plantngo.backend.models.Customer;
-import me.plantngo.backend.models.Merchant;
-import me.plantngo.backend.models.Order;
-import me.plantngo.backend.models.OrderItem;
-import me.plantngo.backend.models.OrderStatus;
-import me.plantngo.backend.models.Product;
 import me.plantngo.backend.repositories.OrderRepository;
 import me.plantngo.backend.repositories.ProductRepository;
 
@@ -39,13 +34,17 @@ public class OrderService {
 
     private MerchantService merchantService;
 
+    private LogService logService;
+
     @Autowired
     public OrderService(OrderRepository orderRepository, CustomerService customerService,
-            ProductRepository productRepository, MerchantService merchantService) {
+                        ProductRepository productRepository, MerchantService merchantService,
+                        LogService logService) {
         this.orderRepository = orderRepository;
         this.customerService = customerService;
         this.productRepository = productRepository;
         this.merchantService = merchantService;
+        this.logService = logService;
     }
 
     public List<Order> getAllOrders() {
@@ -106,6 +105,11 @@ public class OrderService {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setSkipNullEnabled(true);
         mapper.map(updateOrderDTO, order);
+
+        /*
+        to log a fulfilled order
+         */
+        if(order.getOrderStatus() == OrderStatus.FULFILLED) logService.addLog(order.getCustomer().getUsername(), "order");
 
         orderRepository.save(order);
 
