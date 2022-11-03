@@ -1,11 +1,17 @@
 package me.plantngo.backend.controllers;
 
+import java.net.MalformedURLException;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import me.plantngo.backend.DTO.*;
 import me.plantngo.backend.models.*;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +20,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,17 +47,18 @@ public class ShopController {
     public ShopController(ShopService shopService, MerchantService merchantService) {
         this.shopService = shopService;
         this.merchantService = merchantService;
+
     }
 
     @ApiOperation(value = "Get a Voucher given its Id")
-    @GetMapping(path="/{merchantName}/vouchers/{id}")
+    @GetMapping(path = "/{merchantName}/vouchers/{id}")
     public Voucher getVoucher(@PathVariable("merchantName") String merchantName, @PathVariable("id") Integer id) {
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
         return shopService.getVoucher(merchant, id);
     }
 
     @ApiOperation(value = "Get all Vouchers created by a Merchant")
-    @GetMapping(path="/{merchantName}/vouchers")
+    @GetMapping(path = "/{merchantName}/vouchers")
     public List<Voucher> getAllVouchersFromMerchantName(@PathVariable("merchantName") String merchantName) {
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
         return shopService.getAllVouchersFromMerchant(merchant);
@@ -94,7 +103,6 @@ public class ShopController {
     public ResponseEntity<String> addCategory(@PathVariable("merchantName") String merchantName,
             @Valid @RequestBody CategoryDTO categoryDTO) {
 
-
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
         shopService.addCategory(merchant, categoryDTO);
         return new ResponseEntity<>("Category Added!", HttpStatus.CREATED);
@@ -118,7 +126,6 @@ public class ShopController {
     public ResponseEntity<String> deleteCategory(@PathVariable("merchantName") String merchantName,
             @PathVariable("categoryName") String categoryName) {
 
-
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
         shopService.deleteCategory(merchant, categoryName);
         return new ResponseEntity<>("Category deleted!", HttpStatus.OK);
@@ -129,16 +136,18 @@ public class ShopController {
     @PostMapping(path = "/{merchantName}/{categoryName}")
     public ResponseEntity<String> addProduct(@PathVariable("merchantName") String merchantName,
             @PathVariable("categoryName") String categoryName,
-            @Valid @RequestBody ProductDTO productDTO) {
-
+            @Valid @RequestPart("product") ProductDTO productDTO, @RequestPart("file") MultipartFile file)
+            throws MalformedURLException, JsonMappingException, JsonProcessingException {
 
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
-        shopService.addProduct(merchant, categoryName, productDTO);
+        // ModelMapper mapper = new ModelMapper();
+        // ProductDTO productDTO = mapper.map(product, ProductDTO.class);
+        shopService.addProduct(merchant, categoryName, productDTO, file);
+
         return new ResponseEntity<>("Product Added!", HttpStatus.CREATED);
 
-
     }
-    
+
     @ApiOperation(value = "Update an existing Product by a Merchant")
     @PutMapping(path = "/{merchantName}/{categoryName}/{productName}")
     public ResponseEntity<String> updateProduct(@PathVariable("merchantName") String merchantName,
