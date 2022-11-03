@@ -73,4 +73,8 @@ public class Customer {
         @Column(name = "resetPasswordToken")
         private String resetPasswordToken;
 
+        @ManyToMany
+        @JoinTable(name = "quest_completion", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "quest_id"))
+        private Set<Quest> completedQuests;
+
 }

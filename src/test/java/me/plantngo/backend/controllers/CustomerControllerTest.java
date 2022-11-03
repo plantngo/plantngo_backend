@@ -57,7 +57,7 @@ public class CustomerControllerTest {
         URI uri = new URI(rootUrl + port + apiUrl);
         Customer customer = new Customer(1, "John Doe", "john.doe@example.com", "Password12345!",
                 new ArrayList<Preference>(), 1000, new HashSet<Voucher>(), new HashSet<Voucher>(),
-                new ArrayList<Order>(), null);
+                new ArrayList<Order>(), null, null);
         customerRepository.save(customer);
 
         ResponseEntity<Customer[]> result = restTemplate.getForEntity(uri, Customer[].class);

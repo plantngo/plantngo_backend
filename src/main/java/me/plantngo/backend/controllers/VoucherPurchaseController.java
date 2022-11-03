@@ -3,10 +3,7 @@ package me.plantngo.backend.controllers;
 import me.plantngo.backend.DTO.VoucherPurchaseDTO;
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.models.Voucher;
-import me.plantngo.backend.services.CustomerService;
-import me.plantngo.backend.services.MerchantService;
-import me.plantngo.backend.services.ShopService;
-import me.plantngo.backend.services.VoucherPurchaseService;
+import me.plantngo.backend.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +26,17 @@ public class VoucherPurchaseController {
     private final ShopService shopService;
     private final MerchantService merchantService;
 
+    private final LogService logService;
+
     @Autowired
-    public VoucherPurchaseController(VoucherPurchaseService voucherPurchaseService, CustomerService customerService, ShopService shopService, MerchantService merchantService) {
+    public VoucherPurchaseController(VoucherPurchaseService voucherPurchaseService,
+                                     CustomerService customerService, ShopService shopService,
+                                     MerchantService merchantService, LogService logService) {
         this.voucherPurchaseService = voucherPurchaseService;
         this.customerService = customerService;
         this.shopService = shopService;
         this.merchantService = merchantService;
+        this.logService = logService;
     }
 
     @ApiOperation(value = "Get all existing Vouchers")
@@ -87,6 +89,7 @@ public class VoucherPurchaseController {
         Customer customer = customerService.getCustomerByUsername(customerUsername);
         Voucher voucher = shopService.getVoucher(merchantService.getMerchantById(voucherPurchaseDTO.getMerchantId()), voucherPurchaseDTO.getVoucherId());
         voucherPurchaseService.addOwnedVoucher(customer, voucher);
+        //logService.addLog(customerUsername, "purchase-voucher");
         return new ResponseEntity<>("Successfully added.", HttpStatus.OK);
 
     }
@@ -97,6 +100,7 @@ public class VoucherPurchaseController {
 
         Customer customer = customerService.getCustomerByUsername(customerUsername);
         voucherPurchaseService.purchaseVouchers(customer);
+        logService.addLog(customerUsername, "purchase-voucher");
         return new ResponseEntity<>("Purchase successful!", HttpStatus.OK);
 
     }
