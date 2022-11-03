@@ -46,12 +46,25 @@ public class PromotionController {
         return promotionService.getAllPromotions();
     }
 
+    @ApiOperation(value = "Get all existing Promotions Sorted")
+    @GetMapping(path = "/allPromoSorted")
+    public List<Promotion> getAllPromotionsSorted() {
+        return promotionService.getAllPromotionsSorted();
+    }
+
+    @ApiOperation(value = "Adding clicks")
+    @PutMapping(path="/addClick/{promotionId}")
+    public ResponseEntity<String> getPromotionbyId (@PathVariable("promotionId") Integer id) {
+        promotionService.addClicksToPromotion(id);
+        return new ResponseEntity<>("Promotion clicked", HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Create a Promotion")
     @PostMapping(path = "/{merchantName}")
     public ResponseEntity<Promotion> addPromotion(@RequestBody @Valid PromotionDTO promotionDTO,
             @PathVariable("merchantName") String merchantName) {
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
-        Promotion promotion = promotionService.addPromotion(promotionDTO, merchant);
+        Promotion promotion = promotionService.addPromotion(promotionDTO, merchant);       
         return new ResponseEntity<>(promotion, HttpStatus.CREATED);
     }
 

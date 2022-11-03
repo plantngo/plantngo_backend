@@ -49,7 +49,7 @@ public class OrderController {
     }
 
     @ApiOperation(value = "Get all Orders placed by a Customer given their Username")
-    @GetMapping(path = "/{customerName}")
+    @GetMapping(path = "/customer/{customerName}")
     public List<Order> getOrdersByCustomer(@PathVariable("customerName") String name) {
         return orderService.getOrdersByCustomerName(name);
     }

@@ -101,14 +101,15 @@ public class VoucherPurchaseService {
             throw new InsufficientBalanceException();
         }
 
-        if(customer.getOwnedVouchers() == null) customer.setOwnedVouchers(new HashSet<Voucher>());
+        if(customer.getOwnedVouchers() == null)
+            customer.setOwnedVouchers(new HashSet<Voucher>());
 
         for (Voucher voucher: vouchersInCart){
             customer.getOwnedVouchers().add(voucher);
-            customer.getVouchersCart().remove(voucher);
             if(voucher.getCustomersThatOwn() == null) voucher.setCustomersThatOwn(new ArrayList<Customer>());
             voucher.getCustomersThatOwn().add(customer);
         }
+        customer.setVouchersCart(new HashSet<Voucher>());
 
 
         customer.setGreenPoints(customer.getGreenPoints() - totalCost);

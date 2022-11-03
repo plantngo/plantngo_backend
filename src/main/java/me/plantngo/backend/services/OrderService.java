@@ -1,5 +1,7 @@
 package me.plantngo.backend.services;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -171,6 +173,13 @@ public class OrderService {
             totalPrice += orderItem.getPrice();
         }
         return totalPrice;
+        // double result = Double.valueOf(totalPrice);
+        // result = Math.round(result * 100) / 100;
+
+        // DecimalFormat df = new DecimalFormat("#.##");
+        // df.setRoundingMode(RoundingMode.CEILING);
+
+        // return Double.valueOf(df.format(result));
     }
 
     // private OrderItem getOrderItemFromDTO(PlaceOrderDTO placeOrderDTO, Order
