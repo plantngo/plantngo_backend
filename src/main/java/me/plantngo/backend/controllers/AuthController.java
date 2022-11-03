@@ -18,6 +18,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import me.plantngo.backend.DTO.LoginDTO;
 import me.plantngo.backend.DTO.RegistrationDTO;
+import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.services.AuthService;
 
 @RestController
@@ -42,9 +43,11 @@ public class AuthController {
                     @ApiResponse(code = 400, message = "Input fields invalid or username already taken")
     })
     @PostMapping(path = "/register")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody RegistrationDTO registrationDTO) {
-        return authService.registerUser(registrationDTO);
+    public ResponseEntity<Object> registerUser(@Valid @RequestBody RegistrationDTO registrationDTO) {
 
+        Object responseObject = authService.registerUser(registrationDTO);
+        
+        return new ResponseEntity<>(responseObject, HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "Login with a Customer or Merchant account")

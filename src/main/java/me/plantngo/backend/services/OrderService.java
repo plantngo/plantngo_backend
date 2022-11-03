@@ -3,9 +3,11 @@ package me.plantngo.backend.services;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -84,7 +86,7 @@ public class OrderService {
         // Create Order
         Order order = this.orderMapToEntity(placeOrderDTO, customer, merchant);
 
-        List<OrderItem> orderItems = new ArrayList<>();
+        Set<OrderItem> orderItems = new HashSet<>();
 
         for (OrderItemDTO orderItemDTO : placeOrderDTO.getOrderItems()) {
             OrderItem orderItem = this.orderItemMapToEntity(orderItemDTO, order);
@@ -103,40 +105,26 @@ public class OrderService {
         // Check if order exists
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotExistException("Order"));
 
+        // Update Order
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setSkipNullEnabled(true);
         mapper.map(updateOrderDTO, order);
 
+        // Update OrderItems in order
+        Set<UpdateOrderItemDTO> updateOrderItemDTOs = updateOrderDTO.getUpdateOrderItemDTOs();
+        Set<OrderItem> orderItems = order.getOrderItems();
+
+        for (UpdateOrderItemDTO updateOrderItemDTO : updateOrderItemDTOs) {
+            OrderItemDTO orderItemDTO = mapper.map(updateOrderItemDTO, OrderItemDTO.class);
+            OrderItem orderItem = this.orderItemMapToEntity(orderItemDTO, order);
+            orderItems.add(orderItem);
+        }
+
+        order.setOrderItems(orderItems);
         orderRepository.save(order);
 
         return order;
     }
-
-    // public Order updateOrderItemInOrder(UpdateOrderItemDTO updateOrderItemDTO, Integer orderId) {
-    //     // Check if order exists
-    //     Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotExistException("Order"));
-    //     List<OrderItem> orderItems = order.getOrderItems();
-
-    //     for (OrderItem o : orderItems) {
-    //         if (o.getProductId().equals(updateOrderItemDTO.getProductId())) {
-
-    //             if (updateOrderItemDTO.getQuantity() != null) {
-    //                 o.setPrice(o.getPrice() / o.getQuantity() * updateOrderItemDTO.getQuantity());
-    //                 o.setQuantity(updateOrderItemDTO.getQuantity());
-    //             }
-
-    //             break;
-    //         }
-    //     }
-
-    //     // Save updated order
-    //     order.setOrderItems(orderItems);
-    //     order.setTotalPrice(this.getTotalPrice(orderItems));
-
-    //     orderRepository.save(order);
-
-    //     return order;
-    // }
 
     public void deleteOrder(Integer orderId) {
         if (!orderRepository.existsById(orderId)) {
@@ -151,7 +139,7 @@ public class OrderService {
         }
         Order order = orderRepository.findById(orderId).get();
 
-        List<OrderItem> orderItems = order.getOrderItems();
+        Set<OrderItem> orderItems = order.getOrderItems();
         Iterator<OrderItem> itr = orderItems.iterator();
 
         while (itr.hasNext()) {
@@ -167,7 +155,7 @@ public class OrderService {
         throw new NotExistException("Order Item");
     }
 
-    private Double getTotalPrice(List<OrderItem> orderItems) {
+    private Double getTotalPrice(Set<OrderItem> orderItems) {
         Double totalPrice = 0.0;
         for (OrderItem orderItem : orderItems) {
             totalPrice += orderItem.getPrice();

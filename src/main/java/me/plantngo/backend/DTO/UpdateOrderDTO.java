@@ -1,6 +1,7 @@
 package me.plantngo.backend.DTO;
 
 import java.util.List;
+import java.util.Set;
 
 import lombok.*;
 import me.plantngo.backend.models.OrderStatus;
@@ -14,5 +15,5 @@ public class UpdateOrderDTO {
 
     private OrderStatus orderStatus;
 
-    private List<UpdateOrderItemDTO> updateOrderItemDTOs;
+    private Set<UpdateOrderItemDTO> updateOrderItemDTOs;
 }

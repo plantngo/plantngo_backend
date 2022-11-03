@@ -1,6 +1,7 @@
 package me.plantngo.backend.models;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,7 +48,7 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<OrderItem> orderItems;
+    private Set<OrderItem> orderItems;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
