@@ -60,18 +60,19 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
+    @ToString.Exclude
     @JsonBackReference("product_category") // Prevents infinite loop by not serializing this when sending GET request
     // for merchants
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @ToString.Exclude
     @JsonIgnore
     private List<OrderItem> orderItem;
 
-
-
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<ProductIngredient> productIngredients;
 }

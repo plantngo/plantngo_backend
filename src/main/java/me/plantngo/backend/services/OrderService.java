@@ -112,31 +112,31 @@ public class OrderService {
         return order;
     }
 
-    public Order updateOrderItemInOrder(@Valid UpdateOrderItemDTO updateOrderItemDTO, Integer orderId) {
-        // Check if order exists
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotExistException("Order"));
-        List<OrderItem> orderItems = order.getOrderItems();
+    // public Order updateOrderItemInOrder(UpdateOrderItemDTO updateOrderItemDTO, Integer orderId) {
+    //     // Check if order exists
+    //     Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotExistException("Order"));
+    //     List<OrderItem> orderItems = order.getOrderItems();
 
-        for (OrderItem o : orderItems) {
-            if (o.getProductId().equals(updateOrderItemDTO.getProductId())) {
+    //     for (OrderItem o : orderItems) {
+    //         if (o.getProductId().equals(updateOrderItemDTO.getProductId())) {
 
-                if (updateOrderItemDTO.getQuantity() != null) {
-                    o.setPrice(o.getPrice() / o.getQuantity() * updateOrderItemDTO.getQuantity());
-                    o.setQuantity(updateOrderItemDTO.getQuantity());
-                }
+    //             if (updateOrderItemDTO.getQuantity() != null) {
+    //                 o.setPrice(o.getPrice() / o.getQuantity() * updateOrderItemDTO.getQuantity());
+    //                 o.setQuantity(updateOrderItemDTO.getQuantity());
+    //             }
 
-                break;
-            }
-        }
+    //             break;
+    //         }
+    //     }
 
-        // Save updated order
-        order.setOrderItems(orderItems);
-        order.setTotalPrice(this.getTotalPrice(orderItems));
+    //     // Save updated order
+    //     order.setOrderItems(orderItems);
+    //     order.setTotalPrice(this.getTotalPrice(orderItems));
 
-        orderRepository.save(order);
+    //     orderRepository.save(order);
 
-        return order;
-    }
+    //     return order;
+    // }
 
     public void deleteOrder(Integer orderId) {
         if (!orderRepository.existsById(orderId)) {

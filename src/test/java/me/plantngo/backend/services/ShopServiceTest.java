@@ -21,11 +21,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import me.plantngo.backend.DTO.CategoryDTO;
+import me.plantngo.backend.DTO.ProductDTO;
 import me.plantngo.backend.DTO.UpdateCategoryDTO;
+import me.plantngo.backend.DTO.UpdateProductDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.models.Category;
 import me.plantngo.backend.models.Merchant;
+import me.plantngo.backend.models.Product;
 import me.plantngo.backend.repositories.CategoryRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 import me.plantngo.backend.repositories.ProductRepository;
@@ -49,6 +52,8 @@ public class ShopServiceTest {
 
     private Category category;
 
+    private Product product;
+
     @BeforeEach
     public void initEach() {
         merchant = new Merchant();
@@ -57,38 +62,43 @@ public class ShopServiceTest {
 
         category = new Category();
         category.setName("Food");
-        category.setMerchant(merchant);
-
-        List<Category> categoryList = new ArrayList<>();
-        categoryList.add(category);
         
         Category category2 = new Category();
         category2.setName("Dessert");
+
+        product = new Product();
+        product.setName("Laksa");
+        product.setDescription("It's Laksa");
+        product.setPrice(6.1);
+        product.setCarbonEmission(0.0);
+        product.setCategory(category);
+
+        category.setMerchant(merchant);
         category2.setMerchant(merchant);
 
-        categoryList.add(category2);
-
-        merchant.setCategories(categoryList);
+        category.setProducts(List.of(product));
+        merchant.setCategories(List.of(category, category2));
     }
 
     @Test
     public void testAddCategory_NewCategory_ReturnCategory() {
         
+
         // Arrange
         CategoryDTO categoryDTO = new CategoryDTO("Food");
+        category.setProducts(null);
         when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
             .thenReturn(false);
         when(categoryRepository.save(any(Category.class)))
             .thenReturn(category);
 
         // Act
-        Category savedCategory = shopService.addCategory(merchant, categoryDTO);
+        Category responseCategory = shopService.addCategory(merchant, categoryDTO);
 
         // Assert
-        assertEquals(category, savedCategory);
+        assertEquals(category, responseCategory);
         verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryDTO.getName(), merchant);
         verify(categoryRepository, times(1)).save(category);
-
     }
 
     @Test
@@ -108,7 +118,7 @@ public class ShopServiceTest {
         }
 
         // Assert
-        assertEquals("Category already exists", exceptionMsg);
+        assertEquals("Category already exists!", exceptionMsg);
         verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryDTO.getName(), merchant);
 
     }
@@ -208,11 +218,11 @@ public class ShopServiceTest {
         try {
             shopService.updateCategory(merchant, categoryName, updateCategoryDTO);
         } catch (Exception e) {
-            exceptionMsg = "Category already exists";
+            exceptionMsg = e.getMessage();
         }
 
         // Assert
-        assertEquals("Category already exists", exceptionMsg);
+        assertEquals("Category already exists!", exceptionMsg);
         verify(categoryRepository, times(1)).existsByName(updateCategoryDTO.getName());
         verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
     }
@@ -227,17 +237,202 @@ public class ShopServiceTest {
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
             .thenReturn(Optional.of(category));
         UpdateCategoryDTO updateCategoryDTO = new UpdateCategoryDTO("Drinks");
-        Category expectedCategory = new Category();
-        expectedCategory.setMerchant(merchant);
-        expectedCategory.setName("Drinks");
 
         // Act
         Category responseCategory = shopService.updateCategory(merchant, categoryName, updateCategoryDTO);
 
         // Assert
-        assertEquals(expectedCategory, responseCategory);
+        assertEquals(category, responseCategory);
         verify(categoryRepository, times(1)).existsByName(updateCategoryDTO.getName());
         verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
-        verify(categoryRepository, times(1)).saveAndFlush(responseCategory);
+        verify(categoryRepository, times(1)).saveAndFlush(category);
+    }
+
+    @Test
+    public void testGetProduct_ProductNotExist_ThrowNotExistException() {
+
+        // Arrange
+        String exceptionMsg = "";
+        String categoryName = "Food";
+        String productName = "Sprite";
+        when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(Optional.of(category));
+        when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
+            .thenReturn(Optional.empty());
+
+        // Act
+        try {
+            shopService.getProduct(merchant, categoryName, productName);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Product doesn't exist!", exceptionMsg);
+        verify(productRepository, times(1)).findByNameAndCategory(productName, category);
+        verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
+    }
+
+    @Test
+    public void testGetProduct_ProductExists_ReturnProduct() {
+
+        // Arrange
+        String categoryName = "Food";
+        String productName = "Laksa";
+        when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(Optional.of(category));
+        when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
+            .thenReturn(Optional.of(product));
+
+        // Act
+        Product responseProduct = shopService.getProduct(merchant, categoryName, productName);
+
+        // Assert
+        assertEquals(product, responseProduct);
+        verify(productRepository, times(1)).findByNameAndCategory(productName, category);
+        verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
+    }
+
+    @Test
+    public void testAddProduct_ValidProduct_ReturnProduct() {
+
+        // Arrange
+        String categoryName = "Food";
+        ProductDTO productDTO = new ProductDTO("Bee Hoon", 5.5, "Yellow Noodles", null, null, null);
+        Product expectedProduct = new Product(null, "Bee Hoon", 5.5, "Yellow Noodles", 0.0, null, null, category, null, null);
+        when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(true);
+        when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(Optional.of(category));
+        when(productRepository.save(any(Product.class)))
+            .thenReturn(expectedProduct);
+
+        // Act
+        Product responseProduct = shopService.addProduct(merchant, categoryName, productDTO);
+
+        // Assert
+        assertEquals(expectedProduct, responseProduct);
+        verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryName, merchant);
+        verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
+        verify(productRepository, times(1)).save(expectedProduct);
+    }
+
+    @Test
+    public void testAddProduct_InvalidCategory_ThrowNotExistException() {
+
+        // Arrange
+        String categoryName = "Appetizer";
+        String exceptionMsg = "";
+        ProductDTO productDTO = new ProductDTO("Bee Hoon", 5.5, "Yellow Noodles", null, null, null);
+        when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(false);
+
+        // Act
+        try {
+            Product responseProduct = shopService.addProduct(merchant, categoryName, productDTO);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Category doesn't exist!", exceptionMsg);
+        verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryName, merchant);
+    }
+
+    @Test
+    public void testAddProduct_ProductAlreadyExists_ThrowAlreadyExistsException() {
+
+        // Arrange
+        String categoryName = "Food";
+        String exceptionMsg = "";
+        ProductDTO productDTO = new ProductDTO("Laksa", 6.1, "It's Laksa", null, null, null);
+        when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(true);
+        when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
+            .thenReturn(Optional.of(category));
+
+        // Act
+        try {
+            Product responseProduct = shopService.addProduct(merchant, categoryName, productDTO);
+        } catch (AlreadyExistsException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Product already exists!", exceptionMsg);
+        verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryName, merchant);
+        verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
+    }
+
+    @Test
+    public void testUpdateProduct_ValidUpdateProduct_ReturnUpdatedProduct() {
+
+        // Arrange
+        Product expectedProduct = product;
+        expectedProduct.setPrice(10.11);
+        String productName = "Laksa";
+        UpdateProductDTO updateProductDTO = new UpdateProductDTO(null, 10.11, null, null, null, null);
+        when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
+            .thenReturn(Optional.of(product));
+        when(productRepository.saveAndFlush(any(Product.class)))
+            .thenReturn(expectedProduct);
+
+        // Act
+        Product responseProduct = shopService.updateProduct(category, productName, updateProductDTO);
+
+        // Assert
+        assertEquals(expectedProduct, responseProduct);
+        verify(productRepository, times(1)).findByNameAndCategory(productName, category);
+        verify(productRepository, times(1)).saveAndFlush(expectedProduct);
+        
+    }
+
+    @Test
+    public void testUpdateProduct_ProductNotExist_ThrowNotExistException() {
+
+        // Arrange
+        String productName = "Bee Hiang";
+        String exceptionMsg = "";
+        UpdateProductDTO updateProductDTO = new UpdateProductDTO(null, 10.11, null, null, null, null);
+        when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
+            .thenReturn(Optional.empty());
+            
+        // Act
+        try {
+            Product responseProduct = shopService.updateProduct(category, productName, updateProductDTO);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }   
+
+        // Assert
+        assertEquals("Product doesn't exist!", exceptionMsg);
+        verify(productRepository, times(1)).findByNameAndCategory(productName, category);
+        
+    }
+
+    @Test
+    public void testUpdateProduct_ProductNameAlreadyExists_ThrowAlreadyExistsException() {
+
+        // Arrange
+        Product product2 = new Product();
+        product2.setName("Bee Hoon");
+        category.setProducts(List.of(product, product2));
+        String productName = "Laksa";
+        String exceptionMsg = "";
+        UpdateProductDTO updateProductDTO = new UpdateProductDTO("Bee Hoon", null, null, null, null, null);
+        when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
+            .thenReturn(Optional.of(product));
+            
+        // Act
+        try {
+            Product responseProduct = shopService.updateProduct(category, productName, updateProductDTO);
+        } catch (AlreadyExistsException e) {
+            exceptionMsg = e.getMessage();
+        }   
+
+        // Assert
+        assertEquals("Product Name already exists!", exceptionMsg);
+        verify(productRepository, times(1)).findByNameAndCategory(productName, category);
+        
     }
 }

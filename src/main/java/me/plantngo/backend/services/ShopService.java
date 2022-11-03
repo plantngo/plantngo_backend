@@ -96,9 +96,7 @@ public class ShopService {
             throw new AlreadyExistsException("Category");
         }
 
-        categoryRepository.save(category);
-
-        return category;
+        return categoryRepository.save(category);
     }
 
     public Category getCategory(Merchant merchant, String categoryName) {
@@ -148,7 +146,7 @@ public class ShopService {
         Category category = this.getCategory(merchant, categoryName);
         Optional<Product> tempProduct = productRepository.findByNameAndCategory(productName, category);
         if (tempProduct.isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException("Product");
         }
         return tempProduct.get();
     }
@@ -157,7 +155,7 @@ public class ShopService {
 
         // Check to see if category exists
         if (!categoryRepository.existsByNameAndMerchant(categoryName, merchant)) {
-            throw new NotExistException();
+            throw new NotExistException("Category");
         }
 
         Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
@@ -166,7 +164,7 @@ public class ShopService {
         // Check to see if product with same name already exists in category
         for (Product p : productList) {
             if (p.getName().equals(productDTO.getName())) {
-                throw new AlreadyExistsException();
+                throw new AlreadyExistsException("Product");
             }
         }
 
@@ -183,7 +181,7 @@ public class ShopService {
         // Check to see if product exists under category
         Optional<Product> tempProduct = productRepository.findByNameAndCategory(productName, category);
         if (tempProduct.isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException("Product");
         }
 
         // If changing product name, check to see if another product with that name already exists in the category
@@ -192,7 +190,7 @@ public class ShopService {
 
         for (Product p : productList) {
             if (p.getName().equals(updateProductDTO.getName()) && p != product) {
-                throw new AlreadyExistsException();
+                throw new AlreadyExistsException("Product Name");
             }
         }
 
