@@ -183,8 +183,10 @@ public class ShopService {
         }
 
         // Upload photo to AWSS3 and set the imageUrl to productDTO
-        String imageUrl = awss3Service.uploadFile(file);
-        productDTO.setImageUrl(new URL(imageUrl));
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = awss3Service.uploadFile(file);
+            productDTO.setImageUrl(new URL(imageUrl));
+        }
 
         // Creating & Saving Product object
         Product product = this.productMapToEntity(productDTO, category);
