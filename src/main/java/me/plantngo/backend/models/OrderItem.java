@@ -47,6 +47,5 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name = "product_id")
     @JsonIgnore
-    @EqualsAndHashCode.Include
     private Product product;
 }
