@@ -45,4 +45,4 @@ src/main/java/me/plantngo/backend/.DS_Store
 h2_data/
 
 # Secret Env Variables
-.env
+*.env
