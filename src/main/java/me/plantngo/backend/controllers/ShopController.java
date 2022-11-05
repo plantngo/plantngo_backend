@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -133,15 +135,13 @@ public class ShopController {
     }
 
     @ApiOperation(value = "Add a product for a Merchant")
-    @PostMapping(path = "/{merchantName}/{categoryName}")
+    @PostMapping(path = "/{merchantName}/{categoryName}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addProduct(@PathVariable("merchantName") String merchantName,
             @PathVariable("categoryName") String categoryName,
-            @Valid @RequestPart("product") ProductDTO productDTO, @RequestPart("file") MultipartFile file)
+            @Valid @RequestPart("product") ProductDTO productDTO, @RequestParam("image") MultipartFile file)
             throws MalformedURLException, JsonMappingException, JsonProcessingException {
 
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
-        // ModelMapper mapper = new ModelMapper();
-        // ProductDTO productDTO = mapper.map(product, ProductDTO.class);
         shopService.addProduct(merchant, categoryName, productDTO, file);
 
         return new ResponseEntity<>("Product Added!", HttpStatus.CREATED);
