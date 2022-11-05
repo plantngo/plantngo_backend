@@ -42,6 +42,7 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name = "order_id")
     @JsonBackReference
+    @ToString.Exclude
     private Order order;
 
     @ManyToOne

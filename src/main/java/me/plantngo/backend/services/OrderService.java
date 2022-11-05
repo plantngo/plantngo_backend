@@ -129,10 +129,10 @@ public class OrderService {
         /*
          * to log a fulfilled order
          */
-        if (order.getOrderStatus() == OrderStatus.FULFILLED)
+        if (order.getOrderStatus() == OrderStatus.FULFILLED) {
             logService.addLog(order.getCustomer().getUsername(), "order");
+        }
 
-        orderRepository.save(order);
         // Update OrderItems in order
         Set<UpdateOrderItemDTO> updateOrderItemDTOs = updateOrderDTO.getUpdateOrderItemDTOs();
         Set<OrderItem> orderItems = order.getOrderItems();
@@ -155,7 +155,7 @@ public class OrderService {
 
     public void deleteOrder(Integer orderId) {
         if (!orderRepository.existsById(orderId)) {
-            throw new NotExistException();
+            throw new NotExistException("Order");
         }
         orderRepository.deleteById(orderId);
     }
@@ -164,7 +164,7 @@ public class OrderService {
         if (!orderRepository.existsById(orderId)) {
             throw new NotExistException("Order");
         }
-        Order order = orderRepository.findById(orderId).get();
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotExistException("Order"));
 
         Set<OrderItem> orderItems = order.getOrderItems();
         Iterator<OrderItem> itr = orderItems.iterator();
