@@ -48,8 +48,6 @@ public class Promotion {
     @JsonBackReference(value = "merchant_promotion")
     private Merchant merchant;
 
-    @ManyToMany(mappedBy = "productPromotions")
-    private List<Product> promoProducts;
 
     @NotBlank
     private String startDate;
@@ -57,10 +55,8 @@ public class Promotion {
     @NotBlank
     private String endDate;
 
-    @NotNull
-    private Double percentageDiscount;
-
     // @NotBlank
     private String bannerUrl;
 
+    private Integer clicks;
 }

@@ -20,7 +20,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "ingredient")
 public class Ingredient {
@@ -31,6 +31,7 @@ public class Ingredient {
 
     private String ingredientId;
 
+    @EqualsAndHashCode.Include
     private String name;
 
     private String category;
@@ -39,6 +40,5 @@ public class Ingredient {
 
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    @EqualsAndHashCode.Exclude
     private List<ProductIngredient> productIngredients;
 }

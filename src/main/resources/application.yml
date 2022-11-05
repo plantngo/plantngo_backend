@@ -4,7 +4,6 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   jpa:
-    show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL94Dialect
@@ -27,3 +26,17 @@ server:
     include-message: always
     include-binding-errors: always
     include-exception: false
+
+mail:
+  host: ${MAIL_HOST}
+  port: ${MAIL_PORT}
+  username: ${MAIL_USERNAME}
+  password: ${MAIL_PASSWORD}
+  protocol: smtp
+  tls: true
+  properties:
+    mail:
+      smtp:
+        auth: true
+        starttls.enable: true
+        ssl.trust: ${MAIL_HOST}

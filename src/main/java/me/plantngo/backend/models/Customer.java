@@ -31,14 +31,17 @@ public class Customer {
 
         @Size(min = 5, max = 15, message = "Username must be between 5 and 15 characters long")
         @NotBlank(message = "Username cannot be null")
+        @Column(name = "username")
         private String username;
 
         @Email(message = "Must be a valid email")
         @NotBlank(message = "Email cannot be null")
+        @Column(name = "email")
         private String email;
 
         @NotBlank(message = "Password cannot be blank")
         @JsonIgnore
+        @Column(name = "password")
         private String password;
 
         @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
@@ -64,5 +67,14 @@ public class Customer {
          */
         @NotNull(message = "AUTHORITY cannot be null, choose CUSTOMER or ADMIN")
         private final String AUTHORITY = "CUSTOMER";
+
+        @JsonIgnore
+        @Size(min = 16, max = 16)
+        @Column(name = "resetPasswordToken")
+        private String resetPasswordToken;
+
+        @ManyToMany
+        @JoinTable(name = "quest_completion", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "quest_id"))
+        private Set<Quest> completedQuests;
 
 }
