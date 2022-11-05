@@ -54,13 +54,18 @@ public class WebSecurityConfig {
         http
                 .httpBasic().and()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll()
-                .antMatchers("/v2/**").permitAll()
                 .antMatchers("/**/login").permitAll()
                 .antMatchers("/**/register").permitAll()
-                .antMatchers("/api/v1/**").permitAll()
-                .antMatchers("/**/customer").hasRole("ADMIN") // blocked from all users as of right now
-                .antMatchers("/**/merchant").hasRole("ADMIN")
+                .antMatchers("/**/mailer").permitAll()
+                .antMatchers("/**/forgot-password").permitAll()
+                .antMatchers("/").permitAll()
+
+//                .antMatchers("/**/edit-profile").hasAnyRole("CUSTOMER","MERCHANT")
+//
+//                .antMatchers("/**/customer/**").hasAnyRole("ADMIN","CUSTOMER")
+//                .antMatchers(HttpMethod.GET,"/**/customer/**").hasAnyRole("ADMIN","MERCHANT")
+//                .antMatchers("/**/merchant/**").hasAnyRole("ADMIN","MERCHANT")
+//                .antMatchers(HttpMethod.GET,"/**/merchant/**").hasAnyRole("CUSTOMER")
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable() // CSRF protection is needed only for browser based attacks
