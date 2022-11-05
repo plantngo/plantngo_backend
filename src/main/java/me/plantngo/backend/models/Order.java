@@ -48,6 +48,7 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @ToString.Exclude
     private Set<OrderItem> orderItems;
 
     @ManyToOne

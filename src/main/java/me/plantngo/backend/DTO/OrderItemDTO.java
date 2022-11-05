@@ -6,6 +6,7 @@ import lombok.*;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class OrderItemDTO {
     
     @NotNull
