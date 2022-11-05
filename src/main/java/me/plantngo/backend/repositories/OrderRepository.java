@@ -21,6 +21,8 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     List<Order> findAllByMerchantUsernameAndOrderStatus(String username, OrderStatus orderStatus);
 
+    List<Order> findAllByCustomerUsernameAndOrderStatus(String username, OrderStatus orderStatus);
+
     List<Order> findAllByCustomerUsernameAndMerchantUsername(String customerName, String merchantName);
 
     Order findFirstByCustomerUsernameAndMerchantUsernameAndOrderStatus(String customerName, String merchantName,

@@ -146,9 +146,13 @@ public class OrderService {
             }
 
         }
-        order.setTotalPrice(this.getTotalPrice(orderItems));
-        order.setOrderItems(orderItems);
-        orderRepository.save(order);
+        if (orderItems.size() > 0) {
+            order.setTotalPrice(this.getTotalPrice(orderItems));
+            order.setOrderItems(orderItems);
+            orderRepository.save(order);
+        } else {
+            orderRepository.delete(order);
+        }
 
         return order;
     }
@@ -268,6 +272,10 @@ public class OrderService {
             OrderStatus orderStatus) {
         return orderRepository.findFirstByCustomerUsernameAndMerchantUsernameAndOrderStatus(customerName, merchantName,
                 orderStatus);
+    }
+
+    public List<Order> getOrdersByCustomerNameAndOrderStatus(String customerName, OrderStatus orderStatus) {
+        return orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName, orderStatus);
     }
 
 }
