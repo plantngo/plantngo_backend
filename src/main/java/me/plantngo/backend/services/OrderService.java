@@ -100,6 +100,23 @@ public class OrderService {
         return order;
     }
 
+    public Order addOrderItem(String customerName, Integer orderId, OrderItemDTO orderItemDTO) {
+
+        // find existing order
+        Order order = orderRepository.findById(orderId).get();
+
+        Set<OrderItem> orderItems = order.getOrderItems();
+        OrderItem orderItem = this.orderItemMapToEntity(orderItemDTO, order);
+        orderItems.add(orderItem);
+
+        order.setOrderItems(orderItems);
+        order.setTotalPrice(this.getTotalPrice(orderItems));
+
+        orderRepository.save(order);
+
+        return order;
+    }
+
     public Order updateOrder(UpdateOrderDTO updateOrderDTO, Integer orderId) {
         // Check if order exists
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotExistException("Order"));

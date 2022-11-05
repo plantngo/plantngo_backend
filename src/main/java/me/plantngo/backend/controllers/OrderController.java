@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import me.plantngo.backend.DTO.OrderDTO;
+import me.plantngo.backend.DTO.OrderItemDTO;
 import me.plantngo.backend.DTO.UpdateOrderDTO;
 import me.plantngo.backend.DTO.UpdateOrderItemDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
@@ -95,7 +96,7 @@ public class OrderController {
         return orderService.getCancelledOrdersByMerchantName(name);
     }
 
-    @ApiOperation(value = "Add a new Order Item to an existing Order, create a new Order if none exists")
+    @ApiOperation(value = "Create a new Order with Order Items")
     @PostMapping(path = "/{customerName}")
     public ResponseEntity<Order> addToOrder(@RequestBody @Valid OrderDTO placeOrderDTO,
             @PathVariable("customerName") String customerName) {
@@ -103,10 +104,21 @@ public class OrderController {
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Add a new Order Item to an existing Order")
+    @PostMapping(path = "/{customerName}/{orderId}")
+    public ResponseEntity<Order> addToExistingOrder(
+            @PathVariable("customerName") String customerName,
+            @PathVariable("orderId") Integer orderId,
+            @RequestBody OrderItemDTO orderItemDTO) {
+        Order order = orderService.addOrderItem(customerName, orderId, orderItemDTO);
+        return new ResponseEntity<>(order, HttpStatus.CREATED);
+    }
+
     @ApiOperation(value = "Update an existing Order's status given the Order Id")
     @PutMapping(path = "/{orderId}")
     public ResponseEntity<Order> updateOrder(@RequestBody @Valid UpdateOrderDTO updateOrderDTO,
             @PathVariable("orderId") Integer orderId) {
+        System.out.println(orderId + "and " + updateOrderDTO.toString());
         Order order = orderService.updateOrder(updateOrderDTO, orderId);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
