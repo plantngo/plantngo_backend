@@ -95,9 +95,9 @@ public class OrderService {
         order.setOrderItems(orderItems);
         order.setTotalPrice(this.getTotalPrice(orderItems));
 
-        orderRepository.save(order);
+        Order response = orderRepository.save(order);
 
-        return order;
+        return response;
     }
 
     public Order addOrderItem(String customerName, Integer orderId, OrderItemDTO orderItemDTO) {
