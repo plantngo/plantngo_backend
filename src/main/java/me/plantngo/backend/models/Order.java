@@ -14,7 +14,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.JoinColumn;
@@ -32,6 +34,7 @@ import lombok.*;
 @EqualsAndHashCode
 @Entity
 @Table(name = "ordering")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Order {
 
     @Id
@@ -58,7 +61,6 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "merchant_id", nullable = false)
-    @JsonBackReference(value = "merchant_order")
     private Merchant merchant;
 
     public void setOrderStatus(OrderStatus orderStatus) {
