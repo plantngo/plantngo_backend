@@ -26,6 +26,21 @@ public class WebSecurityConfig {
     private JwtRequestFilter jwtRequestFilter;
     private UserDetailsService userDetailsService;
 
+    private static final String[] AUTH_WHITELIST = {
+            // -- Swagger UI v2
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            // -- Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+            // other public endpoints for API may be appended to this array
+    };
+
     @Autowired
     public WebSecurityConfig(JwtRequestFilter jwtRequestFilter, UserDetailsService userDetailsService) {
         this.jwtRequestFilter = jwtRequestFilter;
@@ -54,18 +69,19 @@ public class WebSecurityConfig {
         http
                 .httpBasic().and()
                 .authorizeRequests()
+                .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers("/**/login").permitAll()
                 .antMatchers("/**/register").permitAll()
                 .antMatchers("/**/mailer").permitAll()
                 .antMatchers("/**/forgot-password").permitAll()
                 .antMatchers("/").permitAll()
 
-//                .antMatchers("/**/edit-profile").hasAnyRole("CUSTOMER","MERCHANT")
-//
-//                .antMatchers("/**/customer/**").hasAnyRole("ADMIN","CUSTOMER")
-//                .antMatchers(HttpMethod.GET,"/**/customer/**").hasAnyRole("ADMIN","MERCHANT")
-//                .antMatchers("/**/merchant/**").hasAnyRole("ADMIN","MERCHANT")
-//                .antMatchers(HttpMethod.GET,"/**/merchant/**").hasAnyRole("CUSTOMER")
+                // .antMatchers("/**/edit-profile").hasAnyRole("CUSTOMER","MERCHANT")
+                //
+                // .antMatchers("/**/customer/**").hasAnyRole("ADMIN","CUSTOMER")
+                // .antMatchers(HttpMethod.GET,"/**/customer/**").hasAnyRole("ADMIN","MERCHANT")
+                // .antMatchers("/**/merchant/**").hasAnyRole("ADMIN","MERCHANT")
+                // .antMatchers(HttpMethod.GET,"/**/merchant/**").hasAnyRole("CUSTOMER")
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable() // CSRF protection is needed only for browser based attacks
