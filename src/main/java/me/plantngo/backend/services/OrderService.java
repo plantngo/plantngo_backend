@@ -140,9 +140,13 @@ public class OrderService {
         for (UpdateOrderItemDTO updateOrderItemDTO : updateOrderItemDTOs) {
             OrderItemDTO orderItemDTO = mapper.map(updateOrderItemDTO, OrderItemDTO.class);
             OrderItem orderItem = this.orderItemMapToEntity(orderItemDTO, order);
-            orderItems.add(orderItem);
-        }
+            orderItems.removeIf(x -> x.getProductId() == orderItem.getProductId());
+            if (orderItem.getQuantity() > 0) {
+                orderItems.add(orderItem);
+            }
 
+        }
+        order.setTotalPrice(this.getTotalPrice(orderItems));
         order.setOrderItems(orderItems);
         orderRepository.save(order);
 
