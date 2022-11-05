@@ -72,6 +72,12 @@ public class OrderController {
                 orderStatus);
     }
 
+    @ApiOperation(value = "Get all Orders placed by a customer that are Pending and Fulfilled")
+    @GetMapping(path = "/customer/{customerName}/orderStatus/pendingAndFulfilled")
+    public List<Order> getAllPendingAndFulfilledOrdersByCustomer(@PathVariable("customerName") String customerName) {
+        return orderService.getAllPendingAndFulfilledOrdersByCustomer(customerName);
+    }
+
     @ApiOperation(value = "Get all Orders placed by a Customer at a Merchant that has a Order Status")
     @GetMapping(path = "/customer/{customerName}/merchant/{merchantName}/orderStatus/{orderStatus}")
     public Order getOrderByCustomerAndMerchantAndOrderStatus(@PathVariable("customerName") String customerName,
@@ -126,7 +132,6 @@ public class OrderController {
     @PutMapping(path = "/{orderId}")
     public ResponseEntity<Order> updateOrder(@RequestBody @Valid UpdateOrderDTO updateOrderDTO,
             @PathVariable("orderId") Integer orderId) {
-        System.out.println(orderId + "and " + updateOrderDTO.toString());
         Order order = orderService.updateOrder(updateOrderDTO, orderId);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }

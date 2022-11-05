@@ -95,9 +95,9 @@ public class OrderService {
         order.setOrderItems(orderItems);
         order.setTotalPrice(this.getTotalPrice(orderItems));
 
-        orderRepository.save(order);
+        Order response = orderRepository.save(order);
 
-        return order;
+        return response;
     }
 
     public Order addOrderItem(String customerName, Integer orderId, OrderItemDTO orderItemDTO) {
@@ -135,6 +135,9 @@ public class OrderService {
 
         // Update OrderItems in order
         Set<UpdateOrderItemDTO> updateOrderItemDTOs = updateOrderDTO.getUpdateOrderItemDTOs();
+        if (updateOrderItemDTOs == null) {
+            updateOrderItemDTOs = new HashSet<UpdateOrderItemDTO>();
+        }
         Set<OrderItem> orderItems = order.getOrderItems();
 
         for (UpdateOrderItemDTO updateOrderItemDTO : updateOrderItemDTOs) {
@@ -275,7 +278,15 @@ public class OrderService {
     }
 
     public List<Order> getOrdersByCustomerNameAndOrderStatus(String customerName, OrderStatus orderStatus) {
+
         return orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName, orderStatus);
+    }
+
+    public List<Order> getAllPendingAndFulfilledOrdersByCustomer(String customerName) {
+        List<Order> tmpList = orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName,
+                OrderStatus.PENDING);
+        tmpList.addAll(orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName, OrderStatus.FULFILLED));
+        return tmpList;
     }
 
 }
