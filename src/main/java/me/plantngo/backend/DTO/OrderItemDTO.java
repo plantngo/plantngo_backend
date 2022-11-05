@@ -6,12 +6,13 @@ import lombok.*;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class OrderItemDTO {
-    
+
     @NotNull
     private Integer productId;
 
     @NotNull
     private Integer quantity;
-    
+
 }

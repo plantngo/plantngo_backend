@@ -9,7 +9,9 @@ import me.plantngo.backend.models.OrderStatus;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class OrderDTO {
+    private Integer id;
 
     @NotNull
     private Boolean isDineIn;
