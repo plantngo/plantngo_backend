@@ -65,6 +65,14 @@ public class OrderController {
     }
 
     @ApiOperation(value = "Get all Orders placed by a Customer at a Merchant that has a Order Status")
+    @GetMapping(path = "/customer/{customerName}/orderStatus/{orderStatus}")
+    public List<Order> getAllOrdersByCustomerAndOrderStatus(@PathVariable("customerName") String customerName,
+            @PathVariable("orderStatus") OrderStatus orderStatus) {
+        return orderService.getOrdersByCustomerNameAndOrderStatus(customerName,
+                orderStatus);
+    }
+
+    @ApiOperation(value = "Get all Orders placed by a Customer at a Merchant that has a Order Status")
     @GetMapping(path = "/customer/{customerName}/merchant/{merchantName}/orderStatus/{orderStatus}")
     public Order getOrderByCustomerAndMerchantAndOrderStatus(@PathVariable("customerName") String customerName,
             @PathVariable("merchantName") String merchantName, @PathVariable("orderStatus") OrderStatus orderStatus) {
