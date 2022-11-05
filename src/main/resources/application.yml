@@ -24,6 +24,8 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+  
+
 
 server:
   port: 8080
@@ -55,3 +57,4 @@ cloud:
       static: ${AWS_REGION}
     stack:
       auto: false
+    bucket: ${AWSS3_BUCKET}

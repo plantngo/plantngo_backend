@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -18,6 +19,9 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 public class AWSS3Service implements FileService {
     @Autowired
     private AmazonS3Client awsS3Client;
+
+    @Value("${cloud.aws.bucket}")
+    private String bucket;
 
     @Override
     public String uploadFile(MultipartFile file) {
