@@ -9,6 +9,8 @@ import me.plantngo.backend.models.Quest;
 import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.LogRepository;
 import me.plantngo.backend.repositories.QuestRepository;
+import me.plantngo.backend.repositories.VoucherRepository;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -77,6 +79,12 @@ public class QuestService {
         return new ResponseEntity<>("Successfully deleted quest with id:" + id, HttpStatus.OK);
     }
 
+    public ResponseEntity<String> refreshQuestByCustomerUsername(Integer id, String username) {
+        Customer customer = customerRepository.findByUsername(username).get();
+        return refreshQuestForCustomer(id, customer);
+
+    }
+
     public ResponseEntity<String> refreshQuestForCustomer(Integer questId, Customer customer) {
         String username = customer.getUsername();
 
@@ -97,8 +105,12 @@ public class QuestService {
          * update customer's completed quests if necessary
          */
         if (matches.size() >= quest.getCountToComplete()) {
-            if (addCompletedQuestForCustomer(customer, quest))
+
+            if (!customer.getCompletedQuests().contains(quest) && addCompletedQuestForCustomer(customer, quest)) {
                 System.out.println("<QUEST>: Updated quest status for customer: " + username);
+
+            }
+
         }
 
         return new ResponseEntity<>("Refreshed quest for customer: " + username, HttpStatus.OK);
@@ -143,6 +155,7 @@ public class QuestService {
         Boolean isAdded = completed.add(newQuest);
 
         customer.setCompletedQuests(completed);
+        customer.setGreenPoints(customer.getGreenPoints() + newQuest.getPoints());
 
         customerRepository.saveAndFlush(customer);
 
@@ -169,22 +182,28 @@ public class QuestService {
         // LocalDateTime.now());
         System.out.println(quests);
 
+        Customer customer = this.customerRepository.findByUsername(username).get();
+        Set<Quest> completedQuests = customer.getCompletedQuests();
+
         List<QuestProgressDTO> questProgress = new ArrayList<>();
         for (Quest quest : quests) {
-            List<Log> matches = logRepository.findAllByUsernameAndTypeAndDateTimeBetween(
-                    username,
-                    quest.getType(),
-                    quest.getPostedDateTime(),
-                    quest.getEndDateTime());
+            if (!completedQuests.contains(quest)) {
+                List<Log> matches = logRepository.findAllByUsernameAndTypeAndDateTimeBetween(
+                        username,
+                        quest.getType(),
+                        quest.getPostedDateTime(),
+                        quest.getEndDateTime());
 
-            QuestProgressDTO questProgressDTO = new QuestProgressDTO();
-            ModelMapper mapper = new ModelMapper();
-            mapper.getConfiguration().setSkipNullEnabled(true);
-            mapper.map(quest, questProgressDTO);
-            questProgressDTO.setCountCompleted(matches.size());
-            questProgress.add(questProgressDTO);
+                QuestProgressDTO questProgressDTO = new QuestProgressDTO();
+                ModelMapper mapper = new ModelMapper();
+                mapper.getConfiguration().setSkipNullEnabled(true);
+                mapper.map(quest, questProgressDTO);
+                questProgressDTO.setCountCompleted(matches.size());
+                questProgress.add(questProgressDTO);
+            }
         }
 
         return questProgress;
     }
+
 }

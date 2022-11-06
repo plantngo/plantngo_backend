@@ -21,7 +21,7 @@ public class ResetPasswordController {
     }
 
     @ApiOperation("Gets the reset password token for a user")
-    @GetMapping("/")
+    @PostMapping("/token")
     public ResponseEntity<String> setResetPasswordTokenAndSendEmail(@RequestBody ResetPasswordDTO resetPasswordDTO){
         return resetPasswordService.setResetPasswordTokenAndSendEmail(resetPasswordDTO.getEmail());
     }

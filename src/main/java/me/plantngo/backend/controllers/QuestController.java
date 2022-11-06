@@ -73,6 +73,13 @@ public class QuestController {
         return questService.refreshQuest(id);
     }
 
+    @ApiOperation("Refresh a single quest for a user")
+    @PostMapping("/{id}/refresh/{username}")
+    public ResponseEntity<String> refreshQuestByCustomerUsername(@PathVariable("id") Integer id,
+            @PathVariable("username") String username) {
+        return questService.refreshQuestByCustomerUsername(id, username);
+    }
+
     @ApiOperation("Refresh all quests")
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshAll() {
