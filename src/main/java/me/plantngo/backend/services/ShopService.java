@@ -123,8 +123,10 @@ public class ShopService {
             throw new NotExistException();
         }
 
-        // If changing category name, check to see if another category with that name already exists
-        if (!updateCategoryDTO.getName().equals(categoryName) && categoryRepository.existsByName(updateCategoryDTO.getName())) {
+        // If changing category name, check to see if another category with that name
+        // already exists
+        if (!updateCategoryDTO.getName().equals(categoryName)
+                && categoryRepository.existsByName(updateCategoryDTO.getName())) {
             throw new AlreadyExistsException("Category");
         }
 
@@ -181,6 +183,31 @@ public class ShopService {
         if (file != null && !file.isEmpty()) {
             String imageUrl = awss3Service.uploadFile(file);
             productDTO.setImageUrl(new URL(imageUrl));
+        }
+
+        // Creating & Saving Product object
+        Product product = this.productMapToEntity(productDTO, category);
+
+        productRepository.save(product);
+
+        return product;
+    }
+
+    public Product addProduct(Merchant merchant, String categoryName, ProductDTO productDTO) {
+
+        // Check to see if category exists
+        if (!categoryRepository.existsByNameAndMerchant(categoryName, merchant)) {
+            throw new NotExistException("Category");
+        }
+
+        Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
+        List<Product> productList = category.getProducts();
+
+        // Check to see if product with same name already exists in category
+        for (Product p : productList) {
+            if (p.getName().equals(productDTO.getName())) {
+                throw new AlreadyExistsException("Product");
+            }
         }
 
         // Creating & Saving Product object

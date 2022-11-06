@@ -1,6 +1,7 @@
 package me.plantngo.backend.services;
 
 import me.plantngo.backend.DTO.QuestDTO;
+import me.plantngo.backend.DTO.QuestProgressDTO;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.models.Log;
@@ -29,24 +30,32 @@ public class QuestService {
     private final CustomerRepository customerRepository;
 
     @Autowired
-    public QuestService(QuestRepository questRepository, LogRepository logRepository, CustomerRepository customerRepository) {
+    public QuestService(QuestRepository questRepository, LogRepository logRepository,
+            CustomerRepository customerRepository) {
         this.questRepository = questRepository;
         this.logRepository = logRepository;
         this.customerRepository = customerRepository;
     }
-    public List<Quest> getAllQuests() {return questRepository.findAll();}
+
+    public List<Quest> getAllQuests() {
+        return questRepository.findAll();
+    }
 
     public Quest getQuest(Integer id) {
-        try{
+        try {
             return questRepository.findById(id).get();
         } catch (NoSuchElementException e) {
             throw new NotExistException("Quest");
         }
     }
 
-    public List<Quest> getActiveQuests() {return questRepository.findAllByEndDateTimeAfter(LocalDateTime.now());}
+    public List<Quest> getActiveQuests() {
+        return questRepository.findAllByEndDateTimeAfter(LocalDateTime.now());
+    }
 
-    public List<Quest> getInactiveQuests() {return questRepository.findAllByEndDateTimeBefore(LocalDateTime.now());}
+    public List<Quest> getInactiveQuests() {
+        return questRepository.findAllByEndDateTimeBefore(LocalDateTime.now());
+    }
 
     public ResponseEntity<String> addQuest(QuestDTO questDTO) {
         Quest quest = new Quest();
@@ -72,9 +81,9 @@ public class QuestService {
         String username = customer.getUsername();
 
         Quest quest;
-        try{
+        try {
             quest = questRepository.findById(questId).get();
-        } catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             throw new NotExistException("Quest");
         }
 
@@ -82,24 +91,25 @@ public class QuestService {
                 username,
                 quest.getType(),
                 quest.getPostedDateTime(),
-                quest.getEndDateTime()
-        );
+                quest.getEndDateTime());
 
         /*
-        update customer's completed quests if necessary
+         * update customer's completed quests if necessary
          */
-        if(matches.size() >= quest.getCountToComplete()) {
-            if(addCompletedQuestForCustomer(customer, quest)) System.out.println("<QUEST>: Updated quest status for customer: " + username);
+        if (matches.size() >= quest.getCountToComplete()) {
+            if (addCompletedQuestForCustomer(customer, quest))
+                System.out.println("<QUEST>: Updated quest status for customer: " + username);
         }
 
         return new ResponseEntity<>("Refreshed quest for customer: " + username, HttpStatus.OK);
     }
+
     public ResponseEntity<String> refreshQuest(Integer questId) {
         List<Customer> allCustomers = customerRepository.findAll();
 
         System.out.println("-------------------------------------");
         System.out.println("<QUEST>: Refreshing quest " + questId);
-        for(Customer customer : allCustomers) {
+        for (Customer customer : allCustomers) {
             refreshQuestForCustomer(questId, customer);
         }
         System.out.println("<QUEST>: Refreshed quest " + questId);
@@ -107,13 +117,14 @@ public class QuestService {
 
         return new ResponseEntity<>("Refreshed quest " + questId + " for all customers", HttpStatus.OK);
     }
+
     public ResponseEntity<String> refreshAll() {
 
         List<Quest> allQuests = questRepository.findAll();
 
         List<Integer> allQuestIds = extractQuestIdsList(allQuests);
 
-        for(Integer id : allQuestIds) {
+        for (Integer id : allQuestIds) {
             refreshQuest(id);
         }
 
@@ -125,7 +136,7 @@ public class QuestService {
 
         Set<Quest> completed = customer.getCompletedQuests();
 
-        if(completed == null) {
+        if (completed == null) {
             completed = new HashSet<>();
         }
 
@@ -142,10 +153,38 @@ public class QuestService {
 
         List<Integer> output = new ArrayList<>();
 
-        for(Quest quest : quests) {
+        for (Quest quest : quests) {
             output.add(quest.getId());
         }
 
         return output;
+    }
+
+    public List<QuestProgressDTO> getAllActiveQuestProgressByUsername(String username) {
+
+        List<Quest> quests = this.questRepository.findAllByEndDateTimeAfter(LocalDateTime.now());
+        // List<Quest> customerQuests = this.questRepository
+        // .findAllBycustomersThatHaveCompletedUsernameAndEndDateTimeAfter(
+        // username,
+        // LocalDateTime.now());
+        System.out.println(quests);
+
+        List<QuestProgressDTO> questProgress = new ArrayList<>();
+        for (Quest quest : quests) {
+            List<Log> matches = logRepository.findAllByUsernameAndTypeAndDateTimeBetween(
+                    username,
+                    quest.getType(),
+                    quest.getPostedDateTime(),
+                    quest.getEndDateTime());
+
+            QuestProgressDTO questProgressDTO = new QuestProgressDTO();
+            ModelMapper mapper = new ModelMapper();
+            mapper.getConfiguration().setSkipNullEnabled(true);
+            mapper.map(quest, questProgressDTO);
+            questProgressDTO.setCountCompleted(matches.size());
+            questProgress.add(questProgressDTO);
+        }
+
+        return questProgress;
     }
 }
