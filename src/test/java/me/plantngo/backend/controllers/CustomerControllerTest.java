@@ -59,34 +59,34 @@ public class CustomerControllerTest {
         customerRepository.deleteAll();
     }
 
-    @Test
-    void testGetAllUsers_CustomersExist_CustomerList() throws Exception {
+    // @Test
+    // void testGetAllUsers_CustomersExist_CustomerList() throws Exception {
 
-        // String username = "Jaddd";
-        // String password = "password";
-        // String auth = username + ":" + password;
-        // byte[] encodedAuth = Base64.encodeBase64(auth.getBytes());
-        // String authHeader = new String(encodedAuth);
+    //     // String username = "Jaddd";
+    //     // String password = "password";
+    //     // String auth = username + ":" + password;
+    //     // byte[] encodedAuth = Base64.encodeBase64(auth.getBytes());
+    //     // String authHeader = new String(encodedAuth);
 
-        String jwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKYWRkZCIsIkF1dGhvcml0eSI6IkNVU1RPTUVSIiwiZXhwIjoxNjY4MDkwOTQ3LCJpYXQiOjE2Njc2NTg5NDd9.Khx79-HhoEEgSEiEHl1Ps5qLw9_GYZcxhhHa6oUcq0c";
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + jwtToken);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> request = new HttpEntity<>(headers);
+    //     String jwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKYWRkZCIsIkF1dGhvcml0eSI6IkNVU1RPTUVSIiwiZXhwIjoxNjY4MDkwOTQ3LCJpYXQiOjE2Njc2NTg5NDd9.Khx79-HhoEEgSEiEHl1Ps5qLw9_GYZcxhhHa6oUcq0c";
+    //     HttpHeaders headers = new HttpHeaders();
+    //     headers.set("Authorization", "Bearer " + jwtToken);
+    //     headers.setContentType(MediaType.APPLICATION_JSON);
+    //     HttpEntity<String> request = new HttpEntity<>(headers);
 
-        URI uri = new URI(rootUrl + port + apiUrl);
-        Customer customer = new Customer(1, "Jaddd", "john.doe@example.com", "password",
-                new ArrayList<Preference>(), 1000, new HashSet<Voucher>(), new HashSet<Voucher>(),
-                new ArrayList<Order>(), null, null);
-        customerRepository.save(customer);
+    //     URI uri = new URI(rootUrl + port + apiUrl);
+    //     Customer customer = new Customer(1, "Jaddd", "john.doe@example.com", "password",
+    //             new ArrayList<Preference>(), 1000, new HashSet<Voucher>(), new HashSet<Voucher>(),
+    //             new ArrayList<Order>(), null, null);
+    //     customerRepository.save(customer);
 
-        ResponseEntity<Customer[]> result = restTemplate.exchange(uri, HttpMethod.GET, request, Customer[].class);
-        Customer[] customerList = result.getBody();
+    //     ResponseEntity<Customer[]> result = restTemplate.exchange(uri, HttpMethod.GET, request, Customer[].class);
+    //     Customer[] customerList = result.getBody();
 
-        assertEquals(200, result.getStatusCode().value());
-        assertEquals(1, customerList.length);
+    //     assertEquals(200, result.getStatusCode().value());
+    //     assertEquals(1, customerList.length);
 
-    }
+    // }
 
     // @Test
     // void testGetAllUsers_NoCustomers_EmptyList() {
