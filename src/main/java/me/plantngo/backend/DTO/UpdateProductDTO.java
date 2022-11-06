@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 public class UpdateProductDTO {
 
-    @NotNull
     private String name;
 
     private Double price;

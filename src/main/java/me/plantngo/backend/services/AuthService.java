@@ -59,16 +59,16 @@ public class AuthService {
         return ResponseEntity.ok().header("jwt", jwt).body(" Login Success!");
     }
 
-    public ResponseEntity<String> registerUser(RegistrationDTO registrationDTO) {
+    public Object registerUser(RegistrationDTO registrationDTO) {
         if (registrationDTO.getUserType() == 'C') {
-            return registerCustomer(registrationDTO);
+            return this.registerCustomer(registrationDTO);
         } else if (registrationDTO.getUserType() == 'M') {
-            return registerMerchant(registrationDTO);
+            return this.registerMerchant(registrationDTO);
         }
         throw new InvalidUserTypeException();
     }
 
-    public ResponseEntity<String> registerCustomer(RegistrationDTO registrationDTO) {
+    private Customer registerCustomer(RegistrationDTO registrationDTO) {
 
         // Check if email is already in use
         if (customerRepository.existsByEmail(registrationDTO.getEmail())
@@ -86,10 +86,10 @@ public class AuthService {
 
         customerRepository.save(customer);
 
-        return new ResponseEntity<>("Customer registered!", HttpStatus.CREATED);
+        return customer;
     }
 
-    public ResponseEntity<String> registerMerchant(RegistrationDTO registrationDTO) {
+    private Merchant registerMerchant(RegistrationDTO registrationDTO) {
 
         // Check if email is already in use
         if (merchantRepository.existsByEmail(registrationDTO.getEmail())
@@ -111,7 +111,7 @@ public class AuthService {
 
         merchantRepository.save(merchant);
 
-        return new ResponseEntity<>("Merchant registered!", HttpStatus.CREATED);
+        return merchant;
 
     }
 

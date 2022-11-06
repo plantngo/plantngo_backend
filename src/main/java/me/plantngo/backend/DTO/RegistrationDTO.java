@@ -10,6 +10,7 @@ import lombok.*;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class RegistrationDTO {
 
     @Size(min = 5, max = 15, message = "Username must be between 5 and 15 characters long")
