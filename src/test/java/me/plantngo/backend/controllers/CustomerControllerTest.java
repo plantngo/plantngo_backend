@@ -3,18 +3,26 @@ package me.plantngo.backend.controllers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
-
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import me.plantngo.backend.BackendApplication;
@@ -54,13 +62,25 @@ public class CustomerControllerTest {
     @Test
     void testGetAllUsers_CustomersExist_CustomerList() throws Exception {
 
+        // String username = "Jaddd";
+        // String password = "password";
+        // String auth = username + ":" + password;
+        // byte[] encodedAuth = Base64.encodeBase64(auth.getBytes());
+        // String authHeader = new String(encodedAuth);
+
+        String jwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKYWRkZCIsIkF1dGhvcml0eSI6IkNVU1RPTUVSIiwiZXhwIjoxNjY4MDkwOTQ3LCJpYXQiOjE2Njc2NTg5NDd9.Khx79-HhoEEgSEiEHl1Ps5qLw9_GYZcxhhHa6oUcq0c";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + jwtToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
         URI uri = new URI(rootUrl + port + apiUrl);
-        Customer customer = new Customer(1, "John Doe", "john.doe@example.com", "Password12345!",
+        Customer customer = new Customer(1, "Jaddd", "john.doe@example.com", "password",
                 new ArrayList<Preference>(), 1000, new HashSet<Voucher>(), new HashSet<Voucher>(),
-                new ArrayList<Order>(), null);
+                new ArrayList<Order>(), null, null);
         customerRepository.save(customer);
 
-        ResponseEntity<Customer[]> result = restTemplate.getForEntity(uri, Customer[].class);
+        ResponseEntity<Customer[]> result = restTemplate.exchange(uri, HttpMethod.GET, request, Customer[].class);
         Customer[] customerList = result.getBody();
 
         assertEquals(200, result.getStatusCode().value());

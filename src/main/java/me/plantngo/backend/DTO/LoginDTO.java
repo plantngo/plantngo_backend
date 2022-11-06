@@ -6,6 +6,7 @@ import lombok.*;
 
 @Data
 @AllArgsConstructor
+@Getter
 public class LoginDTO {
     @NotBlank
     String username;

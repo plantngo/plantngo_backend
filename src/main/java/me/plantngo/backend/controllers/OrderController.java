@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import me.plantngo.backend.services.LogService;
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,12 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import me.plantngo.backend.DTO.OrderDTO;
+import me.plantngo.backend.DTO.OrderItemDTO;
 import me.plantngo.backend.DTO.UpdateOrderDTO;
 import me.plantngo.backend.DTO.UpdateOrderItemDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
 import me.plantngo.backend.models.Order;
 import me.plantngo.backend.models.OrderItem;
+import me.plantngo.backend.models.OrderStatus;
 import me.plantngo.backend.services.OrderService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +41,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @Autowired
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, LogService logService) {
         this.orderService = orderService;
     }
 
@@ -52,6 +55,35 @@ public class OrderController {
     @GetMapping(path = "/customer/{customerName}")
     public List<Order> getOrdersByCustomer(@PathVariable("customerName") String name) {
         return orderService.getOrdersByCustomerName(name);
+    }
+
+    @ApiOperation(value = "Get all Orders placed by a Customer at a Merchant")
+    @GetMapping(path = "/customer/{customerName}/merchant/{merchantName}")
+    public List<Order> getOrdersByCustomerAndMerchant(@PathVariable("customerName") String customerName,
+            @PathVariable("merchantName") String merchantName) {
+        return orderService.getOrdersByCustomerNameAndMerchantName(customerName, merchantName);
+    }
+
+    @ApiOperation(value = "Get all Orders placed by a Customer at a Merchant that has a Order Status")
+    @GetMapping(path = "/customer/{customerName}/orderStatus/{orderStatus}")
+    public List<Order> getAllOrdersByCustomerAndOrderStatus(@PathVariable("customerName") String customerName,
+            @PathVariable("orderStatus") OrderStatus orderStatus) {
+        return orderService.getOrdersByCustomerNameAndOrderStatus(customerName,
+                orderStatus);
+    }
+
+    @ApiOperation(value = "Get all Orders placed by a customer that are Pending and Fulfilled")
+    @GetMapping(path = "/customer/{customerName}/orderStatus/pendingAndFulfilled")
+    public List<Order> getAllPendingAndFulfilledOrdersByCustomer(@PathVariable("customerName") String customerName) {
+        return orderService.getAllPendingAndFulfilledOrdersByCustomer(customerName);
+    }
+
+    @ApiOperation(value = "Get all Orders placed by a Customer at a Merchant that has a Order Status")
+    @GetMapping(path = "/customer/{customerName}/merchant/{merchantName}/orderStatus/{orderStatus}")
+    public Order getOrderByCustomerAndMerchantAndOrderStatus(@PathVariable("customerName") String customerName,
+            @PathVariable("merchantName") String merchantName, @PathVariable("orderStatus") OrderStatus orderStatus) {
+        return orderService.getOrdersByCustomerNameAndMerchantNameAndOrderStatus(customerName, merchantName,
+                orderStatus);
     }
 
     @ApiOperation(value = "Get all Orders placed by a Merchant given their Username")
@@ -78,11 +110,21 @@ public class OrderController {
         return orderService.getCancelledOrdersByMerchantName(name);
     }
 
-    @ApiOperation(value = "Add a new Order Item to an existing Order, create a new Order if none exists")
+    @ApiOperation(value = "Create a new Order with Order Items")
     @PostMapping(path = "/{customerName}")
     public ResponseEntity<Order> addToOrder(@RequestBody @Valid OrderDTO placeOrderDTO,
             @PathVariable("customerName") String customerName) {
         Order order = orderService.addOrder(placeOrderDTO, customerName);
+        return new ResponseEntity<>(order, HttpStatus.CREATED);
+    }
+
+    @ApiOperation(value = "Add a new Order Item to an existing Order")
+    @PostMapping(path = "/{customerName}/{orderId}")
+    public ResponseEntity<Order> addToExistingOrder(
+            @PathVariable("customerName") String customerName,
+            @PathVariable("orderId") Integer orderId,
+            @RequestBody OrderItemDTO orderItemDTO) {
+        Order order = orderService.addOrderItem(customerName, orderId, orderItemDTO);
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 

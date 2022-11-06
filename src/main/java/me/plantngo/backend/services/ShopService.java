@@ -1,5 +1,7 @@
 package me.plantngo.backend.services;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +13,7 @@ import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
@@ -23,18 +26,21 @@ import me.plantngo.backend.repositories.ProductRepository;
 
 @Service
 public class ShopService {
-    
+
     private ProductRepository productRepository;
     private MerchantRepository merchantRepository;
     private CategoryRepository categoryRepository;
     private VoucherRepository voucherRepository;
+    private AWSS3Service awss3Service;
 
     @Autowired
-    public ShopService(ProductRepository productRepository, MerchantRepository merchantRepository, CategoryRepository categoryRepository, VoucherRepository voucherRepository) {
+    public ShopService(ProductRepository productRepository, MerchantRepository merchantRepository,
+            CategoryRepository categoryRepository, VoucherRepository voucherRepository, AWSS3Service awss3Service) {
         this.productRepository = productRepository;
         this.merchantRepository = merchantRepository;
         this.categoryRepository = categoryRepository;
         this.voucherRepository = voucherRepository;
+        this.awss3Service = awss3Service;
     }
 
     public Voucher addVoucher(Merchant merchant, VoucherDTO voucherDTO) {
@@ -66,11 +72,12 @@ public class ShopService {
             throw new NotExistException();
         }
 
-        //update the voucher's value
+        // update the voucher's value
         Voucher voucher = tempVoucher.get();
         ModelMapper mapper = new ModelMapper();
 
-        mapper.map(updateVoucherDTO, voucher);;
+        mapper.map(updateVoucherDTO, voucher);
+        ;
 
         // In case we need to call it before method ends
         voucherRepository.saveAndFlush(voucher);
@@ -87,6 +94,7 @@ public class ShopService {
         Voucher voucher = voucherRepository.findByIdAndMerchant(voucherId, merchant).get();
         voucherRepository.delete(voucher);
     }
+
     public Category addCategory(Merchant merchant, CategoryDTO categoryDTO) {
 
         Category category = this.categoryMapToEntity(categoryDTO, merchant);
@@ -96,9 +104,7 @@ public class ShopService {
             throw new AlreadyExistsException("Category");
         }
 
-        categoryRepository.save(category);
-
-        return category;
+        return categoryRepository.save(category);
     }
 
     public Category getCategory(Merchant merchant, String categoryName) {
@@ -108,7 +114,7 @@ public class ShopService {
         }
         return tempCategory.get();
     }
-    
+
     public Category updateCategory(Merchant merchant, String categoryName, UpdateCategoryDTO updateCategoryDTO) {
 
         // Check to see if category exists under merchant
@@ -117,8 +123,10 @@ public class ShopService {
             throw new NotExistException();
         }
 
-        // If changing category name, check to see if another category with that name already exists
-        if (!updateCategoryDTO.getName().equals(categoryName) && categoryRepository.existsByName(updateCategoryDTO.getName())) {
+        // If changing category name, check to see if another category with that name
+        // already exists
+        if (!updateCategoryDTO.getName().equals(categoryName)
+                && categoryRepository.existsByName(updateCategoryDTO.getName())) {
             throw new AlreadyExistsException("Category");
         }
 
@@ -148,16 +156,17 @@ public class ShopService {
         Category category = this.getCategory(merchant, categoryName);
         Optional<Product> tempProduct = productRepository.findByNameAndCategory(productName, category);
         if (tempProduct.isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException("Product");
         }
         return tempProduct.get();
     }
 
-    public Product addProduct(Merchant merchant, String categoryName, ProductDTO productDTO) {
+    public Product addProduct(Merchant merchant, String categoryName, ProductDTO productDTO, MultipartFile file)
+            throws MalformedURLException {
 
         // Check to see if category exists
         if (!categoryRepository.existsByNameAndMerchant(categoryName, merchant)) {
-            throw new NotExistException();
+            throw new NotExistException("Category");
         }
 
         Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
@@ -166,11 +175,42 @@ public class ShopService {
         // Check to see if product with same name already exists in category
         for (Product p : productList) {
             if (p.getName().equals(productDTO.getName())) {
-                throw new AlreadyExistsException();
+                throw new AlreadyExistsException("Product");
             }
         }
 
-        // Creating  & Saving Product object
+        // Upload photo to AWSS3 and set the imageUrl to productDTO
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = awss3Service.uploadFile(file);
+            productDTO.setImageUrl(new URL(imageUrl));
+        }
+
+        // Creating & Saving Product object
+        Product product = this.productMapToEntity(productDTO, category);
+
+        productRepository.save(product);
+
+        return product;
+    }
+
+    public Product addProduct(Merchant merchant, String categoryName, ProductDTO productDTO) {
+
+        // Check to see if category exists
+        if (!categoryRepository.existsByNameAndMerchant(categoryName, merchant)) {
+            throw new NotExistException("Category");
+        }
+
+        Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
+        List<Product> productList = category.getProducts();
+
+        // Check to see if product with same name already exists in category
+        for (Product p : productList) {
+            if (p.getName().equals(productDTO.getName())) {
+                throw new AlreadyExistsException("Product");
+            }
+        }
+
+        // Creating & Saving Product object
         Product product = this.productMapToEntity(productDTO, category);
 
         productRepository.save(product);
@@ -179,20 +219,21 @@ public class ShopService {
     }
 
     public Product updateProduct(Category category, String productName, UpdateProductDTO updateProductDTO) {
-        
+
         // Check to see if product exists under category
         Optional<Product> tempProduct = productRepository.findByNameAndCategory(productName, category);
         if (tempProduct.isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException("Product");
         }
 
-        // If changing product name, check to see if another product with that name already exists in the category
+        // If changing product name, check to see if another product with that name
+        // already exists in the category
         List<Product> productList = category.getProducts();
         Product product = tempProduct.get();
 
         for (Product p : productList) {
             if (p.getName().equals(updateProductDTO.getName()) && p != product) {
-                throw new AlreadyExistsException();
+                throw new AlreadyExistsException("Product Name");
             }
         }
 
@@ -212,11 +253,10 @@ public class ShopService {
         category.getProducts().remove(product);
         productRepository.deleteById(product.getId());
     }
-    
-    // public List<Product> getAllProductsByMerchant(Merchant merchant) {
-    //     return productRepository.findByMerchant(merchant);
-    // }
 
+    // public List<Product> getAllProductsByMerchant(Merchant merchant) {
+    // return productRepository.findByMerchant(merchant);
+    // }
 
     private Voucher voucherMapToEntity(VoucherDTO voucherDTO, Merchant merchant) {
         ModelMapper mapper = new ModelMapper();
@@ -226,6 +266,7 @@ public class ShopService {
 
         return voucher;
     }
+
     private Category categoryMapToEntity(CategoryDTO categoryDTO, Merchant merchant) {
         ModelMapper mapper = new ModelMapper();
 

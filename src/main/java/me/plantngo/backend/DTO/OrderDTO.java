@@ -9,6 +9,7 @@ import me.plantngo.backend.models.OrderStatus;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class OrderDTO {
 
     @NotNull

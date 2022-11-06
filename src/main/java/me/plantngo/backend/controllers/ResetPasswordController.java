@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import me.plantngo.backend.DTO.LoginDTO;
 import me.plantngo.backend.DTO.ResetPasswordDTO;
 import me.plantngo.backend.services.ResetPasswordService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +22,19 @@ public class ResetPasswordController {
 
     @ApiOperation("Gets the reset password token for a user")
     @GetMapping("/")
-    public String getAndSetResetPassWordToken(@RequestBody ResetPasswordDTO resetPasswordDTO){
-        return resetPasswordService.getAndSetResetPassWordToken(resetPasswordDTO.getUsername(), resetPasswordDTO.getEmail(), resetPasswordDTO.getUserType());
+    public ResponseEntity<String> setResetPasswordTokenAndSendEmail(@RequestBody ResetPasswordDTO resetPasswordDTO){
+        return resetPasswordService.setResetPasswordTokenAndSendEmail(resetPasswordDTO.getEmail());
     }
 
     @ApiOperation("checks the reset password token for a user, deleting if a match is found")
     @PostMapping("/")
-    public ResponseEntity<String> checkAndDeleteIfCorrectResetPasswordToken(@RequestBody ResetPasswordDTO resetPasswordDTO){
-        return resetPasswordService.checkAndDeleteIfCorrectResetPasswordToken(resetPasswordDTO.getUsername(), resetPasswordDTO.getUserType(), resetPasswordDTO.getResetPasswordToken());
+    public ResponseEntity<String> checkAndDeleteTokenAndChangePasswordIfCorrectResetPasswordToken(@RequestBody ResetPasswordDTO resetPasswordDTO){
+
+        /*
+        will throw exceptions if the check fails
+        if check passes, it will clear the resetPasswordToken field and then reset the password
+         */
+        return resetPasswordService.checkAndDeleteTokenAndChangePasswordIfCorrectResetPasswordToken(resetPasswordDTO.getEmail(),
+                resetPasswordDTO.getResetPasswordToken(), resetPasswordDTO.getNewPassword());
     }
 }
