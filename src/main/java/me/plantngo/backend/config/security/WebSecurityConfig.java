@@ -42,7 +42,7 @@ public class WebSecurityConfig {
             "/**/login",
             "/**/register",
             "/**/mailer",
-            "/**/forgot-password",
+            "/**/forgot-password/**",
             "/"
             // other public endpoints for API may be appended to this array
     };
