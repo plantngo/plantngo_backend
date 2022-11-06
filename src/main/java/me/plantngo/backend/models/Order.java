@@ -41,6 +41,7 @@ public class Order {
     private Integer id;
 
     @JsonSerialize(using = DecimalJsonSerializer.class)
+
     private Double totalPrice;
 
     private Boolean isDineIn;
@@ -56,11 +57,13 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     @JsonBackReference(value = "customer_order")
+    @ToString.Exclude
     private Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "merchant_id", nullable = false)
     @JsonManagedReference(value = "merchant_order")
+    @ToString.Exclude
     private Merchant merchant;
 
     public void setOrderStatus(OrderStatus orderStatus) {

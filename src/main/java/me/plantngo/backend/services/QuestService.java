@@ -105,10 +105,10 @@ public class QuestService {
          * update customer's completed quests if necessary
          */
         if (matches.size() >= quest.getCountToComplete()) {
-            if (addCompletedQuestForCustomer(customer, quest)) {
+
+            if (!customer.getCompletedQuests().contains(quest) && addCompletedQuestForCustomer(customer, quest)) {
                 System.out.println("<QUEST>: Updated quest status for customer: " + username);
-                customer.setGreenPoints(customer.getGreenPoints() + quest.getPoints());
-                customerRepository.save(customer);
+
             }
 
         }
@@ -155,6 +155,7 @@ public class QuestService {
         Boolean isAdded = completed.add(newQuest);
 
         customer.setCompletedQuests(completed);
+        customer.setGreenPoints(customer.getGreenPoints() + newQuest.getPoints());
 
         customerRepository.saveAndFlush(customer);
 
@@ -181,20 +182,25 @@ public class QuestService {
         // LocalDateTime.now());
         System.out.println(quests);
 
+        Customer customer = this.customerRepository.findByUsername(username).get();
+        Set<Quest> completedQuests = customer.getCompletedQuests();
+
         List<QuestProgressDTO> questProgress = new ArrayList<>();
         for (Quest quest : quests) {
-            List<Log> matches = logRepository.findAllByUsernameAndTypeAndDateTimeBetween(
-                    username,
-                    quest.getType(),
-                    quest.getPostedDateTime(),
-                    quest.getEndDateTime());
+            if (!completedQuests.contains(quest)) {
+                List<Log> matches = logRepository.findAllByUsernameAndTypeAndDateTimeBetween(
+                        username,
+                        quest.getType(),
+                        quest.getPostedDateTime(),
+                        quest.getEndDateTime());
 
-            QuestProgressDTO questProgressDTO = new QuestProgressDTO();
-            ModelMapper mapper = new ModelMapper();
-            mapper.getConfiguration().setSkipNullEnabled(true);
-            mapper.map(quest, questProgressDTO);
-            questProgressDTO.setCountCompleted(matches.size());
-            questProgress.add(questProgressDTO);
+                QuestProgressDTO questProgressDTO = new QuestProgressDTO();
+                ModelMapper mapper = new ModelMapper();
+                mapper.getConfiguration().setSkipNullEnabled(true);
+                mapper.map(quest, questProgressDTO);
+                questProgressDTO.setCountCompleted(matches.size());
+                questProgress.add(questProgressDTO);
+            }
         }
 
         return questProgress;
