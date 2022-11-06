@@ -9,6 +9,8 @@ import me.plantngo.backend.models.Quest;
 import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.LogRepository;
 import me.plantngo.backend.repositories.QuestRepository;
+import me.plantngo.backend.repositories.VoucherRepository;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -77,6 +79,12 @@ public class QuestService {
         return new ResponseEntity<>("Successfully deleted quest with id:" + id, HttpStatus.OK);
     }
 
+    public ResponseEntity<String> refreshQuestByCustomerUsername(Integer id, String username) {
+        Customer customer = customerRepository.findByUsername(username).get();
+        return refreshQuestForCustomer(id, customer);
+
+    }
+
     public ResponseEntity<String> refreshQuestForCustomer(Integer questId, Customer customer) {
         String username = customer.getUsername();
 
@@ -97,8 +105,12 @@ public class QuestService {
          * update customer's completed quests if necessary
          */
         if (matches.size() >= quest.getCountToComplete()) {
-            if (addCompletedQuestForCustomer(customer, quest))
+            if (addCompletedQuestForCustomer(customer, quest)) {
                 System.out.println("<QUEST>: Updated quest status for customer: " + username);
+                customer.setGreenPoints(customer.getGreenPoints() + quest.getPoints());
+                customerRepository.save(customer);
+            }
+
         }
 
         return new ResponseEntity<>("Refreshed quest for customer: " + username, HttpStatus.OK);
@@ -187,4 +199,5 @@ public class QuestService {
 
         return questProgress;
     }
+
 }
