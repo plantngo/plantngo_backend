@@ -34,7 +34,6 @@ import lombok.*;
 @EqualsAndHashCode
 @Entity
 @Table(name = "ordering")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Order {
 
     @Id
@@ -61,6 +60,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "merchant_id", nullable = false)
+    @JsonManagedReference(value = "merchant_order")
     private Merchant merchant;
 
     public void setOrderStatus(OrderStatus orderStatus) {

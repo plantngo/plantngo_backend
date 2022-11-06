@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -27,7 +28,6 @@ import lombok.*;
 @EqualsAndHashCode
 @Entity
 @Table(name = "merchant")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Merchant {
 
         @Id
@@ -96,6 +96,7 @@ public class Merchant {
         private List<Voucher> vouchers;
 
         @OneToMany(mappedBy = "merchant", orphanRemoval = true, cascade = CascadeType.ALL)
+        @JsonBackReference(value = "merchant_order")
         private List<Order> order;
 
         @JsonIgnore
