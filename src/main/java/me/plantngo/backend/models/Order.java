@@ -34,7 +34,6 @@ import lombok.*;
 @EqualsAndHashCode
 @Entity
 @Table(name = "ordering")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Order {
 
     @Id
