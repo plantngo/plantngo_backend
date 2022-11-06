@@ -37,7 +37,13 @@ public class WebSecurityConfig {
             "/webjars/**",
             // -- Swagger UI v3 (OpenAPI)
             "/v3/api-docs/**",
-            "/swagger-ui/**"
+            "/swagger-ui/**",
+            // -- Ordinary endpoints
+            "/**/login",
+            "/**/register",
+            "/**/mailer",
+            "/**/forgot-password",
+            "/"
             // other public endpoints for API may be appended to this array
     };
 
@@ -70,11 +76,6 @@ public class WebSecurityConfig {
                 .httpBasic().and()
                 .authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers("/**/login").permitAll()
-                .antMatchers("/**/register").permitAll()
-                .antMatchers("/**/mailer").permitAll()
-                .antMatchers("/**/forgot-password").permitAll()
-                .antMatchers("/").permitAll()
 
                 // .antMatchers("/**/edit-profile").hasAnyRole("CUSTOMER","MERCHANT")
                 //
