@@ -26,6 +26,7 @@ services:
 
   sonarqube:
     image: sonarqube:community
+    platform: linux/amd64
     depends_on:
       - plantngo-db
     env_file:
