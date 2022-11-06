@@ -67,6 +67,7 @@ public class SampleDataConfig {
                                 null,
                                 null,
                                 null,
+                                null,
                                 null);
 
                 RegistrationDTO customer2 = new RegistrationDTO(
@@ -74,6 +75,7 @@ public class SampleDataConfig {
                                 "gabriel@example.com",
                                 "Password123!",
                                 'C',
+                                null,
                                 null,
                                 null,
                                 null,
@@ -105,7 +107,8 @@ public class SampleDataConfig {
                                 103.84271,
                                 "Italian",
                                 2,
-                                "10:00AM - 20:00PM");
+                                "10:00AM - 20:00PM",
+                                300.0);
                 RegistrationDTO merchantFairPrice = new RegistrationDTO(
                                 "fairprice",
                                 "fairprice@example.com",
@@ -120,7 +123,8 @@ public class SampleDataConfig {
                                 103.8472445,
                                 "Groceries",
                                 1,
-                                "7:00AM - 21:00PM");
+                                "7:00AM - 21:00PM",
+                                270.20);
                 RegistrationDTO merchantJoieVege = new RegistrationDTO(
                                 "joievege",
                                 "Joie@example.com",
@@ -135,7 +139,8 @@ public class SampleDataConfig {
                                 103.8372088,
                                 "Fine Dining",
                                 4,
-                                "10:00AM - 20:00PM");
+                                "10:00AM - 20:00PM",
+                                609.22);
 
                 authService.registerUser(merchantPizzaHut);
                 authService.registerUser(merchantFairPrice);
