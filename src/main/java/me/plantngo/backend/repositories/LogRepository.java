@@ -10,5 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface LogRepository extends JpaRepository<Log, Integer> {
-    List<Log> findAllByUsernameAndTypeAndDateTimeBetween (String username, String type, LocalDateTime postedDateTime, LocalDateTime endDateTime);
+    List<Log> findAllByUsernameAndTypeAndDateTimeBetween(String username, String type, LocalDateTime postedDateTime,
+            LocalDateTime endDateTime);
+
 }

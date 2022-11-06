@@ -65,7 +65,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @ToString.Exclude
-    @JsonIgnore
+    @JsonBackReference
     private List<OrderItem> orderItem;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)

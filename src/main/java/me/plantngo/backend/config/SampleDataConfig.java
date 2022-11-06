@@ -151,25 +151,25 @@ public class SampleDataConfig {
                 Merchant pizzaHut = merchantService.getMerchantByUsername("pizzahut");
                 ProductDTO pizzaHutProduct1 = new ProductDTO("Cheesy 7 Beyond Supreme - Regular Pan",
                                 34.90,
-                                "Cheesy 7 meets Beyond Meat™! Made with Beyond Meat's plant based Italian Sausage Crumbles which leaves a hint of herbs and spice aroma, with capsicums, onions and mushrooms, on a bed of our signature sweet sauce and seven wondrous cheeses!",
+                                "Cheesy 7 meets Beyond Meat! Made with Beyond Meat's plant based Italian Sausage Crumbles which leaves a hint of herbs and spice aroma, with capsicums, onions and mushrooms, on a bed of our signature sweet sauce and seven wondrous cheeses!",
                                 10.0,
                                 new URL("https://static.phdvasia.com/sg1/menu/single/desktop_thumbnail_0bd9658b-d8eb-438d-bc2c-fef8afa1b71e.jpg"),
                                 "Savoury & Cheesy");
                 ProductDTO pizzaHutProduct2 = new ProductDTO("Cheesy 7 Beyond Supreme - Regular Cheesy Stuffed Crust",
                                 43.40,
-                                "Cheesy 7 meets Beyond Meat™! Made with Beyond Meat's plant based Italian Sausage Crumbles which leaves a hint of herbs and spice aroma, with capsicums, onions and mushrooms, on a bed of our signature sweet sauce and seven wondrous cheeses!",
+                                "Cheesy 7 meets Beyond Meat! Made with Beyond Meat's plant based Italian Sausage Crumbles which leaves a hint of herbs and spice aroma, with capsicums, onions and mushrooms, on a bed of our signature sweet sauce and seven wondrous cheeses!",
                                 45.0,
                                 new URL("https://static.phdvasia.com/sg1/menu/single/desktop_thumbnail_0bd9658b-d8eb-438d-bc2c-fef8afa1b71e.jpg"),
                                 "Savoury & Cheesy");
                 ProductDTO pizzaHutProduct3 = new ProductDTO("Cheesy 7 Beyond Supreme - Large Pan",
                                 40.90,
-                                "Cheesy 7 meets Beyond Meat™! Made with Beyond Meat's plant based Italian Sausage Crumbles which leaves a hint of herbs and spice aroma, with capsicums, onions and mushrooms, on a bed of our signature sweet sauce and seven wondrous cheeses!",
+                                "Cheesy 7 meets Beyond Meat! Made with Beyond Meat's plant based Italian Sausage Crumbles which leaves a hint of herbs and spice aroma, with capsicums, onions and mushrooms, on a bed of our signature sweet sauce and seven wondrous cheeses!",
                                 40.0,
                                 new URL("https://static.phdvasia.com/sg1/menu/single/desktop_thumbnail_0bd9658b-d8eb-438d-bc2c-fef8afa1b71e.jpg"),
                                 "Savoury & Cheesy");
-                shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct1);
-                shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct2);
-                shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct3);
+                shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct1, null);
+                shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct2, null);
+                shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct3, null);
 
                 Merchant fairPrice = merchantService.getMerchantByUsername("fairprice");
                 ProductDTO fairPriceProduct1 = new ProductDTO(
@@ -201,11 +201,11 @@ public class SampleDataConfig {
                                 new URL("https://media.nedigital.sg/fairprice/fpol/media/images/product/L/90027875_L1_20211018.jpg?q=60"),
                                 "Salty");
 
-                shopService.addProduct(fairPrice, "Groceries", fairPriceProduct1);
-                shopService.addProduct(fairPrice, "Groceries", fairPriceProduct2);
-                shopService.addProduct(fairPrice, "Snacks", fairPriceProduct3);
-                shopService.addProduct(fairPrice, "Snacks", fairPriceProduct4);
-                shopService.addProduct(fairPrice, "Snacks", fairPriceProduct5);
+                shopService.addProduct(fairPrice, "Groceries", fairPriceProduct1, null);
+                shopService.addProduct(fairPrice, "Groceries", fairPriceProduct2, null);
+                shopService.addProduct(fairPrice, "Snacks", fairPriceProduct3, null);
+                shopService.addProduct(fairPrice, "Snacks", fairPriceProduct4, null);
+                shopService.addProduct(fairPrice, "Snacks", fairPriceProduct5, null);
 
                 Merchant joieVege = merchantService.getMerchantByUsername("joievege");
                 ProductDTO joieVegeProduct1 = new ProductDTO("4 Course Set", 38.00, "Including 1 Drink of Choice", 10.0,
@@ -214,8 +214,8 @@ public class SampleDataConfig {
                 ProductDTO joieVegeProduct2 = new ProductDTO("5 Course Set", 58.00, "Including 1 Drink of Choice", 12.0,
                                 new URL("https://static.wixstatic.com/media/591a97_49f940ea3868444b9867202f9002610c~mv2.jpg/v1/fit/w_467,h_693,q_90/591a97_49f940ea3868444b9867202f9002610c~mv2.jpg"),
                                 "Savoury");
-                shopService.addProduct(joieVege, "Fine Dining", joieVegeProduct1);
-                shopService.addProduct(joieVege, "Fine Dining", joieVegeProduct2);
+                shopService.addProduct(joieVege, "Fine Dining", joieVegeProduct1, null);
+                shopService.addProduct(joieVege, "Fine Dining", joieVegeProduct2, null);
         }
 
         private void createVouchers() {

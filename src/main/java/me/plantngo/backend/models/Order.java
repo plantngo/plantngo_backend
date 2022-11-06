@@ -14,7 +14,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.JoinColumn;
@@ -39,6 +41,7 @@ public class Order {
     private Integer id;
 
     @JsonSerialize(using = DecimalJsonSerializer.class)
+
     private Double totalPrice;
 
     private Boolean isDineIn;
@@ -48,16 +51,19 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @ToString.Exclude
     private Set<OrderItem> orderItems;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     @JsonBackReference(value = "customer_order")
+    @ToString.Exclude
     private Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "merchant_id", nullable = false)
-    @JsonBackReference(value = "merchant_order")
+    @JsonManagedReference(value = "merchant_order")
+    @ToString.Exclude
     private Merchant merchant;
 
     public void setOrderStatus(OrderStatus orderStatus) {

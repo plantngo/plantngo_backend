@@ -95,6 +95,23 @@ public class OrderService {
         order.setOrderItems(orderItems);
         order.setTotalPrice(this.getTotalPrice(orderItems));
 
+        Order response = orderRepository.save(order);
+
+        return response;
+    }
+
+    public Order addOrderItem(String customerName, Integer orderId, OrderItemDTO orderItemDTO) {
+
+        // find existing order
+        Order order = orderRepository.findById(orderId).get();
+
+        Set<OrderItem> orderItems = order.getOrderItems();
+        OrderItem orderItem = this.orderItemMapToEntity(orderItemDTO, order);
+        orderItems.add(orderItem);
+
+        order.setOrderItems(orderItems);
+        order.setTotalPrice(this.getTotalPrice(orderItems));
+
         orderRepository.save(order);
 
         return order;
@@ -112,29 +129,40 @@ public class OrderService {
         /*
          * to log a fulfilled order
          */
-        if (order.getOrderStatus() == OrderStatus.FULFILLED)
+        if (order.getOrderStatus() == OrderStatus.FULFILLED) {
             logService.addLog(order.getCustomer().getUsername(), "order");
+        }
 
-        orderRepository.save(order);
         // Update OrderItems in order
         Set<UpdateOrderItemDTO> updateOrderItemDTOs = updateOrderDTO.getUpdateOrderItemDTOs();
+        if (updateOrderItemDTOs == null) {
+            updateOrderItemDTOs = new HashSet<UpdateOrderItemDTO>();
+        }
         Set<OrderItem> orderItems = order.getOrderItems();
 
         for (UpdateOrderItemDTO updateOrderItemDTO : updateOrderItemDTOs) {
             OrderItemDTO orderItemDTO = mapper.map(updateOrderItemDTO, OrderItemDTO.class);
             OrderItem orderItem = this.orderItemMapToEntity(orderItemDTO, order);
-            orderItems.add(orderItem);
-        }
+            orderItems.removeIf(x -> x.getProductId() == orderItem.getProductId());
+            if (orderItem.getQuantity() > 0) {
+                orderItems.add(orderItem);
+            }
 
-        order.setOrderItems(orderItems);
-        orderRepository.save(order);
+        }
+        if (orderItems.size() > 0) {
+            order.setTotalPrice(this.getTotalPrice(orderItems));
+            order.setOrderItems(orderItems);
+            orderRepository.save(order);
+        } else {
+            orderRepository.delete(order);
+        }
 
         return order;
     }
 
     public void deleteOrder(Integer orderId) {
         if (!orderRepository.existsById(orderId)) {
-            throw new NotExistException();
+            throw new NotExistException("Order");
         }
         orderRepository.deleteById(orderId);
     }
@@ -143,7 +171,7 @@ public class OrderService {
         if (!orderRepository.existsById(orderId)) {
             throw new NotExistException("Order");
         }
-        Order order = orderRepository.findById(orderId).get();
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotExistException("Order"));
 
         Set<OrderItem> orderItems = order.getOrderItems();
         Iterator<OrderItem> itr = orderItems.iterator();
@@ -237,6 +265,28 @@ public class OrderService {
         orderItem.setProductId(product.getId());
 
         return orderItem;
+    }
+
+    public List<Order> getOrdersByCustomerNameAndMerchantName(String customerName, String merchantName) {
+        return orderRepository.findAllByCustomerUsernameAndMerchantUsername(customerName, merchantName);
+    }
+
+    public Order getOrdersByCustomerNameAndMerchantNameAndOrderStatus(String customerName, String merchantName,
+            OrderStatus orderStatus) {
+        return orderRepository.findFirstByCustomerUsernameAndMerchantUsernameAndOrderStatus(customerName, merchantName,
+                orderStatus);
+    }
+
+    public List<Order> getOrdersByCustomerNameAndOrderStatus(String customerName, OrderStatus orderStatus) {
+
+        return orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName, orderStatus);
+    }
+
+    public List<Order> getAllPendingAndFulfilledOrdersByCustomer(String customerName) {
+        List<Order> tmpList = orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName,
+                OrderStatus.PENDING);
+        tmpList.addAll(orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName, OrderStatus.FULFILLED));
+        return tmpList;
     }
 
 }
