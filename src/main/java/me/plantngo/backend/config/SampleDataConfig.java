@@ -2,6 +2,9 @@ package me.plantngo.backend.config;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -13,6 +16,10 @@ import me.plantngo.backend.DTO.ProductDTO;
 import me.plantngo.backend.DTO.RegistrationDTO;
 import me.plantngo.backend.DTO.VoucherDTO;
 import me.plantngo.backend.models.Merchant;
+import me.plantngo.backend.models.Promotion;
+import me.plantngo.backend.models.Quest;
+import me.plantngo.backend.repositories.PromotionRepository;
+import me.plantngo.backend.repositories.QuestRepository;
 import me.plantngo.backend.services.AuthService;
 import me.plantngo.backend.services.MerchantService;
 import me.plantngo.backend.services.ShopService;
@@ -26,6 +33,10 @@ public class SampleDataConfig {
         private ShopService shopService;
         @Autowired
         private MerchantService merchantService;
+        @Autowired
+        private PromotionRepository promotionRepository;
+        @Autowired
+        private QuestRepository questRepository;
 
         @Bean
         CommandLineRunner commandLineRunner() {
@@ -36,7 +47,8 @@ public class SampleDataConfig {
                         createMerchantCategories();
                         createMerchantProducts();
                         createVouchers();
-
+                        createPromotions();
+                        createQuests();
                 };
         }
 
@@ -267,6 +279,52 @@ public class SampleDataConfig {
                                 "15% off 5 Course Set Meal");
                 shopService.addVoucher(joieVege, joieVegeVoucher1);
 
+        }
+
+        private void createPromotions() {
+                Promotion promotion = new Promotion(1, "30% Off Storewide Ala carte item takeaways", null, "20/12/2022",
+                                "06/11/2022",
+                                "https://www.whynotdeals.com/wp-content/uploads/2020/05/lotus-vegetarian-singapore-30-off-storewide-ala-carte-takeaways-promotion_why-not-deals.jpg",
+                                30);
+                Promotion promotion2 = new Promotion(2,
+                                "Meatless Monday Promotion! S$1 Claypot Rice with Chicken in GongBao Sauce", null,
+                                "20/12/2022",
+                                "06/11/2022",
+                                "https://media.womensweekly.com.sg/public/2019/11/Where-To-Go-For-Delicious-Vegetarian-Food-In-Singapore_3.jpg?compress=true&quality=80&w=480&dpr=2.6",
+                                20);
+                Promotion promotion3 = new Promotion(3,
+                                "Students and Seniors Specials, S$5.90 Signature Bento Set and Noodles", null,
+                                "20/12/2022",
+                                "06/11/2022",
+                                "https://www.greendot.sg/wp-content/uploads/2019/09/WEB_Students-Senior-Promotion-01.jpg",
+                                1);
+                Promotion promotion4 = new Promotion(4,
+                                "Greendot free delivery!", null,
+                                "20/12/2022",
+                                "06/11/2022",
+                                "https://www.greendot.sg/wp-content/uploads/2020/11/homebanner_getz-1048x576.jpeg",
+                                1);
+                Promotion promotion5 = new Promotion(5,
+                                "Lotus Kitchen Mother's Day, 9 Course Special", null,
+                                "20/12/2022",
+                                "06/11/2022",
+                                "https://www.whynotdeals.com/wp-content/uploads/2018/05/lotus-kitchen-singapore-mothers-day-vegetarian-9-course-meal-promotion-1-31-may-2018_why-not-deals.jpg",
+                                1);
+
+                this.promotionRepository.saveAll(List.of(promotion, promotion2, promotion3, promotion4, promotion5));
+        }
+
+        private void createQuests() {
+                Quest quest1 = new Quest(1, LocalDateTime.now(), "order", 1, 1000, LocalDateTime.now().plusDays(3),
+                                null);
+                // LocalDateTime.now().plusDays(7) );
+                Quest quest2 = new Quest(2, LocalDateTime.now(), "login", 1, 100, LocalDateTime.now().plusDays(3),
+                                null);
+
+                Quest quest3 = new Quest(3, LocalDateTime.now(), "purchase-voucher", 1, 1000,
+                                LocalDateTime.now().plusDays(3),
+                                null);
+                this.questRepository.saveAll(List.of(quest1, quest2, quest3));
         }
 
 }
