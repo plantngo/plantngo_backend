@@ -28,7 +28,6 @@ import lombok.*;
 @EqualsAndHashCode
 @Entity
 @Table(name = "merchant")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Merchant {
 
         @Id
