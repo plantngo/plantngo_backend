@@ -269,4 +269,6 @@ public class ProductServiceTest {
         assertEquals(expectedProductIngredient, responseProductIngredient);
         verify(productIngredientRepository, times(1)).findByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName);
     }
+
+    
 }

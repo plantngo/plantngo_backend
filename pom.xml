@@ -24,6 +24,9 @@
 			**/security/*.java,
 			**/models/*.java
 		</sonar.exclusions>
+		<sonar.login>admin</sonar.login>
+		<sonar.password>password</sonar.password>
+		<sonar.projectKey>sqp_b98b0d1762c98b66cbbd7809c311aab50b8573b5</sonar.projectKey>
 	</properties>
 	
 	<dependencies>
