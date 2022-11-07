@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,15 +19,23 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import me.plantngo.backend.DTO.UpdateCustomerDetailsDTO;
+import me.plantngo.backend.exceptions.AlreadyExistsException;
+import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.repositories.CustomerRepository;
+import me.plantngo.backend.repositories.MerchantRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
 
     @Mock
     private CustomerRepository customerRepository;
+
+    @Mock
+    private MerchantRepository merchantRepository;
+
     @InjectMocks
     private CustomerService customerService;
 
@@ -146,8 +155,102 @@ public class CustomerServiceTest {
         
     }
 
+    @Test
+    void testUpdateCustomer_CustomerExists_ReturnCustomer() {
 
-  
+        // Arrange
+        String username = "Daniel";
+        UpdateCustomerDetailsDTO updateCustomerDetailsDTO = new UpdateCustomerDetailsDTO("Jacky", "jacky@yahoo.com.sg", null, 1000);
+        Customer customer = new Customer();
+        customer.setUsername("Daniel");
+        Customer expectedCustomer = new Customer();
+        expectedCustomer.setUsername(updateCustomerDetailsDTO.getUsername());
+        expectedCustomer.setEmail(updateCustomerDetailsDTO.getEmail());
+        expectedCustomer.setGreenPoints(updateCustomerDetailsDTO.getGreenPoints());
 
+        when(merchantRepository.existsByUsername(anyString()))
+            .thenReturn(false);
+        when(customerRepository.existsByUsername(anyString()))
+            .thenReturn(false);
+        when(customerRepository.findByUsername(anyString()))
+            .thenReturn(Optional.of(customer));
+        when(customerRepository.saveAndFlush(any(Customer.class)))
+            .thenReturn(expectedCustomer);
 
+        // Act
+        Customer responseCustomer = customerService.updateCustomer(username, updateCustomerDetailsDTO);
+
+        // Assert
+        assertEquals(expectedCustomer, responseCustomer);
+        verify(merchantRepository, times(1)).existsByUsername(updateCustomerDetailsDTO.getUsername());
+        verify(customerRepository, times(1)).existsByUsername(updateCustomerDetailsDTO.getUsername());
+        verify(customerRepository, times(1)).findByUsername(username);
+        verify(customerRepository, times(1)).saveAndFlush(expectedCustomer);
+        
+    }
+
+    @Test
+    void testUpdateCustomer_UsernameAlreadyExistsInCustomer_ThrowAlreadyExistsException() {
+
+        // Arrange
+        String username = "Daniel";
+        UpdateCustomerDetailsDTO updateCustomerDetailsDTO = new UpdateCustomerDetailsDTO("Jacky", "jacky@yahoo.com.sg", null, 1000);
+        String exceptionMsg = "";
+
+        when(merchantRepository.existsByUsername(anyString()))
+            .thenReturn(false);
+        when(customerRepository.existsByUsername(anyString()))
+            .thenReturn(true);
+
+        // Act
+        try {
+            Customer responseCustomer = customerService.updateCustomer(username, updateCustomerDetailsDTO);
+        } catch (AlreadyExistsException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Username already exists!", exceptionMsg);
+        verify(merchantRepository, times(1)).existsByUsername(updateCustomerDetailsDTO.getUsername());
+        verify(customerRepository, times(1)).existsByUsername(updateCustomerDetailsDTO.getUsername());
+    }
+
+    @Test
+    void testDeleteCustomer_CustomerExists_ReturnSuccess() {
+
+        // Arrange
+        String username = "Daniel";
+
+        when(customerRepository.existsByUsername(anyString()))
+            .thenReturn(true);
+
+        // Act
+        customerService.deleteCustomer(username);
+
+        // Assert
+        verify(customerRepository, times(1)).existsByUsername(username);
+        verify(customerRepository, times(1)).deleteByUsername(username);
+    }
+
+    @Test
+    void testDeleteCustomer_CustomerNotExist_ThrowNotExistException() {
+
+        // Arrange
+        String username = "Daniel";
+        String exceptionMsg = "";
+
+        when(customerRepository.existsByUsername(anyString()))
+            .thenReturn(false);
+
+        // Act
+        try {
+            customerService.deleteCustomer(username);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Customer doesn't exist!", exceptionMsg);
+        verify(customerRepository, times(1)).existsByUsername(username);
+    }
 }
