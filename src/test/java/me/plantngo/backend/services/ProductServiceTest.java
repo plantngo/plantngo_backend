@@ -401,4 +401,140 @@ public class ProductServiceTest {
         verify(ingredientRepository, times(1)).findByName(productIngredientDTO.getName());
         verify(productIngredientRepository, times(1)).findByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName);
     }
+
+    @Test
+    void testDeleteAllProductIngredients_ProductExists_ReturnSuccess() {
+
+        // Arrange
+        String productName = "Steak";
+        String merchantName = "Daniel";
+
+        Merchant merchant = new Merchant();
+        merchant.setUsername("Daniel");
+
+        Category category = new Category();
+        category.setMerchant(merchant);
+        merchant.setCategories(List.of(category));
+        
+        Product expectedProduct = new Product(1, "Steak", 10.0, null, 0.0, null, null, category, null, new HashSet<>());
+        
+        Set<ProductIngredient> productIngredients = new HashSet<>();
+        productIngredients.add(productIngredient);
+        product.setProductIngredients(productIngredients);
+
+        when(productRepository.findByNameAndCategoryMerchantUsername(any(String.class), any(String.class)))
+            .thenReturn(Optional.of(product));
+        when(productRepository.save(any(Product.class)))
+            .thenReturn(expectedProduct);
+
+        // Act
+        productService.deleteAllProductIngredients(merchantName, productName);
+
+        // Assert
+        verify(productRepository, times(1)).findByNameAndCategoryMerchantUsername(productName, merchantName);
+        verify(productRepository, times(1)).save(expectedProduct);
+    }
+
+    @Test
+    void testDeleteAllProductIngredients_ProductNotExists_ThrowNotExistException() {
+
+        // Arrange
+        String productName = "Steak";
+        String merchantName = "Daniel";
+        String exceptionMsg = "";
+
+        when(productRepository.findByNameAndCategoryMerchantUsername(any(String.class), any(String.class)))
+            .thenReturn(Optional.empty());
+
+        // Act
+        try {
+            productService.deleteAllProductIngredients(merchantName, productName);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Product doesn't exist!", exceptionMsg);
+        verify(productRepository, times(1)).findByNameAndCategoryMerchantUsername(productName, merchantName);
+    }
+
+    @Test
+    void testDeleteProductIngredient_ProductIngredientExist_ReturnSucess() {
+
+        // Arrange
+        String productName = "Steak";
+        String merchantName = "Daniel";
+        String productIngredientName = "Beef";
+
+        Merchant merchant = new Merchant();
+        merchant.setUsername("Daniel");
+
+        Category category = new Category();
+        category.setMerchant(merchant);
+        merchant.setCategories(List.of(category));
+
+        Product expectedProduct = new Product(1, "Steak", 10.0, null, 0.0, null, null, category, null, new HashSet<>());
+
+        Set<ProductIngredient> productIngredients = new HashSet<>();
+        productIngredients.add(productIngredient);
+        product.setProductIngredients(productIngredients);
+
+        when(productRepository.findByName(any(String.class)))
+            .thenReturn(Optional.of(product));
+        when(ingredientRepository.findByName(any(String.class)))
+            .thenReturn(Optional.of(ingredient));
+        when(productIngredientRepository.findByIngredientAndProductAndProductCategoryMerchantUsername(any(Ingredient.class), any(Product.class), any(String.class)))
+            .thenReturn(Optional.of(productIngredient));
+        when(productRepository.save(any(Product.class)))
+            .thenReturn(expectedProduct);
+        
+        // Act
+        productService.deleteProductIngredient(merchantName, productName, productIngredientName);
+
+        // Assert
+        verify(productRepository, times(1)).findByName(productName);
+        verify(ingredientRepository, times(1)).findByName(productIngredientName);
+        verify(productIngredientRepository, times(1)).findByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, expectedProduct, merchantName);
+        verify(productRepository, times(1)).save(expectedProduct);
+    }    
+    
+    @Test
+    void testDeleteProductIngredient_ProductIngredientNotExist_ThrowNotExistException() {
+
+        // Arrange
+        String productName = "Steak";
+        String merchantName = "Daniel";
+        String productIngredientName = "Fish";
+        String exceptionMsg = "";
+
+        Set<ProductIngredient> productIngredients = new HashSet<>();
+        productIngredients.add(productIngredient);
+        product.setProductIngredients(productIngredients);
+
+        Ingredient ingredient2 = new Ingredient();
+        ingredient2.setName("Fish");
+
+        ProductIngredient productIngredient2 = new ProductIngredient();
+        productIngredient2.setIngredient(ingredient2);
+
+        when(productRepository.findByName(any(String.class)))
+            .thenReturn(Optional.of(product));
+        when(ingredientRepository.findByName(any(String.class)))
+            .thenReturn(Optional.of(ingredient2));
+        when(productIngredientRepository.findByIngredientAndProductAndProductCategoryMerchantUsername(any(Ingredient.class), any(Product.class), any(String.class)))
+            .thenReturn(Optional.of(productIngredient2));
+        
+        // Act
+        try {
+            productService.deleteProductIngredient(merchantName, productName, productIngredientName);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Product Ingredient doesn't exist!", exceptionMsg);
+        verify(productRepository, times(1)).findByName(productName);
+        verify(ingredientRepository, times(1)).findByName(productIngredientName);
+        verify(productIngredientRepository, times(1)).findByIngredientAndProductAndProductCategoryMerchantUsername(ingredient2, product, merchantName);
+    }
 }
