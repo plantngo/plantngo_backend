@@ -248,6 +248,43 @@ public class ShopService {
         return product;
     }
 
+    // update product with image
+    public Product updateProduct(Category category, String productName, UpdateProductDTO updateProductDTO,
+            MultipartFile file) throws MalformedURLException {
+
+        // Check to see if product exists under category
+        Optional<Product> tempProduct = productRepository.findByNameAndCategory(productName, category);
+        if (tempProduct.isEmpty()) {
+            throw new NotExistException("Product");
+        }
+
+        // If changing product name, check to see if another product with that name
+        // already exists in the category
+        List<Product> productList = category.getProducts();
+        Product product = tempProduct.get();
+
+        for (Product p : productList) {
+            if (p.getName().equals(updateProductDTO.getName()) && p != product) {
+                throw new AlreadyExistsException("Product Name");
+            }
+        }
+
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = awss3Service.uploadFile(file);
+            updateProductDTO.setImageUrl(new URL(imageUrl));
+        }
+
+        // Updating product
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setSkipNullEnabled(true);
+        mapper.map(updateProductDTO, product);
+
+        // In case we need to call it before method ends
+        productRepository.saveAndFlush(product);
+
+        return product;
+    }
+
     public void deleteProduct(Product product) {
         Category category = product.getCategory();
         category.getProducts().remove(product);
@@ -280,7 +317,7 @@ public class ShopService {
         ModelMapper mapper = new ModelMapper();
 
         Product product = mapper.map(productDTO, Product.class);
-        if (product.getCarbonEmission() == null){
+        if (product.getCarbonEmission() == null) {
             product.setCarbonEmission(0.0);
         }
         product.setCategory(category);
