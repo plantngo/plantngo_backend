@@ -33,9 +33,11 @@ public class PromotionService {
     private AWSS3Service awss3Service;
 
     @Autowired
-    public PromotionService(PromotionRepository promotionRepository, ProductService productService) {
+    public PromotionService(PromotionRepository promotionRepository, ProductService productService,
+            AWSS3Service awss3Service) {
         this.promotionRepository = promotionRepository;
         this.productService = productService;
+        this.awss3Service = awss3Service;
     }
 
     public Promotion getPromotionById(Integer id) {
@@ -48,15 +50,15 @@ public class PromotionService {
     public List<Promotion> getAllPromotions() {
         return promotionRepository.findAll();
     }
-    
+
     public List<Promotion> getAllPromotionsSorted() {
         List<Promotion> promoList = promotionRepository.findAll();
         Collections.sort(promoList, new Comparator<Promotion>() {
             @Override
             public int compare(Promotion u1, Promotion u2) {
-              return u2.getClicks().compareTo(u1.getClicks());
+                return u2.getClicks().compareTo(u1.getClicks());
             }
-          });
+        });
         return promoList;
     }
 
@@ -75,7 +77,8 @@ public class PromotionService {
         return promotion;
     }
 
-    public Promotion addPromotion(PromotionDTO promotionDTO, Merchant merchant, MultipartFile file) throws MalformedURLException {
+    public Promotion addPromotion(PromotionDTO promotionDTO, Merchant merchant, MultipartFile file)
+            throws MalformedURLException {
 
         Promotion promotion = this.promotionMapToEntity(promotionDTO, merchant);
         promotion.setClicks(0);
@@ -105,12 +108,12 @@ public class PromotionService {
         promotionRepository.deleteById(promotionId);
     }
 
-    public void addClicksToPromotion(Integer promotionId){
-        if(!promotionRepository.existsById(promotionId)){
+    public void addClicksToPromotion(Integer promotionId) {
+        if (!promotionRepository.existsById(promotionId)) {
             throw new NotExistException("Promotion ID: " + promotionId);
         }
         Promotion promotion = this.getPromotionById(promotionId);
-        promotion.setClicks(promotion.getClicks() + 1); 
+        promotion.setClicks(promotion.getClicks() + 1);
         promotionRepository.saveAndFlush(promotion);
     }
 

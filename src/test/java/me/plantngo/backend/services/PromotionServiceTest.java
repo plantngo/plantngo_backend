@@ -6,6 +6,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -205,17 +207,17 @@ public class PromotionServiceTest {
     }
 
     @Test
-    void testAddPromotion_ValidPromotionDTO_ReturnPromotion() {
+    void testAddPromotion_ValidPromotionDTO_ReturnPromotion() throws MalformedURLException {
 
         // Arrange
-        PromotionDTO promotionDTO = new PromotionDTO("It's a promotion!", "www.google.com.sg", null, null);
+        PromotionDTO promotionDTO = new PromotionDTO("It's a promotion!", new URL("https://www.google.com.sg"), null, null);
 
         Merchant merchant = new Merchant();
         merchant.setUsername("Daniel");
 
         Promotion expectedPromotion = new Promotion();
         expectedPromotion.setDescription("It's a promotion!");
-        expectedPromotion.setBannerUrl("www.google.com.sg");
+        expectedPromotion.setBannerUrl(new URL("https://www.google.com.sg"));
         expectedPromotion.setMerchant(merchant);
         expectedPromotion.setClicks(0);
 
@@ -322,15 +324,15 @@ public class PromotionServiceTest {
     }
 
     @Test
-    void testUpdatePromotion_ValidPromotionDTO_ReturnPromotion() {
+    void testUpdatePromotion_ValidPromotionDTO_ReturnPromotion() throws MalformedURLException {
 
         // Arrange
         Integer promotionId = 1;
-        PromotionDTO promotionDTO = new PromotionDTO("Hello", "yahoo", null, null);
+        PromotionDTO promotionDTO = new PromotionDTO("Hello", new URL("https://yahoo.com.sg"), null, null);
         Promotion expectedPromotion = new Promotion();
         expectedPromotion.setId(1);
         expectedPromotion.setDescription("Hello");
-        expectedPromotion.setBannerUrl("yahoo");
+        expectedPromotion.setBannerUrl(new URL("https://yahoo.com.sg"));
 
         when(promotionRepository.findById(any(Integer.class)))
             .thenReturn(Optional.of(promotion));
@@ -347,11 +349,11 @@ public class PromotionServiceTest {
     }
 
     @Test
-    void testUpdatePromotion_PromotionNotExist_ThrowNotExistException() {
+    void testUpdatePromotion_PromotionNotExist_ThrowNotExistException() throws MalformedURLException {
 
         // Arrange
         Integer promotionId = 1;
-        PromotionDTO promotionDTO = new PromotionDTO("Hello", "yahoo", null, null);
+        PromotionDTO promotionDTO = new PromotionDTO("Hello", new URL("https://yahoo.com.sg"), null, null);
         String exceptionMsg = "";
 
         when(promotionRepository.findById(any(Integer.class)))
