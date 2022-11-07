@@ -22,12 +22,14 @@ import java.util.Optional;
 
 @Service
 public class ResetPasswordService {
-    CustomerRepository customerRepository;
-    MerchantRepository merchantRepository;
+    
+    private CustomerRepository customerRepository;
 
-    ChangeCredentialService changeCredentialService;
+    private MerchantRepository merchantRepository;
 
-    MailService mailService;
+    private ChangeCredentialService changeCredentialService;
+
+    private MailService mailService;
 
     @Autowired
     public ResetPasswordService(CustomerRepository customerRepository, MerchantRepository merchantRepository,
