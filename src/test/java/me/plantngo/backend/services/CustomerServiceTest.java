@@ -111,13 +111,19 @@ public class CustomerServiceTest {
     @Test
     void testGetCustomerByEmail_Exist_ReturnCustomer(){
 
-        // arrange
-        Customer customer = new Customer();
-        customer.setEmail("john.doe@example.com");
-
-        Optional<Customer> optionalCustomer = Optional.of(customer);
-        when(customerRepository.findByEmail(any(String.class))).thenReturn(optionalCustomer);
+         // arrange
+         Customer customer = new Customer();
+         customer.setEmail("john.doe@example.com");;
  
+         Optional<Customer> optionalCustomer = Optional.of(customer);
+         when(customerRepository.findByEmail(any(String.class))).thenReturn(optionalCustomer);
+ 
+         // act 
+         Customer responseCustomer = customerService.getCustomerByEmail(customer.getEmail());
+ 
+         //assert
+         assertEquals(responseCustomer, customer);
+         verify(customerRepository, times(1)).findByEmail(customer.getEmail());
 
     }
 
