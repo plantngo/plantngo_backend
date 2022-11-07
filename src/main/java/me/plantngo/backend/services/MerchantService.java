@@ -1,6 +1,7 @@
 package me.plantngo.backend.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import me.plantngo.backend.DTO.UpdateCustomerDetailsDTO;
 import me.plantngo.backend.DTO.UpdateMerchantDetailsDTO;
@@ -29,10 +30,11 @@ public class MerchantService {
     }
 
     public Merchant getMerchantByUsername(String username) {
-        if (merchantRepository.findByUsername(username).isEmpty()) {
+        Optional<Merchant> optionalMerchant = merchantRepository.findByUsername(username);
+        if (optionalMerchant.isEmpty()) {
             throw new UserNotFoundException("Username not found");
         }
-        return merchantRepository.findByUsername(username).get();
+        return optionalMerchant.get();
     }
 
     public Merchant getMerchantById(Integer id){
@@ -43,17 +45,19 @@ public class MerchantService {
     }
     
     public Merchant getMerchantByEmail(String email) {
-        if (merchantRepository.findByEmail(email).isEmpty()) {
+        Optional<Merchant> optionalMerchant = merchantRepository.findByEmail(email);
+        if (optionalMerchant.isEmpty()) {
             throw new UserNotFoundException("Email not found");
         }
-        return merchantRepository.findByEmail(email).get();
+        return optionalMerchant.get();
     }
 
     public Merchant getMerchantByCompany(String company) {
-        if (merchantRepository.findByCompany(company).isEmpty()) {
+        Optional<Merchant> optionalMerchant = merchantRepository.findByCompany(company);
+        if (optionalMerchant.isEmpty()) {
             throw new UserNotFoundException("Company not found");
         }
-        return merchantRepository.findByCompany(company).get();
+        return optionalMerchant.get();
     }
 
     public List<Merchant> findAll() {

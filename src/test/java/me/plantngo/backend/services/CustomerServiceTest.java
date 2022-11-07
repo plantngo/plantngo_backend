@@ -113,7 +113,7 @@ public class CustomerServiceTest {
 
         // arrange
         Customer customer = new Customer();
-        customer.setEmail("john.doe@example.com");;
+        customer.setEmail("john.doe@example.com");
 
         Optional<Customer> optionalCustomer = Optional.of(customer);
         when(customerRepository.findByEmail(any(String.class))).thenReturn(optionalCustomer);
