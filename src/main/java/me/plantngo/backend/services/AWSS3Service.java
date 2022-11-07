@@ -35,14 +35,14 @@ public class AWSS3Service implements FileService {
         metaData.setContentType(file.getContentType());
 
         try {
-            awsS3Client.putObject("plantngodev", key, file.getInputStream(), metaData);
+            awsS3Client.putObject(bucket, key, file.getInputStream(), metaData);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "An exception occured while uploading the file");
         }
 
-        awsS3Client.setObjectAcl("plantngodev", key, CannedAccessControlList.PublicRead);
+        awsS3Client.setObjectAcl(bucket, key, CannedAccessControlList.PublicRead);
 
-        return awsS3Client.getResourceUrl("plantngodev", key);
+        return awsS3Client.getResourceUrl(bucket, key);
     }
 }

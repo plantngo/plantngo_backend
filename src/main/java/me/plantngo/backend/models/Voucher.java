@@ -53,9 +53,11 @@ public class Voucher {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "ownedVouchers")
+    @ToString.Exclude
     private List<Customer> customersThatOwn;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "vouchersCart")
+    @ToString.Exclude
     private List<Customer> customersInCart;
 }

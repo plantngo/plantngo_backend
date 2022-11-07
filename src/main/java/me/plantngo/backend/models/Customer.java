@@ -52,10 +52,12 @@ public class Customer {
 
         @ManyToMany
         @JoinTable(name = "ownership", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "voucher_id"))
+        @ToString.Exclude
         private Set<Voucher> ownedVouchers;
 
         @ManyToMany
         @JoinTable(name = "cart", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "voucher_id"))
+        @ToString.Exclude
         private Set<Voucher> vouchersCart;
 
         @OneToMany(mappedBy = "customer", orphanRemoval = true, cascade = CascadeType.ALL)
