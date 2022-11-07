@@ -2,6 +2,7 @@ package me.plantngo.backend.DTO;
 
 import javax.validation.constraints.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.*;
@@ -23,4 +24,6 @@ public class OrderDTO {
 
     @NotNull
     private List<OrderItemDTO> orderItems;
+
+    private LocalDateTime orderTime;
 }

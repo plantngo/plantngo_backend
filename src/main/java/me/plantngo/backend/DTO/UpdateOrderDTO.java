@@ -1,5 +1,6 @@
 package me.plantngo.backend.DTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -20,4 +21,6 @@ public class UpdateOrderDTO {
     private OrderStatus orderStatus;
 
     private Set<UpdateOrderItemDTO> updateOrderItemDTOs;
+
+    private LocalDateTime orderTime;
 }

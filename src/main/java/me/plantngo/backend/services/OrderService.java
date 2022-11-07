@@ -247,7 +247,6 @@ public class OrderService {
         Order order = mapper.map(placeOrderDTO, Order.class);
         order.setCustomer(customer);
         order.setMerchant(merchant);
-        order.setOrderTime(LocalDateTime.now());
 
         return order;
     }
