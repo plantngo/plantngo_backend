@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import me.plantngo.backend.DTO.UpdateMerchantDetailsDTO;
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.services.CustomerService;
 
