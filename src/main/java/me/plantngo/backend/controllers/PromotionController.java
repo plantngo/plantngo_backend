@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -76,9 +75,7 @@ public class PromotionController {
     @ApiOperation(value = "Get Merchant Promotions")
     @GetMapping(path = "/{merchantName}")
     public List<Promotion> getAllPromotions(@PathVariable("merchantName") String merchantName) {
-        List<Promotion> promotion = promotionService
-                .getPromotionsByMerchant(merchantService.getMerchantByUsername(merchantName));
-        return promotion;
+        return promotionService.getPromotionsByMerchant(merchantService.getMerchantByUsername(merchantName));
     }
 
     @ApiOperation(value = "Delete a Merchant's Promotion given its Id")

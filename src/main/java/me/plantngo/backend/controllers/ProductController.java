@@ -20,10 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import me.plantngo.backend.DTO.ProductIngredientDTO;
-import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Product;
 import me.plantngo.backend.models.ProductIngredient;
-import me.plantngo.backend.services.MerchantService;
 import me.plantngo.backend.services.ProductService;
 
 @RestController()
