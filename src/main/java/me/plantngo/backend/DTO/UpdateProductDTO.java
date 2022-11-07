@@ -1,5 +1,7 @@
 package me.plantngo.backend.DTO;
 
+import java.net.URL;
+
 import javax.validation.constraints.NotNull;
 
 import lombok.*;
@@ -16,7 +18,7 @@ public class UpdateProductDTO {
 
     private Double carbonEmission;
 
-    private String imageUrl;
+    private URL imageUrl;
 
     private String flavourType;
 }

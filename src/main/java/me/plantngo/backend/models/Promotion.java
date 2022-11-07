@@ -48,7 +48,6 @@ public class Promotion {
     @JsonBackReference(value = "merchant_promotion")
     private Merchant merchant;
 
-
     @NotBlank
     private String startDate;
 
@@ -56,7 +55,7 @@ public class Promotion {
     private String endDate;
 
     // @NotBlank
-    private String bannerUrl;
+    private URL bannerUrl;
 
     private Integer clicks;
 }

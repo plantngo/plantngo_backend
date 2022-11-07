@@ -32,11 +32,13 @@ public class ProductIngredient {
 
     @ManyToOne
     @JoinColumn(name = "ingredient_id")
+    @ToString.Exclude
     private Ingredient ingredient;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
     @JsonBackReference
+    @ToString.Exclude
     private Product product;
 
 }
