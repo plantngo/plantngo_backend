@@ -133,13 +133,13 @@ public class ShopController {
         return new ResponseEntity<>("Category deleted!", HttpStatus.OK);
 
     }
-    
+
     @ApiOperation(value = "Add a product for a Merchant")
     @PostMapping(path = "/{merchantName}/{categoryName}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addProduct(@PathVariable("merchantName") String merchantName,
             @PathVariable("categoryName") String categoryName,
-            @Valid @RequestPart("product") ProductDTO productDTO, @RequestParam("image") MultipartFile file)
-            throws MalformedURLException, JsonMappingException, JsonProcessingException {
+            @Valid @RequestPart("product") ProductDTO productDTO, @RequestPart("image") MultipartFile file)
+            throws MalformedURLException {
 
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
         shopService.addProduct(merchant, categoryName, productDTO, file);
@@ -149,16 +149,17 @@ public class ShopController {
     }
 
     @ApiOperation(value = "Update an existing Product by a Merchant")
-    @PutMapping(path = "/{merchantName}/{categoryName}/{productName}")
+    @PutMapping(path = "/{merchantName}/{categoryName}/{productName}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateProduct(@PathVariable("merchantName") String merchantName,
             @PathVariable("categoryName") String categoryName,
             @PathVariable("productName") String productName,
-            @Valid @RequestBody UpdateProductDTO updateProductDTO) {
+            @Valid @RequestPart("product") UpdateProductDTO updateProductDTO,
+            @RequestPart("image") MultipartFile file) throws MalformedURLException {
 
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
         Category category = shopService.getCategory(merchant, categoryName);
 
-        shopService.updateProduct(category, productName, updateProductDTO);
+        shopService.updateProduct(category, productName, updateProductDTO, file);
         return new ResponseEntity<>("Product updated!", HttpStatus.OK);
 
     }

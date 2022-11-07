@@ -24,25 +24,21 @@ public class ChangeCredentialService {
     @Autowired
     public ChangeCredentialService(CustomerRepository customerRepository,
                                    MerchantRepository merchantRepository,
-                                   BCryptPasswordEncoder bCryptPasswordEncoder,
-                                   CustomerService customerService,
-                                   MerchantService merchantService){
+                                   BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.customerRepository = customerRepository;
         this.merchantRepository = merchantRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public void validateNewUsername(String newUsername, Character userType){
-        try{
-            if(userType == 'C')
-                customerRepository.findByUsername(newUsername).get();
-            else if(userType == 'M')
-                merchantRepository.findByUsername(newUsername).get();
-            else
-                throw new IllegalArgumentException("Invalid user type");
 
-            throw new AlreadyExistsException("Username already taken");
-        } catch (NoSuchElementException e){}
+        if (!userType.equals('C') && !userType.equals('M')) {
+            throw new IllegalArgumentException("Invalid user type");
+        } else if ((userType.equals('M') && merchantRepository.existsByUsername(newUsername)) 
+                    || userType.equals('C') && customerRepository.existsByUsername(newUsername)) {
+            throw new AlreadyExistsException("Username");
+        }
+
     }
 
     public ResponseEntity<String> replaceUsername(String oldUsername, String newUsername, Character userType){

@@ -77,7 +77,7 @@ public class ProductService {
         return productRepository.findByCategoryMerchantUsernameOrderByCarbonEmission(merchantName);
     }
 
-    public ProductIngredient addProductIngredient(String merchantName, String productName, @Valid ProductIngredientDTO productIngredientDTO) {
+    public ProductIngredient addProductIngredient(String merchantName, String productName, ProductIngredientDTO productIngredientDTO) {
         Product product = this.getProductByName(productName);
         Ingredient ingredient = this.getIngredientByName(productIngredientDTO.getName());
         if (productIngredientRepository.existsByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName)) {
@@ -104,7 +104,7 @@ public class ProductService {
 
     public ProductIngredient updateProductIngredient(String merchantName,
             String productName,
-            @Valid ProductIngredientDTO productIngredientDTO) {
+            ProductIngredientDTO productIngredientDTO) {
 
         Product product = this.getProductByName(productName);
         Ingredient ingredient = this.getIngredientByName(productIngredientDTO.getName());

@@ -59,6 +59,7 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @JsonBackReference("product_category") // Prevents infinite loop by not serializing this when sending GET request
     // for merchants
     private Category category;

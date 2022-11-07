@@ -1,5 +1,7 @@
 package me.plantngo.backend.services;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import me.plantngo.backend.DTO.PromotionDTO;
 import me.plantngo.backend.exceptions.NotExistException;
@@ -23,13 +26,18 @@ import me.plantngo.backend.repositories.PromotionRepository;
 
 @Service
 public class PromotionService {
-    private PromotionRepository promotionRepository;
+
+    private final PromotionRepository promotionRepository;
+
     private final ProductService productService;
+    private AWSS3Service awss3Service;
 
     @Autowired
-    public PromotionService(PromotionRepository promotionRepository, ProductService productService) {
+    public PromotionService(PromotionRepository promotionRepository, ProductService productService,
+            AWSS3Service awss3Service) {
         this.promotionRepository = promotionRepository;
         this.productService = productService;
+        this.awss3Service = awss3Service;
     }
 
     public Promotion getPromotionById(Integer id) {
@@ -42,15 +50,15 @@ public class PromotionService {
     public List<Promotion> getAllPromotions() {
         return promotionRepository.findAll();
     }
-    
+
     public List<Promotion> getAllPromotionsSorted() {
         List<Promotion> promoList = promotionRepository.findAll();
         Collections.sort(promoList, new Comparator<Promotion>() {
             @Override
             public int compare(Promotion u1, Promotion u2) {
-              return u2.getClicks().compareTo(u1.getClicks());
+                return u2.getClicks().compareTo(u1.getClicks());
             }
-          });
+        });
         return promoList;
     }
 
@@ -64,6 +72,22 @@ public class PromotionService {
         promotion.setClicks(0);
 
         // promotion.setMerchantId(merchant.getId());
+        promotionRepository.save(promotion);
+
+        return promotion;
+    }
+
+    public Promotion addPromotion(PromotionDTO promotionDTO, Merchant merchant, MultipartFile file)
+            throws MalformedURLException {
+
+        Promotion promotion = this.promotionMapToEntity(promotionDTO, merchant);
+        promotion.setClicks(0);
+
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = awss3Service.uploadFile(file);
+            promotion.setBannerUrl(new URL(imageUrl));
+        }
+
         promotionRepository.save(promotion);
 
         return promotion;
@@ -84,24 +108,17 @@ public class PromotionService {
         promotionRepository.deleteById(promotionId);
     }
 
-    public void addClicksToPromotion(Integer promotionId){
-        if(!promotionRepository.existsById(promotionId)){
+    public void addClicksToPromotion(Integer promotionId) {
+        if (!promotionRepository.existsById(promotionId)) {
             throw new NotExistException("Promotion ID: " + promotionId);
-        };
+        }
         Promotion promotion = this.getPromotionById(promotionId);
-        promotion.setClicks(promotion.getClicks() + 1); 
+        promotion.setClicks(promotion.getClicks() + 1);
         promotionRepository.saveAndFlush(promotion);
     }
 
     private Promotion promotionMapToEntity(PromotionDTO promotionDTO, Merchant merchant) {
         ModelMapper mapper = new ModelMapper();
-        // Converter<String, LocalDate> toDate = new AbstractConverter<String,
-        // LocalDate>() {
-        // protected LocalDate convert(String source) {
-        // return LocalDate.parse(source);
-        // }
-        // };
-        // mapper.addConverter(toDate);
         Promotion promotion = mapper.map(promotionDTO, Promotion.class);
         promotion.setMerchant(merchant);
 
@@ -115,6 +132,26 @@ public class PromotionService {
 
         promotion.setDescription(promotionDTO.getDescription());
         promotion.setBannerUrl(promotionDTO.getBannerUrl());
+        promotion.setStartDate(promotionDTO.getStartDate());
+        promotion.setEndDate(promotionDTO.getEndDate());
+
+        promotionRepository.save(promotion);
+
+        return promotion;
+    }
+
+    public Promotion updatePromotion(PromotionDTO promotionDTO, Integer promotionId, MultipartFile file)
+            throws MalformedURLException {
+
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new NotExistException("Promotion"));
+
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = awss3Service.uploadFile(file);
+            System.out.println(imageUrl);
+            promotion.setBannerUrl(new URL(imageUrl));
+        }
+        promotion.setDescription(promotionDTO.getDescription());
         promotion.setStartDate(promotionDTO.getStartDate());
         promotion.setEndDate(promotionDTO.getEndDate());
 
