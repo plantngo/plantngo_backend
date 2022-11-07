@@ -80,6 +80,7 @@ public class Merchant {
 
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
         @JsonManagedReference("merchant_category") // Serializes this side
+        @EqualsAndHashCode.Exclude
         private List<Category> categories;
 
         @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)

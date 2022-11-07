@@ -26,7 +26,9 @@ import me.plantngo.backend.repositories.PromotionRepository;
 
 @Service
 public class PromotionService {
-    private PromotionRepository promotionRepository;
+
+    private final PromotionRepository promotionRepository;
+
     private final ProductService productService;
     private AWSS3Service awss3Service;
 
@@ -106,7 +108,7 @@ public class PromotionService {
     public void addClicksToPromotion(Integer promotionId){
         if(!promotionRepository.existsById(promotionId)){
             throw new NotExistException("Promotion ID: " + promotionId);
-        };
+        }
         Promotion promotion = this.getPromotionById(promotionId);
         promotion.setClicks(promotion.getClicks() + 1); 
         promotionRepository.saveAndFlush(promotion);
@@ -114,13 +116,6 @@ public class PromotionService {
 
     private Promotion promotionMapToEntity(PromotionDTO promotionDTO, Merchant merchant) {
         ModelMapper mapper = new ModelMapper();
-        // Converter<String, LocalDate> toDate = new AbstractConverter<String,
-        // LocalDate>() {
-        // protected LocalDate convert(String source) {
-        // return LocalDate.parse(source);
-        // }
-        // };
-        // mapper.addConverter(toDate);
         Promotion promotion = mapper.map(promotionDTO, Promotion.class);
         promotion.setMerchant(merchant);
 
