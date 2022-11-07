@@ -1,6 +1,7 @@
 package me.plantngo.backend.services;
 
 import me.plantngo.backend.exceptions.AlreadyExistsException;
+import me.plantngo.backend.exceptions.InsufficientBalanceException;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.models.Voucher;
@@ -9,7 +10,6 @@ import me.plantngo.backend.repositories.VoucherRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,7 +41,8 @@ public class VoucherPurchaseServiceTest {
     private VoucherPurchaseService voucherPurchaseService;
 
     private List<Voucher> allVouchers;
-    private List<Voucher> voucherInCart;
+    private Voucher voucherInCart;
+    private Set<Voucher> vouchersOwned;
 
     private Voucher voucher;
 
@@ -49,12 +50,13 @@ public class VoucherPurchaseServiceTest {
 
     private Customer customer;
 
+
     @BeforeEach
-    public void initEach() {
+    void initEach() {
 
         allVouchers = new ArrayList<>();
-        voucherInCart = new ArrayList<>();
         customers = new ArrayList<>();
+        vouchersOwned = new HashSet<>();
 
         customer = new Customer();
         customer.setUsername("Daniel");
@@ -64,31 +66,39 @@ public class VoucherPurchaseServiceTest {
         customer.setUsername("Emil");
         customers.add(customer);
 
-        // One voucher that only Emil owns
         // Emil has it in cart
+        voucherInCart = new Voucher();
+        voucherInCart.setId(1);
+        List<Customer> singleCustomer = new ArrayList<>();
+        singleCustomer.add(customer);
+        voucherInCart.setCustomersInCart(singleCustomer);
+
+        Set<Voucher> singleVoucher = new HashSet<>();
+        singleVoucher.add(voucherInCart);
+        customer.setVouchersCart(singleVoucher);
+
+
+        allVouchers.add(voucherInCart);
+
+        // One voucher that both Daniel and Emil owns
         voucher = new Voucher();
-        voucher.setCustomersThatOwn(List.of(customer));
-        voucher.setCustomersInCart(List.of(customer));
-        voucherInCart.add(voucher);
+        voucher.setCustomersThatOwn(customers);
+        singleVoucher = new HashSet<>();
+        singleVoucher.add(voucher);
+        customer.setOwnedVouchers(singleVoucher);
         allVouchers.add(voucher);
+        vouchersOwned.add(voucher);
 
         // One voucher that both Daniel and Emil owns
         voucher = new Voucher();
         voucher.setCustomersThatOwn(customers);
         allVouchers.add(voucher);
-
-        // One voucher that both Daniel and Emil owns
-        // Both Daniel and Emil has it in cart
-        voucher = new Voucher();
-        voucher.setCustomersThatOwn(customers);
-        voucher.setCustomersInCart(customers);
-        voucherInCart.add(voucher);
-        allVouchers.add(voucher);
+        
 
     }
 
     @Test
-    public void testGetAllVouchers_AllVouchers_ReturnAllVouchers() {
+    void testGetAllVouchers_AllVouchers_ReturnAllVouchers() {
         // Arrange
         List<Voucher> expectedVouchers = allVouchers;
 
@@ -104,7 +114,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAllVouchers_NoVouchers_ReturnEmptyList() {
+    void testGetAllVouchers_NoVouchers_ReturnEmptyList() {
         // Arrange
         allVouchers = new ArrayList<>();
         List<Voucher> expectedVouchers = new ArrayList<>();
@@ -121,7 +131,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAllOwnedVouchers_ValidCustomer_ReturnAllVouchers() {
+    void testGetAllOwnedVouchers_ValidCustomer_ReturnAllVouchers() {
         // Arrange
         List<Voucher> expectedVouchers = allVouchers;
         String customerName = "Emil";
@@ -138,7 +148,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAllOwnedVouchers_InvalidCustomer_ReturnEmptyList() {
+    void testGetAllOwnedVouchers_InvalidCustomer_ReturnEmptyList() {
         // Arrange
         List<Voucher> expectedVouchers = new ArrayList<>();
         String customerName = "Kate";
@@ -155,12 +165,12 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAllInCartVouchers_ValidCustomer_ReturnAllVouchersInCart() {
+    void testGetAllInCartVouchers_ValidCustomer_ReturnAllVouchersInCart() {
         // Arrange
-        List<Voucher> expectedVouchers = voucherInCart;
+        List<Voucher> expectedVouchers = List.of(voucherInCart);
         String customerName = "Emil";
 
-        when(voucherRepository.findByCustomersInCart_Username(any(String.class))).thenReturn(voucherInCart);
+        when(voucherRepository.findByCustomersInCart_Username(any(String.class))).thenReturn(List.of(voucherInCart));
 
         // Act
         List<Voucher> responseVouchers = voucherPurchaseService.getAllInCartVouchers(customerName);
@@ -172,7 +182,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAllInCartVouchers_InvalidCustomer_ReturnEmptyList() {
+    void testGetAllInCartVouchers_InvalidCustomer_ReturnEmptyList() {
         // Arrange
         List<Voucher> expectedVouchers = new ArrayList<>();
         String customerName = "Kate";
@@ -189,13 +199,13 @@ public class VoucherPurchaseServiceTest {
     }
     
     @Test
-    public void testGetAddToCart_InvalidVoucher_ThrowNotExistException() {
+    void testGetAddToCart_InvalidVoucher_ThrowNotExistException() {
         // Arrange
         // Retrieve Customer Emil
         String exceptionMsg = "";
         Customer customer = customers.get(1);
         Voucher voucher = new Voucher();
-        List<Voucher> expectedVouchers = new ArrayList<>();
+        List<Voucher> expectedVouchers = allVouchers;
 
         when(voucherRepository.findAll()).thenReturn(expectedVouchers);
 
@@ -210,7 +220,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAddToCart_VoucherAlrExists_ThrowAlreadyExistsException() {
+    void testGetAddToCart_VoucherAlrExists_ThrowAlreadyExistsException() {
         // Arrange
         // Retrieve Customer Emil
         String exceptionMsg = "";
@@ -218,7 +228,7 @@ public class VoucherPurchaseServiceTest {
         // Retrieve voucher that is already in cart
         Voucher voucher = allVouchers.get(0);
         customer.setVouchersCart(Set.of(voucher));
-        when(voucherRepository.findAll()).thenReturn(voucherInCart);
+        when(voucherRepository.findAll()).thenReturn(List.of(voucherInCart));
 
         // Act
         try {
@@ -235,30 +245,243 @@ public class VoucherPurchaseServiceTest {
 
     // customer.getVouchersCart() == null
     // voucher.getCustomersInCart() == null
-    // @Test
-    // public void testGetAddToCart_NoVouchersInCart_AddToCart() {
-    //     // Arrange
+    @Test
+    void testGetAddToCart_NoVouchersInCart_AddToCart() {
+        // Arrange
 
-    //     // Retrieve Customer Emil
-    //     Customer customer = customers.get(0);
-    //     // Retrieve voucher that is not in cart
-    //     Voucher voucher = allVouchers.get(0);
+        // Retrieve Customer Emil
+        Customer customer = customers.get(0);
+        // Retrieve voucher that is not in cart
+        Voucher voucher = allVouchers.get(0);
+        Set<Voucher> voucherSet = new HashSet<>();
+        voucherSet.add(voucher);
 
-    //     when(voucherRepository.findAll()).thenReturn(allVouchers);
+        when(voucherRepository.findAll()).thenReturn(allVouchers);
 
-    //     // Act
-    //     voucherPurchaseService.addToCart(customer, voucher);
+        // Act
+        voucherPurchaseService.addToCart(customer, voucher);
 
-    //     // Assert
-    //     assertEquals(customer.getVouchersCart(), Set.of(voucher));
-    //     verify(voucherRepository, times(1)).findAll();
+        // Assert
 
-    // }
+        assertEquals(customer.getVouchersCart().contains(voucher), voucherSet.contains(voucher));
+        // assert
+        // assertEquals(customer.getVouchersCart(), voucherSet);
+        verify(voucherRepository, times(1)).findAll();
 
+    }
+
+    // deleteFromCart
+    @Test
+    void testDeleteFromCart_CustomerDoesNotHaveVoucherInCart_ThrowNotExistException() {
+        // Arrange
+        // Retrieve Customer Daniel (No Voucher in cart)
+        String exceptionMsg = "";
+        Customer customer = customers.get(0);
+        // Retrieve voucher that is already in cart
+        Voucher voucher = new Voucher();
+
+        // Act
+        try {
+            voucherPurchaseService.deleteFromCart(customer, voucher);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Voucher doesn't exist!", exceptionMsg);
+    }
+
+    @Test
+    void testDeleteFromCart_DifferentVoucherFromCart_ThrowNotExistException() {
+        // Arrange
+        // Retrieve Customer Emil
+        String exceptionMsg = "";
+        Customer customer = customers.get(1);
+        
+        // Retrieve voucher that is already in cart
+        Voucher voucher = new Voucher();
+
+        // Act
+        try {
+            voucherPurchaseService.deleteFromCart(customer, voucher);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Voucher doesn't exist!", exceptionMsg);
+
+    }
+
+    @Test
+    void testDeleteFromCart_DeleteFromCart_DeleteFromCart(){
+
+        // Arrange
+        Voucher voucher = voucherInCart;
+        Customer customer = customers.get(1);
+        
+        when(voucherRepository.saveAndFlush(any(Voucher.class))).thenReturn(voucher);
+        
+        // Act
+        voucherPurchaseService.deleteFromCart(customer, voucher);
+
+
+        // Assert
+        
+        assert(voucher.getCustomersInCart().isEmpty());
+        assert(customer.getVouchersCart().isEmpty());
+    }
 
     
-    // deleteFromCart
+    
     // addOwnedVoucher
+    @Test
+    void testAddOwnedVoucher_InvalidVoucher_ThrowNotExistException() {
+        // Arrange
+        // Retrieve Customer Emil
+        String exceptionMsg = "";
+        Customer customer = customers.get(1);
+        Voucher voucher = new Voucher();
+        List<Voucher> expectedVouchers = allVouchers;
+
+        when(voucherRepository.findAll()).thenReturn(expectedVouchers);
+
+        try {
+            voucherPurchaseService.addOwnedVoucher(customer, voucher);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+        assertEquals("Voucher doesn't exist!", exceptionMsg);
+        verify(voucherRepository, times(1)).findAll();
+
+    }
+
+    @Test
+    void testAddOwnedVoucher_VoucherAlrExists_ThrowAlreadyExistsException() {
+        // Arrange
+        // Retrieve Customer Emil
+        String exceptionMsg = "";
+        Customer customer = customers.get(1);
+        // Retrieve voucher that is already owned
+        Voucher voucher = allVouchers.get(1);
+        Set<Voucher> voucherSet = new HashSet<>();
+        voucherSet.add(voucher);
+        customer.setVouchersCart(voucherSet);
+        when(voucherRepository.findAll()).thenReturn(allVouchers);
+
+        // Act
+        try {
+            voucherPurchaseService.addOwnedVoucher(customer, voucher);
+        } catch (AlreadyExistsException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Voucher already exists!", exceptionMsg);
+        verify(voucherRepository, times(1)).findAll();
+
+    }
+
+    @Test
+    void testAddOwnedVoucher(){
+        // Arrange
+        Voucher voucher = voucherInCart;
+        Customer customer = customers.get(1);
+        when(voucherRepository.findAll()).thenReturn(allVouchers);
+        
+        // Act
+        voucherPurchaseService.addOwnedVoucher(customer, voucher);
+
+        // Assert
+        vouchersOwned.add(voucher);
+        assertEquals(vouchersOwned, customer.getOwnedVouchers());
+        assert(customer.getVouchersCart().isEmpty());
+        assert(voucher.getCustomersThatOwn().contains(customer));
+        // assertEquals(vouchersOwned, customer.getOwnedVouchers());
+    }
+
     // purchaseVouchers
+    @Test
+    void testPurchaseVouchers_InsufficientBalance_ThrowInsufficientBalanceException() {
+        // Arrange
+        // Retrieve Customer Emil
+        String exceptionMsg = "";
+        Customer customer = customers.get(1);
+        Voucher voucher = voucherInCart;
+        voucher.setValue(1);
+    
+        // Act
+        try {
+            voucherPurchaseService.purchaseVouchers(customer);
+        } catch (InsufficientBalanceException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Insufficient Green Points", exceptionMsg);
+
+    }
+
+    @Test
+    void testPurchaseVouchers(){
+        // Arrange
+        Customer customer = customers.get(1);
+        customer.setGreenPoints(2);
+        Voucher voucher = voucherInCart;
+        voucher.setValue(1);
+
+        // Act
+        voucherPurchaseService.purchaseVouchers(customer);
+
+        // Assert
+        assert(customer.getVouchersCart().isEmpty());
+        assertEquals(1, customer.getGreenPoints());
+        assert(customer.getVouchersCart().isEmpty());
+        vouchersOwned.add(voucher);
+        assertEquals(vouchersOwned, customer.getOwnedVouchers());
+        assert(voucher.getCustomersThatOwn().contains(customer));
+    }
+
+
     // deleteOwnedVoucher
+    @Test
+    void testDeleteOwnedVoucher_CustomerHasNoVouchers_ThrowNotExistException() {
+        // Arrange
+        String exceptionMsg = "";
+        Customer customer = new Customer();
+        Voucher voucher = new Voucher();
+
+        // Act
+        try {
+            voucherPurchaseService.deleteOwnedVoucher(customer, voucher);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Voucher doesn't exist!", exceptionMsg);
+
+    }
+
+    @Test
+    void testDeleteOwnedVoucher_DoesNotContainThisVoucher_ThrowNotExistException() {
+        // Arrange
+        // Retrieve Customer Emil
+        String exceptionMsg = "";
+        Customer customer = customers.get(1);
+        Voucher voucher = new Voucher();
+
+        // Act
+        try {
+            voucherPurchaseService.deleteOwnedVoucher(customer, voucher);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Voucher doesn't exist!", exceptionMsg);
+
+    }
+
+
 }

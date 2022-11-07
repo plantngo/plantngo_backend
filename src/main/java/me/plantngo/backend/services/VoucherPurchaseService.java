@@ -43,12 +43,14 @@ public class VoucherPurchaseService {
 
         if(!voucherRepository.findAll().contains(voucher)) throw new NotExistException("Voucher");
 
-        if(customer.getVouchersCart().contains(voucher)) throw new AlreadyExistsException("Voucher");
-
         if(customer.getVouchersCart() == null) customer.setVouchersCart(new HashSet<Voucher>());
-        customer.getVouchersCart().add(voucher);
 
         if(voucher.getCustomersInCart() == null) voucher.setCustomersInCart(new ArrayList<Customer>());
+
+        if(customer.getVouchersCart().contains(voucher)) throw new AlreadyExistsException("Voucher");
+
+        customer.getVouchersCart().add(voucher);
+
         voucher.getCustomersInCart().add(customer);
 
         voucherRepository.saveAndFlush(voucher);
@@ -58,8 +60,8 @@ public class VoucherPurchaseService {
 
     public void deleteFromCart(Customer customer, Voucher voucher){
 
-        if(customer.getVouchersCart() == null) throw new NotExistException();
-        if(!customer.getVouchersCart().contains(voucher)) throw new NotExistException();
+        if(customer.getVouchersCart() == null) throw new NotExistException("Voucher");
+        if(!customer.getVouchersCart().contains(voucher)) throw new NotExistException("Voucher");
         customer.getVouchersCart().remove(voucher);
 
         voucher.getCustomersInCart().remove(customer);
@@ -71,11 +73,13 @@ public class VoucherPurchaseService {
 
     public void addOwnedVoucher(Customer customer, Voucher voucher){
 
-        if(!voucherRepository.findAll().contains(voucher)) throw new NotExistException();
-
-        if(customer.getOwnedVouchers().contains(voucher)) throw new AlreadyExistsException();
+        if(!voucherRepository.findAll().contains(voucher)) throw new NotExistException("Voucher");
 
         if(customer.getOwnedVouchers() == null) customer.setOwnedVouchers(new HashSet<Voucher>());
+
+        if(customer.getOwnedVouchers().contains(voucher)) throw new AlreadyExistsException("Voucher");
+
+        
         customer.getOwnedVouchers().add(voucher);
         customer.getVouchersCart().remove(voucher);
 
@@ -116,8 +120,8 @@ public class VoucherPurchaseService {
 
     public void deleteOwnedVoucher(Customer customer, Voucher voucher){
 
-        if(customer.getOwnedVouchers() == null) throw new NotExistException();
-        if(!customer.getOwnedVouchers().contains(voucher)) throw new NotExistException();
+        if(customer.getOwnedVouchers() == null) throw new NotExistException("Voucher");
+        if(!customer.getOwnedVouchers().contains(voucher)) throw new NotExistException("Voucher");
         customer.getOwnedVouchers().remove(voucher);
 
         voucher.getCustomersThatOwn().remove(customer);
