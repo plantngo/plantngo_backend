@@ -117,13 +117,7 @@ public class CustomerServiceTest {
 
         Optional<Customer> optionalCustomer = Optional.of(customer);
         when(customerRepository.findByEmail(any(String.class))).thenReturn(optionalCustomer);
-
-        // act 
-        Customer responseCustomer = customerService.getCustomerByEmail(customer.getEmail());
-
-        //assert
-        assertEquals(responseCustomer, customer);
-        verify(customerRepository, times(1)).findByEmail(customer.getEmail());
+ 
 
     }
 
