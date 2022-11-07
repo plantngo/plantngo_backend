@@ -23,6 +23,7 @@ import java.util.Set;
 public class Quest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     // @NotNull

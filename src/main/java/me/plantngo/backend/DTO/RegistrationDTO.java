@@ -46,4 +46,6 @@ public class RegistrationDTO {
     private Integer priceRating;
 
     private String operatingHours;
+
+    private Double carbonRating;
 }
