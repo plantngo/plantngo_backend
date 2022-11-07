@@ -57,18 +57,19 @@ public class PromotionController {
     }
 
     @ApiOperation(value = "Adding clicks")
-    @PutMapping(path="/addClick/{promotionId}")
-    public ResponseEntity<String> getPromotionbyId (@PathVariable("promotionId") Integer id) {
+    @PutMapping(path = "/addClick/{promotionId}")
+    public ResponseEntity<String> getPromotionbyId(@PathVariable("promotionId") Integer id) {
         promotionService.addClicksToPromotion(id);
         return new ResponseEntity<>("Promotion clicked", HttpStatus.OK);
     }
 
     @ApiOperation(value = "Create a Promotion")
-    @PostMapping(path = "/{merchantName}" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Promotion> addPromotion(@Valid @RequestPart("promotion") PromotionDTO promotionDTO, 
-            @PathVariable("merchantName") String merchantName, @RequestPart("image") MultipartFile file) throws MalformedURLException {
+    @PostMapping(path = "/{merchantName}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Promotion> addPromotion(@Valid @RequestPart("promotion") PromotionDTO promotionDTO,
+            @PathVariable("merchantName") String merchantName, @RequestPart("image") MultipartFile file)
+            throws MalformedURLException {
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
-        Promotion promotion = promotionService.addPromotion(promotionDTO, merchant, file);       
+        Promotion promotion = promotionService.addPromotion(promotionDTO, merchant, file);
         return new ResponseEntity<>(promotion, HttpStatus.CREATED);
     }
 
@@ -88,10 +89,10 @@ public class PromotionController {
     }
 
     @ApiOperation(value = "Update an existing Promotion")
-    @PutMapping(path = "/{promotionId}")
-    public ResponseEntity<String> updatePromotion(@RequestBody @Valid PromotionDTO promotionDTO,
-            @PathVariable("promotionId") Integer promotionId) {
-        promotionService.updatePromotion(promotionDTO, promotionId);
+    @PutMapping(path = "/{promotionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updatePromotion(@Valid @RequestPart("promotion") PromotionDTO promotionDTO,
+            @PathVariable("promotionId") Integer promotionId, @RequestPart("image") MultipartFile file) throws MalformedURLException {
+        promotionService.updatePromotion(promotionDTO, promotionId, file);
         return new ResponseEntity<>("Promotion updated", HttpStatus.CREATED);
     }
 

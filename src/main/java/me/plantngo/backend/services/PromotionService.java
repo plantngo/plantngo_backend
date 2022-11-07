@@ -140,4 +140,24 @@ public class PromotionService {
         return promotion;
     }
 
+    public Promotion updatePromotion(PromotionDTO promotionDTO, Integer promotionId, MultipartFile file)
+            throws MalformedURLException {
+
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new NotExistException("Promotion"));
+
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = awss3Service.uploadFile(file);
+            System.out.println(imageUrl);
+            promotion.setBannerUrl(new URL(imageUrl));
+        }
+        promotion.setDescription(promotionDTO.getDescription());
+        promotion.setStartDate(promotionDTO.getStartDate());
+        promotion.setEndDate(promotionDTO.getEndDate());
+
+        promotionRepository.save(promotion);
+
+        return promotion;
+    }
+
 }
