@@ -108,7 +108,7 @@ public class SampleDataConfig {
                                 "Italian",
                                 2,
                                 "10:00AM - 20:00PM",
-                                300.0);
+                                1905.13);
                 RegistrationDTO merchantFairPrice = new RegistrationDTO(
                                 "fairprice",
                                 "fairprice@example.com",
@@ -124,7 +124,7 @@ public class SampleDataConfig {
                                 "Groceries",
                                 1,
                                 "7:00AM - 21:00PM",
-                                270.20);
+                                728.98);
                 RegistrationDTO merchantJoieVege = new RegistrationDTO(
                                 "joievege",
                                 "Joie@example.com",
@@ -140,11 +140,28 @@ public class SampleDataConfig {
                                 "Fine Dining",
                                 4,
                                 "10:00AM - 20:00PM",
-                                609.22);
+                                2374.35);
+                RegistrationDTO merchantGreenDot = new RegistrationDTO(
+                                "greendot",
+                                "greendot@example.com",
+                                "Password123!",
+                                'M',
+                                "Green Dot",
+                                "https://www.greendot.sg/wp-content/uploads/2014/09/logo.png",
+                                "https://www.greendot.sg/wp-content/themes/Greendot/images/banner-connect.jpg",
+                                "1 Raffles Pl, #03 - 23 / 24 / 25, Singapore 048616",
+                                "Contemporary indoor-outdoor rooftop eatery serving a set menu of adventurous vegetarian cuisine.",
+                                1.2838519,
+                                103.7810027,
+                                "Vegetarian Cuisine",
+                                2,
+                                "11:00AM - 20:30PM",
+                                2293.6);
 
                 authService.registerUser(merchantPizzaHut);
                 authService.registerUser(merchantFairPrice);
                 authService.registerUser(merchantJoieVege);
+                authService.registerUser(merchantGreenDot);
 
         }
 
@@ -162,6 +179,10 @@ public class SampleDataConfig {
                 Merchant joieVege = merchantService.getMerchantByUsername("joievege");
                 CategoryDTO joieVegeCat1 = new CategoryDTO("Fine Dining");
                 shopService.addCategory(joieVege, joieVegeCat1);
+
+                Merchant greendot = merchantService.getMerchantByUsername("greendot");
+                CategoryDTO greenDotCat1 = new CategoryDTO("Vegetarian Cuisine");
+                shopService.addCategory(greendot, greenDotCat1);
         }
 
         public void createMerchantProducts() throws MalformedURLException {
@@ -169,19 +190,19 @@ public class SampleDataConfig {
                 ProductDTO pizzaHutProduct1 = new ProductDTO("Cheesy 7 Beyond Supreme - Regular Pan",
                                 34.90,
                                 "Cheesy 7 meets Beyond Meat! Made with Beyond Meat's plant based Italian Sausage Crumbles which leaves a hint of herbs and spice aroma, with capsicums, onions and mushrooms, on a bed of our signature sweet sauce and seven wondrous cheeses!",
-                                10.0,
+                                1089.2,
                                 new URL("https://static.phdvasia.com/sg1/menu/single/desktop_thumbnail_0bd9658b-d8eb-438d-bc2c-fef8afa1b71e.jpg"),
                                 "Savoury & Cheesy");
                 ProductDTO pizzaHutProduct2 = new ProductDTO("Cheesy 7 Beyond Supreme - Regular Cheesy Stuffed Crust",
                                 43.40,
                                 "Cheesy 7 meets Beyond Meat! Made with Beyond Meat's plant based Italian Sausage Crumbles which leaves a hint of herbs and spice aroma, with capsicums, onions and mushrooms, on a bed of our signature sweet sauce and seven wondrous cheeses!",
-                                45.0,
+                                2582.4,
                                 new URL("https://static.phdvasia.com/sg1/menu/single/desktop_thumbnail_0bd9658b-d8eb-438d-bc2c-fef8afa1b71e.jpg"),
                                 "Savoury & Cheesy");
                 ProductDTO pizzaHutProduct3 = new ProductDTO("Cheesy 7 Beyond Supreme - Large Pan",
                                 40.90,
                                 "Cheesy 7 meets Beyond Meat! Made with Beyond Meat's plant based Italian Sausage Crumbles which leaves a hint of herbs and spice aroma, with capsicums, onions and mushrooms, on a bed of our signature sweet sauce and seven wondrous cheeses!",
-                                40.0,
+                                2043.8,
                                 new URL("https://static.phdvasia.com/sg1/menu/single/desktop_thumbnail_0bd9658b-d8eb-438d-bc2c-fef8afa1b71e.jpg"),
                                 "Savoury & Cheesy");
                 shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct1, null);
@@ -191,30 +212,33 @@ public class SampleDataConfig {
                 Merchant fairPrice = merchantService.getMerchantByUsername("fairprice");
                 ProductDTO fairPriceProduct1 = new ProductDTO(
                                 "The Vegetarian Butcher Vegan Meal - Chickened Out Chunks", 7.95,
-                                "The Vegetarian Butcher Vegan Meal - Chickened Out Chunks", 10.0,
+                                "The Vegetarian Butcher Vegan Meal - Chickened Out Chunks",
+                                386.6,
                                 new URL("https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/13208081_XL1_20220722.jpg?w=1200&q=70"),
                                 "Plain");
                 ProductDTO fairPriceProduct2 = new ProductDTO("Heinz Vegan Seriously Good Garlic Aioli Mayonnaise",
                                 8.95,
-                                "Heinz Vegan Seriously Good Garlic Aioli Mayonnaise", 10.0,
+                                "Heinz Vegan Seriously Good Garlic Aioli Mayonnaise",
+                                165.5,
                                 new URL("https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/90094302_XL1_20210816.jpg?w=1200&q=70"),
                                 "Sour");
                 ProductDTO fairPriceProduct3 = new ProductDTO(
                                 "Hey! Chips - Broccoli (100% Natural, Gluten-Free, Vegan)",
                                 4.90,
                                 "Hey! Chips - Broccoli (100% Natural, Gluten-Free, Vegan)",
-                                10.0,
+                                386.6,
                                 new URL("https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/90045450_XL1_20211018.jpg?w=1200&q=70"),
                                 "Salty");
                 ProductDTO fairPriceProduct4 = new ProductDTO("Hey! Chips - Banana (100% Natural, Gluten-Free, Vegan)",
                                 4.90,
                                 "Hey! Chips - Banana (100% Natural, Gluten-Free, Vegan)",
-                                10.0,
+                                386.6,
                                 new URL("https://media.nedigital.sg/fairprice/fpol/media/images/product/L/90045446_L1_20211018.jpg?q=60"),
                                 "Salty");
                 ProductDTO fairPriceProduct5 = new ProductDTO("Hey! Chips - Bulk (100% Natural, Gluten-Free, Vegan)",
                                 33.90,
-                                "Hey! Chips - Bulk (100% Natural, Gluten-Free, Vegan", 10.0,
+                                "Hey! Chips - Bulk (100% Natural, Gluten-Free, Vegan",
+                                2319.6,
                                 new URL("https://media.nedigital.sg/fairprice/fpol/media/images/product/L/90027875_L1_20211018.jpg?q=60"),
                                 "Salty");
 
@@ -225,14 +249,40 @@ public class SampleDataConfig {
                 shopService.addProduct(fairPrice, "Snacks", fairPriceProduct5, null);
 
                 Merchant joieVege = merchantService.getMerchantByUsername("joievege");
-                ProductDTO joieVegeProduct1 = new ProductDTO("4 Course Set", 38.00, "Including 1 Drink of Choice", 10.0,
+                ProductDTO joieVegeProduct1 = new ProductDTO("4 Course Set", 38.00, "Including 1 Drink of Choice",
+                                2221.6,
                                 new URL("https://static.wixstatic.com/media/591a97_20e12d8438d84db48839fb893ed60072~mv2.jpg/v1/fit/w_467,h_571,q_90/591a97_20e12d8438d84db48839fb893ed60072~mv2.jpg"),
                                 "Savoury");
-                ProductDTO joieVegeProduct2 = new ProductDTO("5 Course Set", 58.00, "Including 1 Drink of Choice", 12.0,
+                ProductDTO joieVegeProduct2 = new ProductDTO("5 Course Set", 58.00, "Including 1 Drink of Choice",
+                                2527.1,
                                 new URL("https://static.wixstatic.com/media/591a97_49f940ea3868444b9867202f9002610c~mv2.jpg/v1/fit/w_467,h_693,q_90/591a97_49f940ea3868444b9867202f9002610c~mv2.jpg"),
                                 "Savoury");
                 shopService.addProduct(joieVege, "Fine Dining", joieVegeProduct1, null);
                 shopService.addProduct(joieVege, "Fine Dining", joieVegeProduct2, null);
+
+                Merchant greenDot = merchantService.getMerchantByUsername("greendot");
+                ProductDTO greenDotProduct1 = new ProductDTO(
+                                "Signature Lion Mane Mushroom Rendang with Turmeric Rice Bento Set", 10.90,
+                                "Rendang Lion Mane Mushroom, Beijing Cabbage with Carrot Strips, Nyonya Achar, Turmeric Basmati Rice with Cranberry and Papadum. Complimentary Soup Included.",
+                                2331.6,
+                                new URL("https://www.greendot.sg/wp-content/uploads/2018/10/Screenshot-2022-04-24-at-11.14.29-PM.png"),
+                                "Savoury");
+                ProductDTO greenDotProduct2 = new ProductDTO(
+                                "Crispy Beancurd Skin w Sesame Rice Bento", 9.9,
+                                "Crispy Beancurd Skin, Braised Tau Kwa & Mushroom, Achar, Sesame Rice with Parsley & Crispy Beancurd Skin (Chili Provided). Complimentary Soup Included.",
+                                2117.1,
+                                new URL("https://www.greendot.sg/wp-content/uploads/2018/10/Screenshot-2022-04-24-at-11.15.46-PM-150x150.png"),
+                                "Savoury");
+                ProductDTO greenDotProduct3 = new ProductDTO(
+                                "Angelica Herbal Trio Mushroom with Brown Rice Bento Set", 5.9,
+                                "Angelica Herbal Fresh Trio Mushroom, Broccoli with Carrot Strips, Braised Pumpkin, Brown Rice. Complimentary Soup Included.",
+                                2421.3,
+                                new URL("https://www.greendot.sg/wp-content/uploads/2018/10/Screenshot-2022-04-24-at-11.17.30-PM-150x150.png"),
+                                "Savoury");
+
+                shopService.addProduct(greenDot, "Vegetarian Cuisine", greenDotProduct1, null);
+                shopService.addProduct(greenDot, "Vegetarian Cuisine", greenDotProduct2, null);
+                shopService.addProduct(greenDot, "Vegetarian Cuisine", greenDotProduct3, null);
         }
 
         private void createVouchers() {
