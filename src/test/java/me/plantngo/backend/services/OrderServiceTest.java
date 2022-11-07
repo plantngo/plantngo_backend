@@ -65,7 +65,7 @@ public class OrderServiceTest {
     private OrderItem orderItem;
 
     @BeforeEach
-    public void initEach() {
+    void initEach() {
 
         orders = new ArrayList<>();
 
@@ -109,7 +109,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testGetAllOrders_AllOrders_ReturnAllOrders() {
+    void testGetAllOrders_AllOrders_ReturnAllOrders() {
 
         // Arrange
         List<Order> expectedOrders = orders;
@@ -126,7 +126,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testGetAllOrders_NoOrders_ReturnEmptyList() {
+    void testGetAllOrders_NoOrders_ReturnEmptyList() {
 
         // Arrange
         orders = new ArrayList<>();
@@ -144,7 +144,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testGetOrdersByCustomerName_ValidCustomerName_ReturnAllOrdersByCustomer() {
+    void testGetOrdersByCustomerName_ValidCustomerName_ReturnAllOrdersByCustomer() {
 
         // Arrange
         List<Order> expectedOrders = orders;
@@ -162,7 +162,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testGetOrdersByCustomerName_InvalidCustomerName_ReturnEmptyList() {
+    void testGetOrdersByCustomerName_InvalidCustomerName_ReturnEmptyList() {
 
         // Arrange
         List<Order> expectedOrders = new ArrayList<>();
@@ -180,7 +180,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testGetOrdersByMerchantName_ValidMerchantName_ReturnAllOrdersByMerchant() {
+    void testGetOrdersByMerchantName_ValidMerchantName_ReturnAllOrdersByMerchant() {
 
         // Arrange
         List<Order> expectedOrders = orders;
@@ -198,7 +198,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testGetOrdersByMerchantName_InvalidMerchantName_ReturnEmptyList() {
+    void testGetOrdersByMerchantName_InvalidMerchantName_ReturnEmptyList() {
 
         // Arrange
         List<Order> expectedOrders = new ArrayList<>();
@@ -216,7 +216,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testGetPendingOrdersByMerchantName_ValidMerchantName_ReturnAllPendingOrders() {
+    void testGetPendingOrdersByMerchantName_ValidMerchantName_ReturnAllPendingOrders() {
 
         // Arrange
         List<Order> expectedOrders = orders;
@@ -241,7 +241,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testGetPendingOrdersByMerchantName_InvalidMerchantName_ReturnEmptyList() {
+    void testGetPendingOrdersByMerchantName_InvalidMerchantName_ReturnEmptyList() {
 
         // Arrange
         List<Order> expectedOrders = new ArrayList<>();
@@ -259,7 +259,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testGetFulfilledOrdersByMerchantName_ValidMerchantName_ReturnAllFulfilledOrders() {
+    void testGetFulfilledOrdersByMerchantName_ValidMerchantName_ReturnAllFulfilledOrders() {
 
         // Arrange
         List<Order> expectedOrders = orders;
@@ -284,7 +284,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testGetCancelledOrdersByMerchantName_ValidMerchantName_ReturnAllCancelledOrders() {
+    void testGetCancelledOrdersByMerchantName_ValidMerchantName_ReturnAllCancelledOrders() {
 
         // Arrange
         List<Order> expectedOrders = orders;
@@ -309,7 +309,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testAddOrder_ValidOrder_ReturnOrder() {
+    void testAddOrder_ValidOrder_ReturnOrder() {
 
         // Arrange
         order.setId(null);
@@ -340,7 +340,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testAddOrder_InvalidProductId_ThrowNotExistException() {
+    void testAddOrder_InvalidProductId_ThrowNotExistException() {
 
         // Arrange
         order.setId(null);
@@ -372,7 +372,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testUpdateOrder_ValidUpdateOrderDTO_ReturnUpdatedOrder() {
+    void testUpdateOrder_ValidUpdateOrderDTO_ReturnUpdatedOrder() {
 
         // Arrange
         Integer orderId = order.getId();
@@ -410,7 +410,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testUpdateOrder_InvalidProductId_ThrowNotExistException() {
+    void testUpdateOrder_InvalidProductId_ThrowNotExistException() {
 
         // Arrange
         String exceptionMsg = "";
@@ -450,7 +450,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testDeleteOrder_OrderExists_ReturnSuccess() {
+    void testDeleteOrder_OrderExists_ReturnSuccess() {
 
         // Arrange
         Integer orderId = order.getId();
@@ -466,7 +466,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testDeleteOrder_OrderNotExist_ThrowNotExistException() {
+    void testDeleteOrder_OrderNotExist_ThrowNotExistException() {
 
         // Arrange
         String exceptionMsg = "";
@@ -488,7 +488,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testDeleteOrderItem_OrderItemExists_ReturnSuccess() {
+    void testDeleteOrderItem_OrderItemExists_ReturnSuccess() {
 
         // Arrange
         Integer orderId = order.getId();
@@ -511,7 +511,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testDeleteOrderItem_OrderItemNotExist_ThrowNotExistException() {
+    void testDeleteOrderItem_OrderItemNotExist_ThrowNotExistException() {
 
         // Arrange
         Integer orderId = order.getId();

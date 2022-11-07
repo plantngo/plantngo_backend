@@ -52,7 +52,7 @@ public class VoucherPurchaseServiceTest {
 
 
     @BeforeEach
-    public void initEach() {
+    void initEach() {
 
         allVouchers = new ArrayList<>();
         customers = new ArrayList<>();
@@ -98,7 +98,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAllVouchers_AllVouchers_ReturnAllVouchers() {
+    void testGetAllVouchers_AllVouchers_ReturnAllVouchers() {
         // Arrange
         List<Voucher> expectedVouchers = allVouchers;
 
@@ -114,7 +114,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAllVouchers_NoVouchers_ReturnEmptyList() {
+    void testGetAllVouchers_NoVouchers_ReturnEmptyList() {
         // Arrange
         allVouchers = new ArrayList<>();
         List<Voucher> expectedVouchers = new ArrayList<>();
@@ -131,7 +131,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAllOwnedVouchers_ValidCustomer_ReturnAllVouchers() {
+    void testGetAllOwnedVouchers_ValidCustomer_ReturnAllVouchers() {
         // Arrange
         List<Voucher> expectedVouchers = allVouchers;
         String customerName = "Emil";
@@ -148,7 +148,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAllOwnedVouchers_InvalidCustomer_ReturnEmptyList() {
+    void testGetAllOwnedVouchers_InvalidCustomer_ReturnEmptyList() {
         // Arrange
         List<Voucher> expectedVouchers = new ArrayList<>();
         String customerName = "Kate";
@@ -165,7 +165,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAllInCartVouchers_ValidCustomer_ReturnAllVouchersInCart() {
+    void testGetAllInCartVouchers_ValidCustomer_ReturnAllVouchersInCart() {
         // Arrange
         List<Voucher> expectedVouchers = List.of(voucherInCart);
         String customerName = "Emil";
@@ -182,7 +182,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAllInCartVouchers_InvalidCustomer_ReturnEmptyList() {
+    void testGetAllInCartVouchers_InvalidCustomer_ReturnEmptyList() {
         // Arrange
         List<Voucher> expectedVouchers = new ArrayList<>();
         String customerName = "Kate";
@@ -199,7 +199,7 @@ public class VoucherPurchaseServiceTest {
     }
     
     @Test
-    public void testGetAddToCart_InvalidVoucher_ThrowNotExistException() {
+    void testGetAddToCart_InvalidVoucher_ThrowNotExistException() {
         // Arrange
         // Retrieve Customer Emil
         String exceptionMsg = "";
@@ -220,7 +220,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testGetAddToCart_VoucherAlrExists_ThrowAlreadyExistsException() {
+    void testGetAddToCart_VoucherAlrExists_ThrowAlreadyExistsException() {
         // Arrange
         // Retrieve Customer Emil
         String exceptionMsg = "";
@@ -246,7 +246,7 @@ public class VoucherPurchaseServiceTest {
     // customer.getVouchersCart() == null
     // voucher.getCustomersInCart() == null
     @Test
-    public void testGetAddToCart_NoVouchersInCart_AddToCart() {
+    void testGetAddToCart_NoVouchersInCart_AddToCart() {
         // Arrange
 
         // Retrieve Customer Emil
@@ -272,7 +272,7 @@ public class VoucherPurchaseServiceTest {
 
     // deleteFromCart
     @Test
-    public void testDeleteFromCart_CustomerDoesNotHaveVoucherInCart_ThrowNotExistException() {
+    void testDeleteFromCart_CustomerDoesNotHaveVoucherInCart_ThrowNotExistException() {
         // Arrange
         // Retrieve Customer Daniel (No Voucher in cart)
         String exceptionMsg = "";
@@ -292,7 +292,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testDeleteFromCart_DifferentVoucherFromCart_ThrowNotExistException() {
+    void testDeleteFromCart_DifferentVoucherFromCart_ThrowNotExistException() {
         // Arrange
         // Retrieve Customer Emil
         String exceptionMsg = "";
@@ -314,7 +314,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testDeleteFromCart_DeleteFromCart_DeleteFromCart(){
+    void testDeleteFromCart_DeleteFromCart_DeleteFromCart(){
 
         // Arrange
         Voucher voucher = voucherInCart;
@@ -336,7 +336,7 @@ public class VoucherPurchaseServiceTest {
     
     // addOwnedVoucher
     @Test
-    public void testAddOwnedVoucher_InvalidVoucher_ThrowNotExistException() {
+    void testAddOwnedVoucher_InvalidVoucher_ThrowNotExistException() {
         // Arrange
         // Retrieve Customer Emil
         String exceptionMsg = "";
@@ -357,7 +357,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testAddOwnedVoucher_VoucherAlrExists_ThrowAlreadyExistsException() {
+    void testAddOwnedVoucher_VoucherAlrExists_ThrowAlreadyExistsException() {
         // Arrange
         // Retrieve Customer Emil
         String exceptionMsg = "";
@@ -383,7 +383,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testAddOwnedVoucher(){
+    void testAddOwnedVoucher(){
         // Arrange
         Voucher voucher = voucherInCart;
         Customer customer = customers.get(1);
@@ -402,7 +402,7 @@ public class VoucherPurchaseServiceTest {
 
     // purchaseVouchers
     @Test
-    public void testPurchaseVouchers_InsufficientBalance_ThrowInsufficientBalanceException() {
+    void testPurchaseVouchers_InsufficientBalance_ThrowInsufficientBalanceException() {
         // Arrange
         // Retrieve Customer Emil
         String exceptionMsg = "";
@@ -423,7 +423,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testPurchaseVouchers(){
+    void testPurchaseVouchers(){
         // Arrange
         Customer customer = customers.get(1);
         customer.setGreenPoints(2);
@@ -445,7 +445,7 @@ public class VoucherPurchaseServiceTest {
 
     // deleteOwnedVoucher
     @Test
-    public void testDeleteOwnedVoucher_CustomerHasNoVouchers_ThrowNotExistException() {
+    void testDeleteOwnedVoucher_CustomerHasNoVouchers_ThrowNotExistException() {
         // Arrange
         String exceptionMsg = "";
         Customer customer = new Customer();
@@ -464,7 +464,7 @@ public class VoucherPurchaseServiceTest {
     }
 
     @Test
-    public void testDeleteOwnedVoucher_DoesNotContainThisVoucher_ThrowNotExistException() {
+    void testDeleteOwnedVoucher_DoesNotContainThisVoucher_ThrowNotExistException() {
         // Arrange
         // Retrieve Customer Emil
         String exceptionMsg = "";

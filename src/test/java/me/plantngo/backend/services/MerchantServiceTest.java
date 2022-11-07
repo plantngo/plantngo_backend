@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,14 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import me.plantngo.backend.DTO.UpdateMerchantDetailsDTO;
+import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
 import me.plantngo.backend.models.Merchant;
+import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,8 +33,18 @@ public class MerchantServiceTest {
 
     @Mock
     private MerchantRepository merchantRepository;
+
+    @Mock
+    private CustomerRepository customerRepository;
+
     @InjectMocks
     private MerchantService merchantService;
+
+    @BeforeEach
+    public void initEach() {
+        
+    }
+
 
     @Test
     void testFindAll_AllMerchants_ReturnAllMerchants(){
@@ -146,6 +162,100 @@ public class MerchantServiceTest {
         
     }
 
+    @Test
+    void testFindMerchantInRange_AllMerchants_ReturnAllMerchants(){
+
+        // arrange
+        Merchant merchant1 = new Merchant();
+        merchant1.setUsername("Fairprice");
+        Merchant merchant2 = new Merchant();
+        merchant2.setUsername("Pizzahut");
+        Merchant merchant3 = new Merchant();
+        merchant3.setUsername("Greendot");
+        Merchant merchant4 = new Merchant();
+        merchant4.setUsername("Fairprice");
+        List<Merchant> merchantList = List.of(merchant1, merchant2, merchant3, merchant4);
+
+        when(merchantRepository.findAll()).thenReturn(merchantList);
+
+        // act 
+        List<Merchant> responseList = merchantService.findMerchantsInRange(1.0,1.0);
+        
+        //assert
+        verify(merchantRepository, times(1)).findAll();
+        assertEquals(merchantList, responseList);
+        
+    }
+
+    @Test
+    void testGetMerchantByCompany_Exist_ReturnMerchant(){
+        // Arrange
+        Merchant expectedMerchant = new Merchant();
+        expectedMerchant.setCompany("ExampleCompany");
+        String merchantCompanyToSearch = "ExampleCompany";
+        Optional<Merchant> optionalMerchant = Optional.of(expectedMerchant);
+        when(merchantRepository.findByCompany(any(String.class))).thenReturn(optionalMerchant);
+
+        // Act
+        Merchant responseMerchant = merchantService.getMerchantByCompany(expectedMerchant.getCompany());
+        // Assert
+        assertEquals(expectedMerchant, responseMerchant);
+        verify(merchantRepository, times(1)).findByCompany(any(String.class));
+    }
+
+    @Test
+    void testGetMerchantByCompany_NotFound_ThrowUserNotFound(){
+        // Arrange
+        Merchant expectedMerchant = new Merchant();
+        expectedMerchant.setCompany("ExampleCompany");
+        String merchantCompanyToSearch = "WrongExampleCompany";
+        
+        when(merchantRepository.findByCompany(any(String.class))).thenReturn(Optional.empty());
+
+        // Act and assert
+        Exception exception = assertThrows(UserNotFoundException.class, () -> merchantService.getMerchantByCompany(merchantCompanyToSearch));
+
+        // Assert
+        verify(merchantRepository, times(1)).findByCompany(merchantCompanyToSearch);
+        assertEquals(exception.getMessage(), "User Not Found:Company not found");
+        
+    }
+
+
+    @Test
+    void testUpdateMerchant_UsernameExist_ThrowAlreadyExists(){
+        // Arrange
+        when(merchantRepository.existsByUsername(any(String.class))).thenReturn(true);
+
+        Merchant merchant = new Merchant();
+        merchant.setUsername("Fairprice");
+
+        UpdateMerchantDetailsDTO update = new UpdateMerchantDetailsDTO("USERNAMEUSED", null, null, null, null, null, null);
+
+        // Act
+        Exception exception = assertThrows(AlreadyExistsException.class, () -> merchantService.updateMerchant("Fairprice", update));
+        verify(merchantRepository, times(1)).existsByUsername(anyString());
+        assertEquals("Username already exists!",exception.getMessage());
+    }
+
+    // @Test
+    // void testUpdateMerchant_Update_ReturnUpdateMerchant(){
+    //     // Arrange
+    //     when(merchantRepository.existsByUsername(any(String.class))).thenReturn(false);
+    //     when(customerRepository.existsByUsername(any(String.class))).thenReturn(false);
+        
+    //     Merchant merchant = new Merchant();
+    //     merchant.setUsername("Fairprice");
+    //     when(merchantService.getMerchantByUsername(any(String.class))).thenReturn(merchant);
+
+    //     UpdateMerchantDetailsDTO update = new UpdateMerchantDetailsDTO("Noprice", null, null, null, null, null, null);
+
+    //     // Act
+    //     Merchant responseMerchant = merchantService.updateMerchant("Fairprice", update);
+    //     verify(merchantRepository, times(1)).existsByUsername(anyString());
+    //     verify(customerRepository, times(1)).existsByUsername(anyString());
+        
+    // }
 
   
 

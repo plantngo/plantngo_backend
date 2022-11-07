@@ -66,7 +66,7 @@ public class ShopServiceTest {
     private MultipartFile file;
 
     @BeforeEach
-    public void initEach() {
+     void initEach() {
 
         file = mock(MultipartFile.class);
 
@@ -95,7 +95,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testAddCategory_NewCategory_ReturnCategory() {
+     void testAddCategory_NewCategory_ReturnCategory() {
         
 
         // Arrange
@@ -116,7 +116,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testAddCategory_ExistingCategory_ThrowAlreadyExistException() {
+     void testAddCategory_ExistingCategory_ThrowAlreadyExistException() {
 
         // Arrange
         CategoryDTO categoryDTO = new CategoryDTO("Dessert");
@@ -138,7 +138,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testGetCategory_CategoryExists_ReturnCategory() {
+     void testGetCategory_CategoryExists_ReturnCategory() {
 
         // Arrange
         Optional<Category> optionalCategory = Optional.of(category);
@@ -154,7 +154,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testGetCategory_CategoryNotExist_ThrowNotExistException() {
+     void testGetCategory_CategoryNotExist_ThrowNotExistException() {
 
         // Arrange
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
@@ -174,7 +174,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testDeleteCategory_CategoryExists_Success() {
+     void testDeleteCategory_CategoryExists_Success() {
 
         // Arrange
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
@@ -196,7 +196,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testDeleteCategory_CategoryNotExist_ThrowNotExistException() {
+     void testDeleteCategory_CategoryNotExist_ThrowNotExistException() {
 
         // Arrange
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
@@ -217,7 +217,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testUpdateCategory_CategoryNameAlreadyExists_ThrowAlreadyExistException() {
+     void testUpdateCategory_CategoryNameAlreadyExists_ThrowAlreadyExistException() {
 
         // Arrange
         String exceptionMsg = "";
@@ -242,7 +242,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testUpdateCategory_CategoryNameValid_Success() {
+    void testUpdateCategory_CategoryNameValid_Success() {
 
         // Arrange
         String categoryName = "Food";
@@ -263,7 +263,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testGetProduct_ProductNotExist_ThrowNotExistException() {
+    void testGetProduct_ProductNotExist_ThrowNotExistException() {
 
         // Arrange
         String exceptionMsg = "";
@@ -288,7 +288,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testGetProduct_ProductExists_ReturnProduct() {
+    void testGetProduct_ProductExists_ReturnProduct() {
 
         // Arrange
         String categoryName = "Food";
@@ -308,7 +308,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testAddProduct_ValidProduct_ReturnProduct() throws MalformedURLException {
+    void testAddProduct_ValidProduct_ReturnProduct() throws MalformedURLException {
 
         // Arrange
         String categoryName = "Food";
@@ -342,7 +342,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testAddProduct_InvalidCategory_ThrowNotExistException() {
+    void testAddProduct_InvalidCategory_ThrowNotExistException() {
 
         // Arrange
         String categoryName = "Appetizer";
@@ -366,7 +366,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testAddProduct_ProductAlreadyExists_ThrowAlreadyExistsException() {
+    void testAddProduct_ProductAlreadyExists_ThrowAlreadyExistsException() {
 
         // Arrange
         String categoryName = "Food";
@@ -393,7 +393,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testUpdateProduct_ValidUpdateProduct_ReturnUpdatedProduct() {
+    void testUpdateProduct_ValidUpdateProduct_ReturnUpdatedProduct() {
 
         // Arrange
         Product expectedProduct = product;
@@ -416,7 +416,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testUpdateProduct_ProductNotExist_ThrowNotExistException() {
+    void testUpdateProduct_ProductNotExist_ThrowNotExistException() {
 
         // Arrange
         String productName = "Bee Hiang";
@@ -439,7 +439,7 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testUpdateProduct_ProductNameAlreadyExists_ThrowAlreadyExistsException() {
+    void testUpdateProduct_ProductNameAlreadyExists_ThrowAlreadyExistsException() {
 
         // Arrange
         Product product2 = new Product();
