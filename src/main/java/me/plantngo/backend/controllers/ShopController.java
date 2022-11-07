@@ -133,7 +133,7 @@ public class ShopController {
         return new ResponseEntity<>("Category deleted!", HttpStatus.OK);
 
     }
-
+    
     @ApiOperation(value = "Add a product for a Merchant")
     @PostMapping(path = "/{merchantName}/{categoryName}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addProduct(@PathVariable("merchantName") String merchantName,

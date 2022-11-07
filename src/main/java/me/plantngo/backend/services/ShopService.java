@@ -280,7 +280,9 @@ public class ShopService {
         ModelMapper mapper = new ModelMapper();
 
         Product product = mapper.map(productDTO, Product.class);
-        product.setCarbonEmission(0.0);
+        if (product.getCarbonEmission() == null){
+            product.setCarbonEmission(0.0);
+        }
         product.setCategory(category);
 
         return product;

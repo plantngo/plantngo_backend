@@ -13,17 +13,13 @@ import javax.validation.constraints.Size;
 public class ResetPasswordDTO {
 
     @NotBlank
-    String username;
-
-    @NotBlank
     String email;
-
-    @NotNull
-    Character userType;
 
     /*
     To be included in the checking method; i.e. only after customer has typed in their reset password token
      */
     @Size(min = 16, max = 16, message = "Token must be of size 16")
     String resetPasswordToken;
+
+    String newPassword;
 }

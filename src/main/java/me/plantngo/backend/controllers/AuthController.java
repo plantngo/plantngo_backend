@@ -58,8 +58,9 @@ public class AuthController {
     })
     @PostMapping(path = "/login")
     public ResponseEntity<String> authenticateUser(@Valid @RequestBody LoginDTO loginDTO) {
+        ResponseEntity<String> response = authService.authenticateUser(loginDTO);
         logService.addLog(loginDTO.getUsername(), "login");
-        return authService.authenticateUser(loginDTO);
+        return response;
     }
 
 }

@@ -14,7 +14,21 @@
 	<description>Plantngo Backend</description>
 	<properties>
 		<java.version>17</java.version>
+		<!-- JaCoCo Properties -->
+		<sonar.exclusions>
+			**/BackendApplication.java,
+			**/config/*.java,
+			**/exceptions/*.java,
+			**/DTO/*.java,
+			**/jwt/*.java,
+			**/security/*.java,
+			**/models/*.java
+		</sonar.exclusions>
+		<sonar.login>admin</sonar.login>
+		<sonar.password>password</sonar.password>
+		<sonar.projectKey>sqp_b98b0d1762c98b66cbbd7809c311aab50b8573b5</sonar.projectKey>
 	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -122,6 +136,19 @@
 			<version>2.3.1</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin -->
+		<dependency>
+			<groupId>org.sonarsource.scanner.maven</groupId>
+			<artifactId>sonar-maven-plugin</artifactId>
+			<version>3.9.1.2184</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.8</version>
+		</dependency>
 
 	</dependencies>
 
@@ -138,6 +165,25 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.8</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

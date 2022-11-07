@@ -12,11 +12,11 @@ public class MailConfig {
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.office365.com");
-        mailSender.setPort(587);
+        mailSender.setHost(System.getenv("MAIL_HOST"));
+        mailSender.setPort(Integer.parseInt(System.getenv("MAIL_PORT")));
 
-        mailSender.setUsername("project.plantngo@outlook.com");
-        mailSender.setPassword("PlantNGo123!");
+        mailSender.setUsername(System.getenv("MAIL_USERNAME"));
+        mailSender.setPassword(System.getenv("MAIL_PASSWORD"));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

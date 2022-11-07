@@ -4,13 +4,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import javax.mail.Multipart;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +24,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.multipart.MultipartFile;
 
 import me.plantngo.backend.DTO.CategoryDTO;
 import me.plantngo.backend.DTO.ProductDTO;
@@ -45,6 +51,9 @@ public class ShopServiceTest {
     @Mock
     private MerchantRepository merchantRepository;
 
+    @Mock
+    private AWSS3Service awss3Service;
+
     @InjectMocks
     private ShopService shopService;
 
@@ -54,8 +63,13 @@ public class ShopServiceTest {
 
     private Product product;
 
+    private MultipartFile file;
+
     @BeforeEach
     public void initEach() {
+
+        file = mock(MultipartFile.class);
+
         merchant = new Merchant();
         merchant.setUsername("Daniel");
         merchant.setAddress("42 Spring Crescent");
@@ -294,26 +308,36 @@ public class ShopServiceTest {
     }
 
     @Test
-    public void testAddProduct_ValidProduct_ReturnProduct() {
+    public void testAddProduct_ValidProduct_ReturnProduct() throws MalformedURLException {
 
         // Arrange
         String categoryName = "Food";
+        String imageUrl = "https://google.com.sg";
         ProductDTO productDTO = new ProductDTO("Bee Hoon", 5.5, "Yellow Noodles", null, null, null);
-        Product expectedProduct = new Product(null, "Bee Hoon", 5.5, "Yellow Noodles", 0.0, null, null, category, null, null);
+        Product expectedProduct = new Product(null, "Bee Hoon", 5.5, "Yellow Noodles", 0.0, new URL("https://google.com.sg"), null, category, null, null);
+
         when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
             .thenReturn(true);
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
             .thenReturn(Optional.of(category));
+        when(awss3Service.uploadFile(any(MultipartFile.class)))
+            .thenReturn(imageUrl);
         when(productRepository.save(any(Product.class)))
             .thenReturn(expectedProduct);
 
         // Act
-        Product responseProduct = shopService.addProduct(merchant, categoryName, productDTO);
+        Product responseProduct = null;
+        try {
+            responseProduct = shopService.addProduct(merchant, categoryName, productDTO, file);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
         // Assert
         assertEquals(expectedProduct, responseProduct);
         verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryName, merchant);
         verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
+        verify(awss3Service, times(1)).uploadFile(file);
         verify(productRepository, times(1)).save(expectedProduct);
     }
 
@@ -326,12 +350,14 @@ public class ShopServiceTest {
         ProductDTO productDTO = new ProductDTO("Bee Hoon", 5.5, "Yellow Noodles", null, null, null);
         when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
             .thenReturn(false);
-
+            
         // Act
         try {
-            Product responseProduct = shopService.addProduct(merchant, categoryName, productDTO);
+            Product responseProduct = shopService.addProduct(merchant, categoryName, productDTO, file);
         } catch (NotExistException e) {
             exceptionMsg = e.getMessage();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         // Assert
@@ -353,8 +379,10 @@ public class ShopServiceTest {
 
         // Act
         try {
-            Product responseProduct = shopService.addProduct(merchant, categoryName, productDTO);
+            Product responseProduct = shopService.addProduct(merchant, categoryName, productDTO, file);
         } catch (AlreadyExistsException e) {
+            exceptionMsg = e.getMessage();
+        } catch (Exception e) {
             exceptionMsg = e.getMessage();
         }
 

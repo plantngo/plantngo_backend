@@ -1,5 +1,6 @@
 package me.plantngo.backend.models;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +35,6 @@ import lombok.*;
 @EqualsAndHashCode
 @Entity
 @Table(name = "ordering")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Order {
 
     @Id
@@ -42,12 +42,15 @@ public class Order {
     private Integer id;
 
     @JsonSerialize(using = DecimalJsonSerializer.class)
+
     private Double totalPrice;
 
     private Boolean isDineIn;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
+    private LocalDateTime orderTime;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -57,11 +60,13 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     @JsonBackReference(value = "customer_order")
+    @ToString.Exclude
     private Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "merchant_id", nullable = false)
     @JsonManagedReference(value = "merchant_order")
+    @ToString.Exclude
     private Merchant merchant;
 
     public void setOrderStatus(OrderStatus orderStatus) {

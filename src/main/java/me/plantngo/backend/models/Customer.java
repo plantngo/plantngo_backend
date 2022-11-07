@@ -74,6 +74,7 @@ public class Customer {
         private String resetPasswordToken;
 
         @ManyToMany
+        @ToString.Exclude
         @JoinTable(name = "quest_completion", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "quest_id"))
         private Set<Quest> completedQuests;
 
