@@ -48,6 +48,6 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    @JsonManagedReference
+    @JsonIgnore
     private Product product;
 }

@@ -7,6 +7,7 @@ services:
       - ./.env
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5432:5432
 
@@ -22,6 +23,22 @@ services:
       - .:/opt/app
     ports:
       - 8080:8080
+      
+  sonarqube:
+    image: sonarqube-arm:latest
+    depends_on:
+      - plantngo-db
+    env_file:
+      - ./.env
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    ports:
+      - 9000:9000
 
 volumes:
   postgres_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:

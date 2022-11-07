@@ -205,9 +205,9 @@ public class SampleDataConfig {
                                 2043.8,
                                 new URL("https://static.phdvasia.com/sg1/menu/single/desktop_thumbnail_0bd9658b-d8eb-438d-bc2c-fef8afa1b71e.jpg"),
                                 "Savoury & Cheesy");
-                shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct1, null);
-                shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct2, null);
-                shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct3, null);
+                shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct1);
+                shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct2);
+                shopService.addProduct(pizzaHut, "Pizza", pizzaHutProduct3);
 
                 Merchant fairPrice = merchantService.getMerchantByUsername("fairprice");
                 ProductDTO fairPriceProduct1 = new ProductDTO(
@@ -242,11 +242,11 @@ public class SampleDataConfig {
                                 new URL("https://media.nedigital.sg/fairprice/fpol/media/images/product/L/90027875_L1_20211018.jpg?q=60"),
                                 "Salty");
 
-                shopService.addProduct(fairPrice, "Groceries", fairPriceProduct1, null);
-                shopService.addProduct(fairPrice, "Groceries", fairPriceProduct2, null);
-                shopService.addProduct(fairPrice, "Snacks", fairPriceProduct3, null);
-                shopService.addProduct(fairPrice, "Snacks", fairPriceProduct4, null);
-                shopService.addProduct(fairPrice, "Snacks", fairPriceProduct5, null);
+                shopService.addProduct(fairPrice, "Groceries", fairPriceProduct1);
+                shopService.addProduct(fairPrice, "Groceries", fairPriceProduct2);
+                shopService.addProduct(fairPrice, "Snacks", fairPriceProduct3);
+                shopService.addProduct(fairPrice, "Snacks", fairPriceProduct4);
+                shopService.addProduct(fairPrice, "Snacks", fairPriceProduct5);
 
                 Merchant joieVege = merchantService.getMerchantByUsername("joievege");
                 ProductDTO joieVegeProduct1 = new ProductDTO("4 Course Set", 38.00, "Including 1 Drink of Choice",
