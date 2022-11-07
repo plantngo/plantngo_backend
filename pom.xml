@@ -22,7 +22,8 @@
 			**/DTO/*.java,
 			**/jwt/*.java,
 			**/security/*.java,
-			**/models/*.java
+			**/models/*.java,
+			**/EmissionService.java
 		</sonar.exclusions>
 		<sonar.projectKey>PlantNGo</sonar.projectKey>
 	</properties>
