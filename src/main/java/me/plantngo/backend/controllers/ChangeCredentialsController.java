@@ -22,8 +22,6 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ChangeCredentialsController {
 
-    private CustomerService customerService;
-    private MerchantService merchantService;
     private ChangeCredentialService changeCredentialService;
     private AuthService authService;
 
@@ -32,8 +30,6 @@ public class ChangeCredentialsController {
             MerchantService merchantService,
             ChangeCredentialService changeCredentialService,
             AuthService authService) {
-        this.customerService = customerService;
-        this.merchantService = merchantService;
         this.changeCredentialService = changeCredentialService;
         this.authService = authService;
     }
