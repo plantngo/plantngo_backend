@@ -23,9 +23,9 @@ services:
       - .:/opt/app
     ports:
       - 8080:8080
-      
+
   sonarqube:
-    image: sonarqube-arm:latest
+    image: sonarqube:community
     depends_on:
       - plantngo-db
     env_file:
