@@ -3,10 +3,8 @@ package me.plantngo.backend.services;
 import java.util.List;
 import java.util.Optional;
 
-import me.plantngo.backend.DTO.UpdateCustomerDetailsDTO;
 import me.plantngo.backend.DTO.UpdateMerchantDetailsDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
-import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.repositories.CustomerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

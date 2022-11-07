@@ -22,8 +22,6 @@ public class LogService {
         log.setType(type);
         log.setDateTime(LocalDateTime.now());
         logRepository.save(log);
-        //TODO: remove
-        System.out.println("09090909_______---___---__-__-___---_-__----)LOGGED_______---___---__-__-___---_-__----)09090909");
         return log;
     }
 

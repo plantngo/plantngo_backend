@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,6 @@ import me.plantngo.backend.DTO.APIPostDTO;
 import me.plantngo.backend.DTO.APIResponseDTO;
 import me.plantngo.backend.DTO.APIResultDTO;
 import me.plantngo.backend.models.Ingredient;
-import me.plantngo.backend.models.ProductIngredient;
 import me.plantngo.backend.repositories.IngredientRepository;
 
 @Service

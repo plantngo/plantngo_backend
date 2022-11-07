@@ -20,7 +20,7 @@ public class MailService {
         message.setFrom("project.plantngo@outlook.com");
         message.setTo(to);
         message.setSubject(subject);
-        message.setText(String.format("[THIS IS AN AUTOMATED MESSAGE - PLEASE DO NOT REPLY DIRECTLY TO THIS EMAIL]\n\nHere is your reset password key: %s\n\nPlease paste this key in the app to reset your password\n" ,text));
+        message.setText(String.format("[THIS IS AN AUTOMATED MESSAGE - PLEASE DO NOT REPLY DIRECTLY TO THIS EMAIL]\n\nHere is your reset password key: %s%n%nPlease paste this key in the app to reset your password%n" ,text));
 
         javaMailSender.send(message);
     }

@@ -1,16 +1,9 @@
 package me.plantngo.backend.services;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-
-import javax.validation.Valid;
 
 import me.plantngo.backend.models.*;
 import org.modelmapper.ModelMapper;
@@ -21,7 +14,6 @@ import me.plantngo.backend.DTO.OrderItemDTO;
 import me.plantngo.backend.DTO.UpdateOrderDTO;
 import me.plantngo.backend.DTO.OrderDTO;
 import me.plantngo.backend.DTO.UpdateOrderItemDTO;
-import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.repositories.OrderRepository;
 import me.plantngo.backend.repositories.ProductRepository;
@@ -38,6 +30,8 @@ public class OrderService {
     private MerchantService merchantService;
 
     private LogService logService;
+
+    private static final String ORDER_STRING = "Order";
 
     @Autowired
     public OrderService(OrderRepository orderRepository, CustomerService customerService,
@@ -120,7 +114,7 @@ public class OrderService {
 
     public Order updateOrder(UpdateOrderDTO updateOrderDTO, Integer orderId) {
         // Check if order exists
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotExistException("Order"));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotExistException(ORDER_STRING));
 
         // Update Order
         ModelMapper mapper = new ModelMapper();
@@ -137,7 +131,7 @@ public class OrderService {
         // Update OrderItems in order
         Set<UpdateOrderItemDTO> updateOrderItemDTOs = updateOrderDTO.getUpdateOrderItemDTOs();
         if (updateOrderItemDTOs == null) {
-            updateOrderItemDTOs = new HashSet<UpdateOrderItemDTO>();
+            updateOrderItemDTOs = new HashSet<>();
         }
         Set<OrderItem> orderItems = order.getOrderItems();
 
@@ -163,16 +157,16 @@ public class OrderService {
 
     public void deleteOrder(Integer orderId) {
         if (!orderRepository.existsById(orderId)) {
-            throw new NotExistException("Order");
+            throw new NotExistException(ORDER_STRING);
         }
         orderRepository.deleteById(orderId);
     }
 
     public void deleteOrderItem(Integer orderId, Integer productId) {
         if (!orderRepository.existsById(orderId)) {
-            throw new NotExistException("Order");
+            throw new NotExistException(ORDER_STRING);
         }
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotExistException("Order"));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotExistException(ORDER_STRING));
 
         Set<OrderItem> orderItems = order.getOrderItems();
         Iterator<OrderItem> itr = orderItems.iterator();
@@ -196,49 +190,7 @@ public class OrderService {
             totalPrice += orderItem.getPrice();
         }
         return totalPrice;
-        // double result = Double.valueOf(totalPrice);
-        // result = Math.round(result * 100) / 100;
-
-        // DecimalFormat df = new DecimalFormat("#.##");
-        // df.setRoundingMode(RoundingMode.CEILING);
-
-        // return Double.valueOf(df.format(result));
     }
-
-    // private OrderItem getOrderItemFromDTO(PlaceOrderDTO placeOrderDTO, Order
-    // order) {
-
-    // // Check if product exists
-    // Optional<Product> tempProduct =
-    // productRepository.findById(placeOrderDTO.getProductId());
-    // if (tempProduct.isEmpty()) {
-    // throw new NotExistException("Product");
-    // }
-    // Product product = tempProduct.get();
-
-    // OrderItem orderItem = new OrderItem();
-
-    // orderItem.setProduct(product);
-    // orderItem.setOrder(order);
-    // orderItem.setQuantity(placeOrderDTO.getQuantity());
-    // orderItem.setPrice(product.getPrice() * placeOrderDTO.getQuantity());
-    // orderItem.setProductId(product.getId());
-
-    // return orderItem;
-    // }
-
-    // private Order getOrderFromDTO(PlaceOrderDTO placeOrderDTO, Customer customer,
-    // Merchant merchant, Integer orderId) {
-    // Optional<Order> tempOrder = orderRepository.findById(orderId);
-    // Order order = null;
-    // if (tempOrder.isEmpty()) {
-    // order = createNewOrderFromDTO(placeOrderDTO, customer, merchant);
-    // } else {
-    // order = tempOrder.get();
-    // }
-
-    // return order;
-    // }
 
     private Order orderMapToEntity(OrderDTO placeOrderDTO, Customer customer, Merchant merchant) {
 
