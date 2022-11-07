@@ -25,32 +25,33 @@ public class Quest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    //@NotNull
+    // @NotNull
     private LocalDateTime postedDateTime;
 
     /*
-    type of action needed to be done
-    "order", "purchase-voucher", "login" (on separate days)
+     * type of action needed to be done
+     * "order", "purchase-voucher", "login" (on separate days)
      */
     @NotBlank
     private String type;
 
     /*
-    number of times action of type must be done to complete
+     * number of times action of type must be done to complete
      */
     @NotNull
     private Integer countToComplete;
 
     /*
-    point awarded upon completion
+     * point awarded upon completion
      */
     @NotNull
     private Integer points;
 
-    //@NotNull
+    // @NotNull
     private LocalDateTime endDateTime;
 
     @JsonIgnore
+    @ToString.Exclude
     @ManyToMany(mappedBy = "completedQuests")
     private Set<Customer> customersThatHaveCompleted;
 }
