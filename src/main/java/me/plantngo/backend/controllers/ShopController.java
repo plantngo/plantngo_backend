@@ -138,7 +138,7 @@ public class ShopController {
     @PostMapping(path = "/{merchantName}/{categoryName}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addProduct(@PathVariable("merchantName") String merchantName,
             @PathVariable("categoryName") String categoryName,
-            @Valid @RequestPart("product") ProductDTO productDTO, @RequestParam("image") MultipartFile file)
+            @Valid @RequestPart("product") ProductDTO productDTO, @RequestPart("image") MultipartFile file)
             throws MalformedURLException {
 
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
@@ -154,7 +154,7 @@ public class ShopController {
             @PathVariable("categoryName") String categoryName,
             @PathVariable("productName") String productName,
             @Valid @RequestPart("product") UpdateProductDTO updateProductDTO,
-            @RequestParam("image") MultipartFile file) throws MalformedURLException {
+            @RequestPart("image") MultipartFile file) throws MalformedURLException {
 
         Merchant merchant = merchantService.getMerchantByUsername(merchantName);
         Category category = shopService.getCategory(merchant, categoryName);

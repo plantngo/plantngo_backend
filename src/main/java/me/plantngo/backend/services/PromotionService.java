@@ -1,5 +1,7 @@
 package me.plantngo.backend.services;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import me.plantngo.backend.DTO.PromotionDTO;
 import me.plantngo.backend.exceptions.NotExistException;
@@ -25,6 +28,7 @@ import me.plantngo.backend.repositories.PromotionRepository;
 public class PromotionService {
     private PromotionRepository promotionRepository;
     private final ProductService productService;
+    private AWSS3Service awss3Service;
 
     @Autowired
     public PromotionService(PromotionRepository promotionRepository, ProductService productService) {
@@ -64,6 +68,21 @@ public class PromotionService {
         promotion.setClicks(0);
 
         // promotion.setMerchantId(merchant.getId());
+        promotionRepository.save(promotion);
+
+        return promotion;
+    }
+
+    public Promotion addPromotion(PromotionDTO promotionDTO, Merchant merchant, MultipartFile file) throws MalformedURLException {
+
+        Promotion promotion = this.promotionMapToEntity(promotionDTO, merchant);
+        promotion.setClicks(0);
+
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = awss3Service.uploadFile(file);
+            promotion.setBannerUrl(new URL(imageUrl));
+        }
+
         promotionRepository.save(promotion);
 
         return promotion;

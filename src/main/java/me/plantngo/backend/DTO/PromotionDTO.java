@@ -1,5 +1,6 @@
 package me.plantngo.backend.DTO;
 
+import java.net.URL;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -16,7 +17,7 @@ public class PromotionDTO {
     private String description;
 
     // @NotBlank
-    private String bannerUrl;
+    private URL bannerUrl;
 
     @NotBlank
     private String startDate;
