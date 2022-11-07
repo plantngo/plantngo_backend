@@ -9,13 +9,11 @@ import me.plantngo.backend.models.Quest;
 import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.LogRepository;
 import me.plantngo.backend.repositories.QuestRepository;
-import me.plantngo.backend.repositories.VoucherRepository;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -111,15 +109,12 @@ public class QuestService {
                     isFound = true;
                 }
             }
-            System.out.println(isFound);
             if (!isFound) {
                 Set<Quest> completed = customer.getCompletedQuests();
 
                 if (completed == null) {
                     completed = new HashSet<>();
                 }
-
-                Boolean isAdded = completed.add(quest);
 
                 customer.setCompletedQuests(completed);
                 customer.setGreenPoints(customer.getGreenPoints() + quest.getPoints());

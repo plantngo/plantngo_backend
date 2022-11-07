@@ -29,6 +29,10 @@ public class ProductService {
 
     private final IngredientRepository ingredientRepository;
 
+    private static final String PRODUCT_STRING = "Product";
+
+    private static final String PRODUCT_INGREDIENT_STRING = "Product Ingredient";
+
     @Autowired
     public ProductService(ProductRepository productRepository, ProductIngredientRepository productIngredientRepository, IngredientRepository ingredientRepository) {
         this.productRepository = productRepository;
@@ -50,17 +54,17 @@ public class ProductService {
 
     public Product getProductById(Integer productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new NotExistException("Product"));
+                .orElseThrow(() -> new NotExistException(PRODUCT_STRING));
     }
 
     public Product getProductByName(String productName) {
         return productRepository.findByName(productName)
-                .orElseThrow(() -> new NotExistException("Product"));
+                .orElseThrow(() -> new NotExistException(PRODUCT_STRING));
     }
 
     public Product getProductByNameAndMerchantName(String productName, String merchantName) {
         return productRepository.findByNameAndCategoryMerchantUsername(productName, merchantName)
-                .orElseThrow(() -> new NotExistException("Product"));
+                .orElseThrow(() -> new NotExistException(PRODUCT_STRING));
     }
 
     public Ingredient getIngredientByName(String name) {
@@ -70,7 +74,7 @@ public class ProductService {
 
     public ProductIngredient getProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername(Ingredient ingredient, Product product, String merchantName) {
         return productIngredientRepository.findByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName)
-                .orElseThrow(() -> new NotExistException("Product Ingredient"));
+                .orElseThrow(() -> new NotExistException(PRODUCT_INGREDIENT_STRING));
     }
 
     public List<Product> getAllProductsByMerchant(String merchantName) {
@@ -81,7 +85,7 @@ public class ProductService {
         Product product = this.getProductByName(productName);
         Ingredient ingredient = this.getIngredientByName(productIngredientDTO.getName());
         if (productIngredientRepository.existsByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName)) {
-            throw new AlreadyExistsException("Product Ingredient");
+            throw new AlreadyExistsException(PRODUCT_INGREDIENT_STRING);
         }
 
         ProductIngredient productIngredient = this.productIngredientMapToEntity(productIngredientDTO, product, ingredient);
@@ -149,7 +153,7 @@ public class ProductService {
 
         Set<ProductIngredient> productIngredients = product.getProductIngredients();
         if (!productIngredients.contains(productIngredient)) {
-            throw new NotExistException("Product Ingredient");
+            throw new NotExistException(PRODUCT_INGREDIENT_STRING);
         }
 
         productIngredients.remove(productIngredient);

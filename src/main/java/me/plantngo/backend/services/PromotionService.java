@@ -2,17 +2,13 @@ package me.plantngo.backend.services;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.modelmapper.AbstractConverter;
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,7 +26,10 @@ public class PromotionService {
     private final PromotionRepository promotionRepository;
 
     private final ProductService productService;
+
     private AWSS3Service awss3Service;
+
+    private final static String PROMOTION_STRING = "Promotion";
 
     @Autowired
     public PromotionService(PromotionRepository promotionRepository, ProductService productService,
@@ -71,7 +70,6 @@ public class PromotionService {
         Promotion promotion = this.promotionMapToEntity(promotionDTO, merchant);
         promotion.setClicks(0);
 
-        // promotion.setMerchantId(merchant.getId());
         promotionRepository.save(promotion);
 
         return promotion;
@@ -103,7 +101,7 @@ public class PromotionService {
 
     public void deletePromotion(Integer promotionId) {
         if (!promotionRepository.existsById(promotionId)) {
-            throw new NotExistException("Promotion");
+            throw new NotExistException(PROMOTION_STRING);
         }
         promotionRepository.deleteById(promotionId);
     }
@@ -128,7 +126,7 @@ public class PromotionService {
     public Promotion updatePromotion(PromotionDTO promotionDTO, Integer promotionId) {
 
         Promotion promotion = promotionRepository.findById(promotionId)
-                .orElseThrow(() -> new NotExistException("Promotion"));
+                .orElseThrow(() -> new NotExistException(PROMOTION_STRING));
 
         promotion.setDescription(promotionDTO.getDescription());
         promotion.setBannerUrl(promotionDTO.getBannerUrl());
@@ -144,11 +142,10 @@ public class PromotionService {
             throws MalformedURLException {
 
         Promotion promotion = promotionRepository.findById(promotionId)
-                .orElseThrow(() -> new NotExistException("Promotion"));
+                .orElseThrow(() -> new NotExistException(PROMOTION_STRING));
 
         if (file != null && !file.isEmpty()) {
             String imageUrl = awss3Service.uploadFile(file);
-            System.out.println(imageUrl);
             promotion.setBannerUrl(new URL(imageUrl));
         }
         promotion.setDescription(promotionDTO.getDescription());
