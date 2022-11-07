@@ -22,12 +22,14 @@ import java.util.Optional;
 
 @Service
 public class ResetPasswordService {
-    CustomerRepository customerRepository;
-    MerchantRepository merchantRepository;
+    
+    private CustomerRepository customerRepository;
 
-    ChangeCredentialService changeCredentialService;
+    private MerchantRepository merchantRepository;
 
-    MailService mailService;
+    private ChangeCredentialService changeCredentialService;
+
+    private MailService mailService;
 
     @Autowired
     public ResetPasswordService(CustomerRepository customerRepository, MerchantRepository merchantRepository,
@@ -139,22 +141,6 @@ public class ResetPasswordService {
         else {
             merchant = (Merchant) user;
             changeCredentialService.replacePassword(merchant.getUsername(), newPassword, 'M');
-        }
-    }
-
-    private Customer getCustomerByUsername(String username){
-        try{
-            return customerRepository.findByUsername(username).get();
-        } catch (NoSuchElementException e) {
-            throw new UserNotFoundException("User does not exist");
-        }
-    }
-
-    private Merchant getMerchantByUsername(String username){
-        try{
-            return merchantRepository.findByUsername(username).get();
-        } catch (NoSuchElementException e) {
-            throw new UserNotFoundException("User does not exist");
         }
     }
 }
