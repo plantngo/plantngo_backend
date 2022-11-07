@@ -153,7 +153,7 @@ public class SampleDataConfig {
                                 "Contemporary indoor-outdoor rooftop eatery serving a set menu of adventurous vegetarian cuisine.",
                                 1.2838519,
                                 103.7810027,
-                                "Vegetarian Cuisine",
+                                "Vegetarian",
                                 2,
                                 "11:00AM - 20:30PM",
                                 2293.6);
