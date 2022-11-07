@@ -238,26 +238,59 @@ public class MerchantServiceTest {
         assertEquals("Username already exists!",exception.getMessage());
     }
 
-    // @Test
-    // void testUpdateMerchant_Update_ReturnUpdateMerchant(){
-    //     // Arrange
-    //     when(merchantRepository.existsByUsername(any(String.class))).thenReturn(false);
-    //     when(customerRepository.existsByUsername(any(String.class))).thenReturn(false);
+    @Test
+    void testUpdateMerchant_MerchantExists_ReturnMerchant(){
         
-    //     Merchant merchant = new Merchant();
-    //     merchant.setUsername("Fairprice");
-    //     when(merchantService.getMerchantByUsername(any(String.class))).thenReturn(merchant);
+        // Arrange
+        String username = "Daniel";
+        UpdateMerchantDetailsDTO updateMerchantDetailsDTO = new UpdateMerchantDetailsDTO("Jacky", "jacky@yahoo.com.sg", null, null, null, null, null);
+        Merchant merchant = new Merchant();
+        merchant.setUsername("Daniel");
+        Merchant expectedMerchant = new Merchant();
+        expectedMerchant.setUsername(updateMerchantDetailsDTO.getUsername());
+        expectedMerchant.setEmail(updateMerchantDetailsDTO.getEmail());
 
-    //     UpdateMerchantDetailsDTO update = new UpdateMerchantDetailsDTO("Noprice", null, null, null, null, null, null);
+        when(merchantRepository.existsByUsername(anyString()))
+            .thenReturn(false);
+        when(customerRepository.existsByUsername(anyString()))
+            .thenReturn(false);
+        when(merchantRepository.findByUsername(anyString()))
+            .thenReturn(Optional.of(merchant));
+        when(merchantRepository.saveAndFlush(any(Merchant.class)))
+            .thenReturn(expectedMerchant);
 
-    //     // Act
-    //     Merchant responseMerchant = merchantService.updateMerchant("Fairprice", update);
-    //     verify(merchantRepository, times(1)).existsByUsername(anyString());
-    //     verify(customerRepository, times(1)).existsByUsername(anyString());
+        // Act
+        Merchant responseMerchant = merchantService.updateMerchant(username, updateMerchantDetailsDTO);
+
+        // Assert
+        assertEquals(expectedMerchant, responseMerchant);
+        verify(merchantRepository, times(1)).existsByUsername(updateMerchantDetailsDTO.getUsername());
+        verify(customerRepository, times(1)).existsByUsername(updateMerchantDetailsDTO.getUsername());
+        verify(merchantRepository, times(1)).findByUsername(username);
+        verify(merchantRepository, times(1)).saveAndFlush(expectedMerchant);
+    }
+
+    @Test
+    void testUpdateMerchant_UsernameAlreadyExistsInMerchant_ThrowAlreadyExistsException(){
         
-    // }
+        // Arrange
+        String username = "Daniel";
+        UpdateMerchantDetailsDTO updateMerchantDetailsDTO = new UpdateMerchantDetailsDTO("Jacky", "jacky@yahoo.com.sg", null, null, null, null, null);
+        String exceptionMsg = "";
 
-  
+        when(merchantRepository.existsByUsername(anyString()))
+            .thenReturn(true);
 
+        // Act
+        try {
+            Merchant responseMerchant = merchantService.updateMerchant(username, updateMerchantDetailsDTO);
+        } catch (AlreadyExistsException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Username already exists!", exceptionMsg);
+        verify(merchantRepository, times(1)).existsByUsername(updateMerchantDetailsDTO.getUsername());
+    }
 
 }
