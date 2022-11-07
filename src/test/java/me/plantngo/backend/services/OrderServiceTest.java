@@ -314,7 +314,7 @@ public class OrderServiceTest {
         // Arrange
         order.setId(null);
         OrderItemDTO orderItemDTO = new OrderItemDTO(1, 2);
-        OrderDTO orderDTO = new OrderDTO(false, merchant.getUsername(), OrderStatus.PENDING, List.of(orderItemDTO));
+        OrderDTO orderDTO = new OrderDTO(false, merchant.getUsername(), OrderStatus.PENDING, List.of(orderItemDTO), null);
         Order expectedOrder = order;
         String customerName = "Daniel";
         String merchantName = "Annabelle";
@@ -345,7 +345,7 @@ public class OrderServiceTest {
         // Arrange
         order.setId(null);
         OrderItemDTO orderItemDTO = new OrderItemDTO(5, 2);
-        OrderDTO orderDTO = new OrderDTO(false, merchant.getUsername(), OrderStatus.PENDING, List.of(orderItemDTO));
+        OrderDTO orderDTO = new OrderDTO(false, merchant.getUsername(), OrderStatus.PENDING, List.of(orderItemDTO), null);
         String customerName = "Daniel";
         String merchantName = "Annabelle";
         String exceptionMsg = "";
@@ -379,7 +379,7 @@ public class OrderServiceTest {
         UpdateOrderItemDTO updateOrderItemDTO = new UpdateOrderItemDTO(1, 10);
         Set<UpdateOrderItemDTO> updateOrderItemDTOs = new HashSet<>();
         updateOrderItemDTOs.add(updateOrderItemDTO);
-        UpdateOrderDTO updateOrderDTO = new UpdateOrderDTO(true, OrderStatus.CANCELLED, updateOrderItemDTOs);
+        UpdateOrderDTO updateOrderDTO = new UpdateOrderDTO(true, OrderStatus.CANCELLED, updateOrderItemDTOs, null);
         
         Order expectedOrder = order;
         OrderItem updatedOrderItem = orderItem;
@@ -418,7 +418,7 @@ public class OrderServiceTest {
         UpdateOrderItemDTO updateOrderItemDTO = new UpdateOrderItemDTO(5, 10);
         Set<UpdateOrderItemDTO> updateOrderItemDTOs = new HashSet<>();
         updateOrderItemDTOs.add(updateOrderItemDTO);
-        UpdateOrderDTO updateOrderDTO = new UpdateOrderDTO(true, OrderStatus.CANCELLED, updateOrderItemDTOs);
+        UpdateOrderDTO updateOrderDTO = new UpdateOrderDTO(true, OrderStatus.CANCELLED, updateOrderItemDTOs, null);
         
         Order expectedOrder = order;
         OrderItem updatedOrderItem = orderItem;
