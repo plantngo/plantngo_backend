@@ -23,7 +23,9 @@ import me.plantngo.backend.repositories.PromotionRepository;
 
 @Service
 public class PromotionService {
-    private PromotionRepository promotionRepository;
+
+    private final PromotionRepository promotionRepository;
+
     private final ProductService productService;
 
     @Autowired
@@ -95,13 +97,6 @@ public class PromotionService {
 
     private Promotion promotionMapToEntity(PromotionDTO promotionDTO, Merchant merchant) {
         ModelMapper mapper = new ModelMapper();
-        // Converter<String, LocalDate> toDate = new AbstractConverter<String,
-        // LocalDate>() {
-        // protected LocalDate convert(String source) {
-        // return LocalDate.parse(source);
-        // }
-        // };
-        // mapper.addConverter(toDate);
         Promotion promotion = mapper.map(promotionDTO, Promotion.class);
         promotion.setMerchant(merchant);
 
