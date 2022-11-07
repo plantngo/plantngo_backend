@@ -181,7 +181,7 @@ public class SampleDataConfig {
                 shopService.addCategory(joieVege, joieVegeCat1);
 
                 Merchant greendot = merchantService.getMerchantByUsername("greendot");
-                CategoryDTO greenDotCat1 = new CategoryDTO("Vegetarian Cuisine");
+                CategoryDTO greenDotCat1 = new CategoryDTO("Vegetarian");
                 shopService.addCategory(greendot, greenDotCat1);
         }
 
@@ -280,9 +280,9 @@ public class SampleDataConfig {
                                 new URL("https://www.greendot.sg/wp-content/uploads/2018/10/Screenshot-2022-04-24-at-11.17.30-PM-150x150.png"),
                                 "Savoury");
 
-                shopService.addProduct(greenDot, "Vegetarian Cuisine", greenDotProduct1, null);
-                shopService.addProduct(greenDot, "Vegetarian Cuisine", greenDotProduct2, null);
-                shopService.addProduct(greenDot, "Vegetarian Cuisine", greenDotProduct3, null);
+                shopService.addProduct(greenDot, "Vegetarian", greenDotProduct1, null);
+                shopService.addProduct(greenDot, "Vegetarian", greenDotProduct2, null);
+                shopService.addProduct(greenDot, "Vegetarian", greenDotProduct3, null);
         }
 
         private void createVouchers() {
