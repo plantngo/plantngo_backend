@@ -170,4 +170,17 @@ public class ResetPasswordServiceTest {
         assertEquals("Reset password token already exists!", exceptionMsg);
         verify(customerRepository, times(1)).findByEmail(email);
     }
+
+    @Test
+    void testCheckAndDeleteTokenAndChangePasswordIfCorrectResetPasswordToken_ValidCustomer_ReturnResponseEntity() {
+
+        // Arrange
+        String email = "daniel@yahoo.com.sg";
+        String resetPasswordToken = "token";
+        String newPassword = "password";
+
+        Customer customer = new Customer();
+        customer.setEmail(email);
+        customer.setResetPasswordToken(resetPasswordToken);
+    }
 }
