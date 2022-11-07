@@ -1,15 +1,12 @@
 package me.plantngo.backend.services;
 
-import me.plantngo.backend.DTO.VoucherDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.InsufficientBalanceException;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.models.Customer;
-import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Voucher;
 import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.VoucherRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,9 +41,9 @@ public class VoucherPurchaseService {
 
     public void addToCart(Customer customer, Voucher voucher){
 
-        if(!voucherRepository.findAll().contains(voucher)) throw new NotExistException();
+        if(!voucherRepository.findAll().contains(voucher)) throw new NotExistException("Voucher");
 
-        if(customer.getVouchersCart().contains(voucher)) throw new AlreadyExistsException();
+        if(customer.getVouchersCart().contains(voucher)) throw new AlreadyExistsException("Voucher");
 
         if(customer.getVouchersCart() == null) customer.setVouchersCart(new HashSet<Voucher>());
         customer.getVouchersCart().add(voucher);
