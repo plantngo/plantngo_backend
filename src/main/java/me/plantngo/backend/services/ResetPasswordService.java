@@ -143,20 +143,4 @@ public class ResetPasswordService {
             changeCredentialService.replacePassword(merchant.getUsername(), newPassword, 'M');
         }
     }
-
-    private Customer getCustomerByUsername(String username){
-        try{
-            return customerRepository.findByUsername(username).get();
-        } catch (NoSuchElementException e) {
-            throw new UserNotFoundException("User does not exist");
-        }
-    }
-
-    private Merchant getMerchantByUsername(String username){
-        try{
-            return merchantRepository.findByUsername(username).get();
-        } catch (NoSuchElementException e) {
-            throw new UserNotFoundException("User does not exist");
-        }
-    }
 }

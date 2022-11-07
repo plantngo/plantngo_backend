@@ -180,7 +180,89 @@ public class ResetPasswordServiceTest {
         String newPassword = "password";
 
         Customer customer = new Customer();
+        customer.setUsername("Daniel");
         customer.setEmail(email);
         customer.setResetPasswordToken(resetPasswordToken);
+
+        Customer expectedCustomer = new Customer();
+        expectedCustomer.setUsername("Daniel");
+        expectedCustomer.setEmail(email);
+        expectedCustomer.setResetPasswordToken(null);
+
+        ResponseEntity<String> expectedResponseEntity = new ResponseEntity<>("Token is correct. Password reset.", HttpStatus.OK);
+
+        when(customerRepository.findByEmail(anyString()))
+            .thenReturn(Optional.of(customer));
+        when(customerRepository.saveAndFlush(any(Customer.class)))
+            .thenReturn(expectedCustomer);
+
+        // Act
+        ResponseEntity<String> responseEntity = resetPasswordService.checkAndDeleteTokenAndChangePasswordIfCorrectResetPasswordToken(email, resetPasswordToken, newPassword);
+
+        // Assert
+        assertEquals(expectedResponseEntity, responseEntity);
+        verify(customerRepository, times(1)).saveAndFlush(expectedCustomer);
+        verify(changeCredentialService, times(1)).replacePassword(customer.getUsername(), newPassword, 'C');
+    }
+
+    @Test
+    void testCheckAndDeleteTokenAndChangePasswordIfCorrectResetPasswordToken_ValidMerchant_ReturnResponseEntity() {
+
+        // Arrange
+        String email = "daniel@yahoo.com.sg";
+        String resetPasswordToken = "token";
+        String newPassword = "password";
+
+        Merchant merchant = new Merchant();
+        merchant.setUsername("Daniel");
+        merchant.setEmail(email);
+        merchant.setResetPasswordToken(resetPasswordToken);
+
+        Merchant expectedMerchant = new Merchant();
+        expectedMerchant.setUsername("Daniel");
+        expectedMerchant.setEmail(email);
+        expectedMerchant.setResetPasswordToken(null);
+
+        ResponseEntity<String> expectedResponseEntity = new ResponseEntity<>("Token is correct. Password reset.", HttpStatus.OK);
+
+        when(merchantRepository.findByEmail(anyString()))
+            .thenReturn(Optional.of(merchant));
+        when(merchantRepository.saveAndFlush(any(Merchant.class)))
+            .thenReturn(expectedMerchant);
+
+        // Act
+        ResponseEntity<String> responseEntity = resetPasswordService.checkAndDeleteTokenAndChangePasswordIfCorrectResetPasswordToken(email, resetPasswordToken, newPassword);
+
+        // Assert
+        assertEquals(expectedResponseEntity, responseEntity);
+        verify(merchantRepository, times(1)).saveAndFlush(expectedMerchant);
+        verify(changeCredentialService, times(1)).replacePassword(merchant.getUsername(), newPassword, 'M');
+    }
+
+    @Test
+    void testCheckAndDeleteTokenAndChangePasswordIfCorrectResetPasswordToken_InvalidAccount_ThrowNotExistException() {
+
+        // Arrange
+        String email = "daniel@yahoo.com.sg";
+        String resetPasswordToken = "token";
+        String newPassword = "password";
+        String exceptionMsg = "";
+
+        when(customerRepository.findByEmail(anyString()))
+            .thenReturn(Optional.empty());
+        when(merchantRepository.findByEmail(anyString()))
+            .thenReturn(Optional.empty());
+
+        // Act
+        try {
+            ResponseEntity<String> responseEntity = resetPasswordService.checkAndDeleteTokenAndChangePasswordIfCorrectResetPasswordToken(email, resetPasswordToken, newPassword); 
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Account doesn't exist!", exceptionMsg);
+        verify(customerRepository, times(1)).findByEmail(email);
+        verify(merchantRepository, times(1)).findByEmail(email);
     }
 }
