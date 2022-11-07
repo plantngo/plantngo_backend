@@ -6,8 +6,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import me.plantngo.backend.models.Customer;
-import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Order;
 import me.plantngo.backend.models.OrderStatus;
 

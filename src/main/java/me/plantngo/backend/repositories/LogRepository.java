@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface LogRepository extends JpaRepository<Log, Integer> {
