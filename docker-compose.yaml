@@ -25,7 +25,7 @@ services:
       - 8080:8080
 
   sonarqube:
-    image: gabrielojh/sonarqube-arm:latest
+    image: sonarqube-arm:latest
     depends_on:
       - plantngo-db
     env_file:
