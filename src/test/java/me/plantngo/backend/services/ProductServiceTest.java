@@ -251,4 +251,22 @@ public class ProductServiceTest {
         assertEquals(expectedIngredient, responseIngredient);
         verify(ingredientRepository, times(1)).findByName(ingredientName);
     }
+
+    @Test
+    void testGetProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername_ProductIngredientExists_ReturnProductIngredient() {
+
+        // Arrange
+        String merchantName = "Daniel";
+        ProductIngredient expectedProductIngredient = productIngredient;
+
+        when(productIngredientRepository.findByIngredientAndProductAndProductCategoryMerchantUsername(any(Ingredient.class), any(Product.class), any(String.class)))
+            .thenReturn(Optional.of(expectedProductIngredient));
+
+        // Act
+        ProductIngredient responseProductIngredient = productService.getProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName);
+
+        // Assert
+        assertEquals(expectedProductIngredient, responseProductIngredient);
+        verify(productIngredientRepository, times(1)).findByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName);
+    }
 }
