@@ -2,6 +2,7 @@ package me.plantngo.backend.services;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -246,6 +247,7 @@ public class OrderService {
         Order order = mapper.map(placeOrderDTO, Order.class);
         order.setCustomer(customer);
         order.setMerchant(merchant);
+        order.setOrderTime(LocalDateTime.now());
 
         return order;
     }

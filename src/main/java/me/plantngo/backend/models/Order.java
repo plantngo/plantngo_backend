@@ -1,5 +1,6 @@
 package me.plantngo.backend.models;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -47,6 +48,8 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
+    private LocalDateTime orderTime;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
