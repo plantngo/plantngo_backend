@@ -36,12 +36,14 @@ public class Category {
     @NotNull
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference(value = "product_category")
+    @ToString.Exclude
     private List<Product> products;
 
     @ManyToOne
     @JoinColumn(name = "merchant_id")
     @JsonBackReference(value = "merchant_category")
+    @ToString.Exclude
     private Merchant merchant;
 }

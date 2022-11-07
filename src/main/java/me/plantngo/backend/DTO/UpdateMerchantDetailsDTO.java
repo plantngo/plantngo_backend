@@ -14,5 +14,9 @@ public class UpdateMerchantDetailsDTO {
 
     private String company;
 
-}
+    private String description;
 
+    private String cuisineType;
+
+    private String operatingHours;
+}
