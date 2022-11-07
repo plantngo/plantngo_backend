@@ -89,7 +89,7 @@ public class PromotionService {
     public void addClicksToPromotion(Integer promotionId){
         if(!promotionRepository.existsById(promotionId)){
             throw new NotExistException("Promotion ID: " + promotionId);
-        };
+        }
         Promotion promotion = this.getPromotionById(promotionId);
         promotion.setClicks(promotion.getClicks() + 1); 
         promotionRepository.saveAndFlush(promotion);

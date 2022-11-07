@@ -17,7 +17,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import me.plantngo.backend.DTO.PromotionDTO;
+import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.exceptions.PromotionNotFoundException;
+import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Product;
 import me.plantngo.backend.models.Promotion;
 import me.plantngo.backend.repositories.PromotionRepository;
@@ -170,5 +173,199 @@ public class PromotionServiceTest {
         verify(promotionRepository, times(1)).findAll();
     }
 
-    
+    @Test
+    void testGetPromotionsByMerchant_ValidMerchant_ReturnAllMerchants() {
+        
+        // Arrange
+        String merchantName = "Daniel";
+
+        Merchant merchant = new Merchant();
+        merchant.setUsername(merchantName);
+
+        promotion.setMerchant(merchant);
+
+        Promotion promotion2 = new Promotion();
+        promotion2.setId(2);
+        promotion2.setDescription("It's a promotion");
+        promotion2.setMerchant(merchant);
+
+        List<Promotion> expectedPromotions = new ArrayList<>();
+        expectedPromotions.add(promotion);
+        expectedPromotions.add(promotion2);
+
+        when(promotionRepository.findByMerchant(any(Merchant.class)))
+            .thenReturn(expectedPromotions);
+
+        // Act
+        List<Promotion> responsePromotions = promotionService.getPromotionsByMerchant(merchant);
+
+        // Assert
+        assertEquals(expectedPromotions, responsePromotions);
+        verify(promotionRepository, times(1)).findByMerchant(merchant);
+    }
+
+    @Test
+    void testAddPromotion_ValidPromotionDTO_ReturnPromotion() {
+
+        // Arrange
+        PromotionDTO promotionDTO = new PromotionDTO("It's a promotion!", "www.google.com.sg", null, null);
+
+        Merchant merchant = new Merchant();
+        merchant.setUsername("Daniel");
+
+        Promotion expectedPromotion = new Promotion();
+        expectedPromotion.setDescription("It's a promotion!");
+        expectedPromotion.setBannerUrl("www.google.com.sg");
+        expectedPromotion.setMerchant(merchant);
+        expectedPromotion.setClicks(0);
+
+        when(promotionRepository.save(any(Promotion.class)))
+            .thenReturn(expectedPromotion);
+
+        // Act
+        Promotion responsePromotion = promotionService.addPromotion(promotionDTO, merchant);
+
+        // Assert
+        assertEquals(expectedPromotion, responsePromotion);
+        verify(promotionRepository, times(1)).save(expectedPromotion);
+    }
+
+    @Test
+    void testDeletePromotion_PromotionExists_ReturnSuccess() {
+
+        // Arrange
+        Integer promotionId = 1;
+        Promotion expectedPromotion = promotion;
+        
+        when(promotionRepository.existsById(any(Integer.class)))
+            .thenReturn(true);
+
+        // Act
+        promotionService.deletePromotion(promotionId);
+
+        // Assert
+        verify(promotionRepository, times(1)).existsById(promotionId);
+        verify(promotionRepository, times(1)).deleteById(promotionId);
+
+    }
+
+    @Test
+    void testDeletePromotion_PromotionNotExist_ThrowNotExistException() {
+
+        // Arrange
+        Integer promotionId = 1;
+        String exceptionMsg = "";
+
+        when(promotionRepository.existsById(any(Integer.class)))
+            .thenReturn(false);
+
+        // Act
+        try {
+            promotionService.deletePromotion(promotionId);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Promotion doesn't exist!", exceptionMsg);
+        verify(promotionRepository, times(1)).existsById(promotionId);
+    }
+
+    @Test
+    void testAddClicksToPromotion_PromotionExists_ReturnSuccess() {
+
+        // Arrange
+        Integer promotionId = 1;
+        promotion.setClicks(0);
+        Promotion expectedPromotion = new Promotion();
+        expectedPromotion.setId(1);
+        expectedPromotion.setDescription("It's a promotion");
+        expectedPromotion.setClicks(1);
+
+        when(promotionRepository.existsById(any(Integer.class)))
+            .thenReturn(true);
+        when(promotionRepository.findById(any(Integer.class)))
+            .thenReturn(Optional.of(promotion));
+        when(promotionRepository.saveAndFlush(any(Promotion.class)))
+            .thenReturn(expectedPromotion);
+        
+        // Act
+        promotionService.addClicksToPromotion(promotionId);
+
+        // Assert
+        assertEquals(1, promotion.getClicks());
+        verify(promotionRepository, times(1)).existsById(promotionId);
+        verify(promotionRepository, times(2)).findById(promotionId);
+        verify(promotionRepository, times(1)).saveAndFlush(expectedPromotion);
+    }
+
+    @Test
+    void testAddClicksToPromotion_PromotionNotExist_ThrowNotExistException() {
+
+        // Arrange
+        Integer promotionId = 1;
+        String exceptionMsg = "";
+
+        when(promotionRepository.existsById(any(Integer.class)))
+            .thenReturn(false);
+
+        // Act
+        try {
+            promotionService.addClicksToPromotion(promotionId);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Promotion ID: 1 doesn't exist!", exceptionMsg);
+        verify(promotionRepository, times(1)).existsById(promotionId);
+    }
+
+    @Test
+    void testUpdatePromotion_ValidPromotionDTO_ReturnPromotion() {
+
+        // Arrange
+        Integer promotionId = 1;
+        PromotionDTO promotionDTO = new PromotionDTO("Hello", "yahoo", null, null);
+        Promotion expectedPromotion = new Promotion();
+        expectedPromotion.setId(1);
+        expectedPromotion.setDescription("Hello");
+        expectedPromotion.setBannerUrl("yahoo");
+
+        when(promotionRepository.findById(any(Integer.class)))
+            .thenReturn(Optional.of(promotion));
+        when(promotionRepository.save(any(Promotion.class)))
+            .thenReturn(expectedPromotion);
+
+        // Act
+        Promotion responsePromotion = promotionService.updatePromotion(promotionDTO, promotionId);
+
+        // Assert
+        assertEquals(expectedPromotion, responsePromotion);
+        verify(promotionRepository, times(1)).findById(promotionId);
+        verify(promotionRepository, times(1)).save(expectedPromotion);
+    }
+
+    @Test
+    void testUpdatePromotion_PromotionNotExist_ThrowNotExistException() {
+
+        // Arrange
+        Integer promotionId = 1;
+        PromotionDTO promotionDTO = new PromotionDTO("Hello", "yahoo", null, null);
+        String exceptionMsg = "";
+
+        when(promotionRepository.findById(any(Integer.class)))
+            .thenReturn(Optional.empty());
+
+        // Act
+        try {
+            Promotion responsePromotion = promotionService.updatePromotion(promotionDTO, promotionId);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Promotion doesn't exist!", exceptionMsg);
+        verify(promotionRepository, times(1)).findById(promotionId);
+    }
 }

@@ -1,1 +1,1 @@
-./mvnw test sonar:sonar 
+./mvnw test sonar:sonar -Dsonar.login=sqp_9713e8ee0a6db861a59cca47c5a54296c57fdca7 -Dsonar.host.url=http://localhost:9000
