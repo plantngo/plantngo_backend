@@ -75,4 +75,4 @@ jobs:
           docker push $ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REPOSITORY:$IMAGE_TAG"
           aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --force-new-deployment 
-          aws ecs update-service --cluster plantngo-cluster-t2-medium --service plantngo-service-t2-medium --force-new-deployment
+          # aws ecs update-service --cluster plantngo-cluster-t2-medium --service plantngo-service-t2-medium --force-new-deployment
