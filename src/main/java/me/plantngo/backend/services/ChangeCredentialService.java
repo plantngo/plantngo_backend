@@ -21,6 +21,8 @@ public class ChangeCredentialService {
     MerchantRepository merchantRepository;
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private static final String USER_NOT_FOUND_ERROR = "User does not exist";
+
     @Autowired
     public ChangeCredentialService(CustomerRepository customerRepository,
                                    MerchantRepository merchantRepository,
@@ -47,7 +49,7 @@ public class ChangeCredentialService {
                 Customer customer = customerRepository.findByUsername(oldUsername).get();
                 return replaceCustomerUsername(customer, newUsername);
             } catch (NoSuchElementException e){
-                throw new UserNotFoundException("User does not exist");
+                throw new UserNotFoundException(USER_NOT_FOUND_ERROR);
             }
         }
         else {
@@ -55,7 +57,7 @@ public class ChangeCredentialService {
                 Merchant merchant = merchantRepository.findByUsername(oldUsername).get();
                 return replaceMerchantUsername(merchant, newUsername);
             } catch (NoSuchElementException e){
-                throw new UserNotFoundException("User does not exist");
+                throw new UserNotFoundException(USER_NOT_FOUND_ERROR);
             }
         }
     }
@@ -76,7 +78,7 @@ public class ChangeCredentialService {
                 Customer customer = customerRepository.findByUsername(username).get();
                 return replaceCustomerPassword(customer, newPassword);
             } catch (NoSuchElementException e){
-                throw new UserNotFoundException("User does not exist");
+                throw new UserNotFoundException(USER_NOT_FOUND_ERROR);
             }
         }
         else if(userType == 'M') {
@@ -84,7 +86,7 @@ public class ChangeCredentialService {
                 Merchant merchant = merchantRepository.findByUsername(username).get();
                 return replaceMerchantPassword(merchant, newPassword);
             } catch (NoSuchElementException e){
-                throw new UserNotFoundException("User does not exist");
+                throw new UserNotFoundException(USER_NOT_FOUND_ERROR);
             }
         } else
             throw new IllegalArgumentException("Invalid user type");

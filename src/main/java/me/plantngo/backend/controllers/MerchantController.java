@@ -2,9 +2,7 @@ package me.plantngo.backend.controllers;
 
 import java.util.List;
 
-import me.plantngo.backend.DTO.UpdateCustomerDetailsDTO;
 import me.plantngo.backend.DTO.UpdateMerchantDetailsDTO;
-import me.plantngo.backend.models.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -6,7 +6,6 @@ import me.plantngo.backend.services.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +18,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import me.plantngo.backend.DTO.LoginDTO;
 import me.plantngo.backend.DTO.RegistrationDTO;
-import me.plantngo.backend.models.Customer;
 import me.plantngo.backend.services.AuthService;
 
 @RestController

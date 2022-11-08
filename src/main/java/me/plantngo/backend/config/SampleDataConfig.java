@@ -3,7 +3,6 @@ package me.plantngo.backend.config;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;

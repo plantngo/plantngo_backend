@@ -2,10 +2,8 @@ package me.plantngo.backend.controllers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import me.plantngo.backend.DTO.LoginDTO;
 import me.plantngo.backend.DTO.ResetPasswordDTO;
 import me.plantngo.backend.services.ResetPasswordService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

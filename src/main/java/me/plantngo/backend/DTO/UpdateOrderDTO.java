@@ -1,7 +1,6 @@
 package me.plantngo.backend.DTO;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EnumType;
