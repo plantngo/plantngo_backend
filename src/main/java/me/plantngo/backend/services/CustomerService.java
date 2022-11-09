@@ -28,6 +28,13 @@ public class CustomerService {
         this.merchantRepository = merchantRepository;
     }
 
+
+    /**
+     * Gets customer with given username
+     * 
+     * @param username
+     * @return
+     */
     public Customer getCustomerByUsername(String username) {
         Optional<Customer> optionalCustomer = customerRepository.findByUsername(username);
         if (optionalCustomer.isEmpty()) {
@@ -36,6 +43,12 @@ public class CustomerService {
         return optionalCustomer.get();
     }
     
+    /**
+     * Gets customer with given email
+     * 
+     * @param email
+     * @return
+     */
     public Customer getCustomerByEmail(String email) {
         Optional<Customer> optionalCustomer = customerRepository.findByEmail(email);
         if (optionalCustomer.isEmpty()) {
@@ -44,10 +57,22 @@ public class CustomerService {
         return optionalCustomer.get();
     }
 
+    /**
+     * Gets all customers
+     * 
+     * @return
+     */
     public List<Customer> findAll() {
         return customerRepository.findAll();
     }
 
+    /**
+     * Updates existing customer with given username using details from updateCustomerDetailsDTO
+     * 
+     * @param username
+     * @param updateCustomerDetailsDTO
+     * @return
+     */
     public Customer updateCustomer(String username, UpdateCustomerDetailsDTO updateCustomerDetailsDTO) {
 
         // Check if new username is already taken
@@ -67,6 +92,11 @@ public class CustomerService {
         return customer;
     }
 
+    /**
+     * Deletes customer with given username
+     * 
+     * @param username
+     */
     public void deleteCustomer(String username) {
         if (!customerRepository.existsByUsername(username)) {
             throw new NotExistException("Customer");

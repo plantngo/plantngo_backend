@@ -43,6 +43,12 @@ public class ShopService {
         this.awss3Service = awss3Service;
     }
 
+    /*
+     * 
+     * Voucher Related Methods
+     * 
+     */
+
     public Voucher addVoucher(Merchant merchant, VoucherDTO voucherDTO) {
 
         Voucher voucher = this.voucherMapToEntity(voucherDTO, merchant);
@@ -94,6 +100,12 @@ public class ShopService {
         Voucher voucher = voucherRepository.findByIdAndMerchant(voucherId, merchant).get();
         voucherRepository.delete(voucher);
     }
+
+    /*
+     * 
+     * Category Related Methods
+     * 
+     */
 
     public Category addCategory(Merchant merchant, CategoryDTO categoryDTO) {
 
@@ -151,6 +163,12 @@ public class ShopService {
         Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
         categoryRepository.delete(category);
     }
+
+    /*
+     * 
+     * Product Related Methods
+     * 
+     */
 
     public Product getProduct(Merchant merchant, String categoryName, String productName) {
         Category category = this.getCategory(merchant, categoryName);
@@ -294,6 +312,12 @@ public class ShopService {
     // public List<Product> getAllProductsByMerchant(Merchant merchant) {
     // return productRepository.findByMerchant(merchant);
     // }
+
+    /*
+     * 
+     * Helper Methods
+     * 
+     */
 
     private Voucher voucherMapToEntity(VoucherDTO voucherDTO, Merchant merchant) {
         ModelMapper mapper = new ModelMapper();
