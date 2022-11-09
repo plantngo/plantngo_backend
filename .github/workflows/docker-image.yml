@@ -26,4 +26,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: plantngo/plantngo_backend:latest
+          tags: plantngo/plantngo-backend:latest
