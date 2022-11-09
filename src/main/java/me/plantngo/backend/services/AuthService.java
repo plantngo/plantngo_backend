@@ -42,6 +42,12 @@ public class AuthService {
         this.jwtProvider = jwtProvider;
     }
 
+    /**
+     * Authenticates user. If loginDTO is valid, returns jwt token in the header
+     * 
+     * @param loginDTO
+     * @return
+     */
     public ResponseEntity<String> authenticateUser(LoginDTO loginDTO) {
 
         Authentication authentication = null;
@@ -58,6 +64,13 @@ public class AuthService {
         return ResponseEntity.ok().header("jwt", jwt).body(" Login Success!");
     }
 
+    /**
+     * Registers a given User based on UserType
+     * 
+     * @param registrationDTO 
+     * @return
+     * 
+     */
     public Object registerUser(RegistrationDTO registrationDTO) {
         if (registrationDTO.getUserType() == 'C') {
             return this.registerCustomer(registrationDTO);
@@ -67,6 +80,12 @@ public class AuthService {
         throw new InvalidUserTypeException();
     }
 
+    /**
+     * Helper method to register Customer
+     * 
+     * @param registrationDTO
+     * @return
+     */
     private Customer registerCustomer(RegistrationDTO registrationDTO) {
 
         // Check if email is already in use
@@ -88,6 +107,12 @@ public class AuthService {
         return customer;
     }
 
+    /**
+     * Helper method to register Merchant
+     * 
+     * @param registrationDTO
+     * @return
+     */
     private Merchant registerMerchant(RegistrationDTO registrationDTO) {
 
         // Check if email is already in use
@@ -114,6 +139,12 @@ public class AuthService {
 
     }
 
+    /**
+     * Mapping registrationDTO to customer entity using ModelMapper
+     * 
+     * @param registrationDTO
+     * @return
+     */
     private Customer customerMapToEntity(RegistrationDTO registrationDTO) {
         registrationDTO.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
         ModelMapper mapper = new ModelMapper();
@@ -122,6 +153,12 @@ public class AuthService {
         return customer;
     }
 
+    /**
+     * Mapping registrationDTO to merchant entity using ModelMapper
+     * 
+     * @param registrationDTO
+     * @return
+     */
     private Merchant merchantMapToEntity(RegistrationDTO registrationDTO) {
         registrationDTO.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
         ModelMapper mapper = new ModelMapper();
