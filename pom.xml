@@ -123,17 +123,17 @@
 			<version>2.7.4</version>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>io.awspring.cloud</groupId>
 			<artifactId>spring-cloud-aws-context</artifactId>
 			<version>2.3.1</version>
-		</dependency>
+		</dependency> -->
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>io.awspring.cloud</groupId>
 			<artifactId>spring-cloud-aws-autoconfigure</artifactId>
 			<version>2.3.1</version>
-		</dependency>
+		</dependency> -->
 
 		<!-- https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin -->
 		<dependency>
@@ -147,6 +147,12 @@
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
 			<version>0.8.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.minio</groupId>
+			<artifactId>minio</artifactId>
+			<version>8.4.5</version>
 		</dependency>
 
 	</dependencies>

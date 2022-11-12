@@ -27,16 +27,18 @@ public class PromotionService {
 
     private final ProductService productService;
 
-    private AWSS3Service awss3Service;
+    private final MinioService minioService;
 
     private final static String PROMOTION_STRING = "Promotion";
 
     @Autowired
     public PromotionService(PromotionRepository promotionRepository, ProductService productService,
-            AWSS3Service awss3Service) {
+            MinioService minioService
+
+    ) {
         this.promotionRepository = promotionRepository;
         this.productService = productService;
-        this.awss3Service = awss3Service;
+        this.minioService = minioService;
     }
 
     public Promotion getPromotionById(Integer id) {
@@ -82,8 +84,14 @@ public class PromotionService {
         promotion.setClicks(0);
 
         if (file != null && !file.isEmpty()) {
-            String imageUrl = awss3Service.uploadFile(file);
-            promotion.setBannerUrl(new URL(imageUrl));
+
+            try {
+                String imageUrl = minioService.uploadFile(file, "promotion", merchant.getUsername());
+                promotion.setBannerUrl(new URL(imageUrl));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
 
         promotionRepository.save(promotion);
@@ -145,8 +153,12 @@ public class PromotionService {
                 .orElseThrow(() -> new NotExistException(PROMOTION_STRING));
 
         if (file != null && !file.isEmpty()) {
-            String imageUrl = awss3Service.uploadFile(file);
-            promotion.setBannerUrl(new URL(imageUrl));
+            try {
+                String imageUrl = minioService.uploadFile(file, "promotion", promotion.getMerchant().getUsername());
+                promotion.setBannerUrl(new URL(imageUrl));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         promotion.setDescription(promotionDTO.getDescription());
         promotion.setStartDate(promotionDTO.getStartDate());

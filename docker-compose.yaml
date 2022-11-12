@@ -19,11 +19,21 @@ services:
     restart: always
     depends_on:
       - plantngo-db
+      - plantngo-s3
     volumes:
       - .:/opt/app
     ports:
       - 8080:8080
-
+  plantngo-s3:
+    container_name: plantngo-s3
+    image: minio/minio
+    env_file: ./.env
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_storage:/data
+    command: server --console-address ":9001" /data
   # sonarqube:
   #   image: sonarqube-arm:latest
   #   depends_on:
@@ -42,3 +52,4 @@ volumes:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_logs:
+  minio_storage:

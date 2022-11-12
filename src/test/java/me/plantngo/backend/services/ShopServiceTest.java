@@ -3,6 +3,7 @@ package me.plantngo.backend.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -41,7 +42,7 @@ import me.plantngo.backend.repositories.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class ShopServiceTest {
-    
+
     @Mock
     private CategoryRepository categoryRepository;
 
@@ -52,7 +53,7 @@ public class ShopServiceTest {
     private MerchantRepository merchantRepository;
 
     @Mock
-    private AWSS3Service awss3Service;
+    private MinioService minioService;
 
     @InjectMocks
     private ShopService shopService;
@@ -66,7 +67,7 @@ public class ShopServiceTest {
     private MultipartFile file;
 
     @BeforeEach
-     void initEach() {
+    void initEach() {
 
         file = mock(MultipartFile.class);
 
@@ -76,7 +77,7 @@ public class ShopServiceTest {
 
         category = new Category();
         category.setName("Food");
-        
+
         Category category2 = new Category();
         category2.setName("Dessert");
 
@@ -95,16 +96,15 @@ public class ShopServiceTest {
     }
 
     @Test
-     void testAddCategory_NewCategory_ReturnCategory() {
-        
+    void testAddCategory_NewCategory_ReturnCategory() {
 
         // Arrange
         CategoryDTO categoryDTO = new CategoryDTO("Food");
         category.setProducts(null);
         when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(false);
+                .thenReturn(false);
         when(categoryRepository.save(any(Category.class)))
-            .thenReturn(category);
+                .thenReturn(category);
 
         // Act
         Category responseCategory = shopService.addCategory(merchant, categoryDTO);
@@ -116,12 +116,12 @@ public class ShopServiceTest {
     }
 
     @Test
-     void testAddCategory_ExistingCategory_ThrowAlreadyExistException() {
+    void testAddCategory_ExistingCategory_ThrowAlreadyExistException() {
 
         // Arrange
         CategoryDTO categoryDTO = new CategoryDTO("Dessert");
         when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(true);
+                .thenReturn(true);
         String exceptionMsg = "";
 
         // Act
@@ -138,12 +138,12 @@ public class ShopServiceTest {
     }
 
     @Test
-     void testGetCategory_CategoryExists_ReturnCategory() {
+    void testGetCategory_CategoryExists_ReturnCategory() {
 
         // Arrange
         Optional<Category> optionalCategory = Optional.of(category);
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(optionalCategory);
+                .thenReturn(optionalCategory);
 
         // Act
         Category responseCategory = shopService.getCategory(merchant, category.getName());
@@ -217,15 +217,15 @@ public class ShopServiceTest {
     }
 
     @Test
-     void testUpdateCategory_CategoryNameAlreadyExists_ThrowAlreadyExistException() {
+    void testUpdateCategory_CategoryNameAlreadyExists_ThrowAlreadyExistException() {
 
         // Arrange
         String exceptionMsg = "";
         String categoryName = "Food";
         when(categoryRepository.existsByName(any(String.class)))
-            .thenReturn(true);
+                .thenReturn(true);
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
         UpdateCategoryDTO updateCategoryDTO = new UpdateCategoryDTO("Dessert");
 
         // Act
@@ -247,9 +247,9 @@ public class ShopServiceTest {
         // Arrange
         String categoryName = "Food";
         when(categoryRepository.existsByName(any(String.class)))
-            .thenReturn(false);
+                .thenReturn(false);
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
         UpdateCategoryDTO updateCategoryDTO = new UpdateCategoryDTO("Drinks");
 
         // Act
@@ -270,9 +270,9 @@ public class ShopServiceTest {
         String categoryName = "Food";
         String productName = "Sprite";
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
         when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
         // Act
         try {
@@ -294,9 +294,9 @@ public class ShopServiceTest {
         String categoryName = "Food";
         String productName = "Laksa";
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
         when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
-            .thenReturn(Optional.of(product));
+                .thenReturn(Optional.of(product));
 
         // Act
         Product responseProduct = shopService.getProduct(merchant, categoryName, productName);
@@ -314,16 +314,21 @@ public class ShopServiceTest {
         String categoryName = "Food";
         String imageUrl = "https://google.com.sg";
         ProductDTO productDTO = new ProductDTO("Bee Hoon", 5.5, "Yellow Noodles", null, null, null);
-        Product expectedProduct = new Product(null, "Bee Hoon", 5.5, "Yellow Noodles", 0.0, new URL("https://google.com.sg"), null, category, null, null);
+        Product expectedProduct = new Product(null, "Bee Hoon", 5.5, "Yellow Noodles", 0.0,
+                new URL("https://google.com.sg"), null, category, null, null);
 
         when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(true);
+                .thenReturn(true);
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(Optional.of(category));
-        when(awss3Service.uploadFile(any(MultipartFile.class)))
-            .thenReturn(imageUrl);
+                .thenReturn(Optional.of(category));
+        try {
+            when(minioService.uploadFile(any(MultipartFile.class), any(String.class), any(String.class)))
+                    .thenReturn(imageUrl);
+        } catch (Exception e) {
+
+        }
         when(productRepository.save(any(Product.class)))
-            .thenReturn(expectedProduct);
+                .thenReturn(expectedProduct);
 
         // Act
         Product responseProduct = null;
@@ -337,7 +342,12 @@ public class ShopServiceTest {
         assertEquals(expectedProduct, responseProduct);
         verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryName, merchant);
         verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
-        verify(awss3Service, times(1)).uploadFile(file);
+        try {
+            verify(minioService, times(1)).uploadFile(file, "product", merchant.getUsername());
+        } catch (Exception e) {
+
+        }
+
         verify(productRepository, times(1)).save(expectedProduct);
     }
 
@@ -349,8 +359,8 @@ public class ShopServiceTest {
         String exceptionMsg = "";
         ProductDTO productDTO = new ProductDTO("Bee Hoon", 5.5, "Yellow Noodles", null, null, null);
         when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(false);
-            
+                .thenReturn(false);
+
         // Act
         try {
             Product responseProduct = shopService.addProduct(merchant, categoryName, productDTO, file);
@@ -373,9 +383,9 @@ public class ShopServiceTest {
         String exceptionMsg = "";
         ProductDTO productDTO = new ProductDTO("Laksa", 6.1, "It's Laksa", null, null, null);
         when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(true);
+                .thenReturn(true);
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
 
         // Act
         try {
@@ -401,9 +411,9 @@ public class ShopServiceTest {
         String productName = "Laksa";
         UpdateProductDTO updateProductDTO = new UpdateProductDTO(null, 10.11, null, null, null, null);
         when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
-            .thenReturn(Optional.of(product));
+                .thenReturn(Optional.of(product));
         when(productRepository.saveAndFlush(any(Product.class)))
-            .thenReturn(expectedProduct);
+                .thenReturn(expectedProduct);
 
         // Act
         Product responseProduct = shopService.updateProduct(category, productName, updateProductDTO);
@@ -412,7 +422,7 @@ public class ShopServiceTest {
         assertEquals(expectedProduct, responseProduct);
         verify(productRepository, times(1)).findByNameAndCategory(productName, category);
         verify(productRepository, times(1)).saveAndFlush(expectedProduct);
-        
+
     }
 
     @Test
@@ -423,19 +433,19 @@ public class ShopServiceTest {
         String exceptionMsg = "";
         UpdateProductDTO updateProductDTO = new UpdateProductDTO(null, 10.11, null, null, null, null);
         when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
-            .thenReturn(Optional.empty());
-            
+                .thenReturn(Optional.empty());
+
         // Act
         try {
             Product responseProduct = shopService.updateProduct(category, productName, updateProductDTO);
         } catch (NotExistException e) {
             exceptionMsg = e.getMessage();
-        }   
+        }
 
         // Assert
         assertEquals("Product doesn't exist!", exceptionMsg);
         verify(productRepository, times(1)).findByNameAndCategory(productName, category);
-        
+
     }
 
     @Test
@@ -449,18 +459,18 @@ public class ShopServiceTest {
         String exceptionMsg = "";
         UpdateProductDTO updateProductDTO = new UpdateProductDTO("Bee Hoon", null, null, null, null, null);
         when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
-            .thenReturn(Optional.of(product));
-            
+                .thenReturn(Optional.of(product));
+
         // Act
         try {
             Product responseProduct = shopService.updateProduct(category, productName, updateProductDTO);
         } catch (AlreadyExistsException e) {
             exceptionMsg = e.getMessage();
-        }   
+        }
 
         // Assert
         assertEquals("Product Name already exists!", exceptionMsg);
         verify(productRepository, times(1)).findByNameAndCategory(productName, category);
-        
+
     }
 }

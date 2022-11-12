@@ -31,16 +31,17 @@ public class ShopService {
     private MerchantRepository merchantRepository;
     private CategoryRepository categoryRepository;
     private VoucherRepository voucherRepository;
-    private AWSS3Service awss3Service;
+    private MinioService minioService;
 
     @Autowired
     public ShopService(ProductRepository productRepository, MerchantRepository merchantRepository,
-            CategoryRepository categoryRepository, VoucherRepository voucherRepository, AWSS3Service awss3Service) {
+            CategoryRepository categoryRepository, VoucherRepository voucherRepository, MinioService minioService) {
         this.productRepository = productRepository;
         this.merchantRepository = merchantRepository;
         this.categoryRepository = categoryRepository;
         this.voucherRepository = voucherRepository;
-        this.awss3Service = awss3Service;
+        this.minioService = minioService;
+
     }
 
     public Voucher addVoucher(Merchant merchant, VoucherDTO voucherDTO) {
@@ -181,8 +182,13 @@ public class ShopService {
 
         // Upload photo to AWSS3 and set the imageUrl to productDTO
         if (file != null && !file.isEmpty()) {
-            String imageUrl = awss3Service.uploadFile(file);
-            productDTO.setImageUrl(new URL(imageUrl));
+            try {
+                String imageUrl = minioService.uploadFile(file, "product", merchant.getUsername());
+                productDTO.setImageUrl(new URL(imageUrl));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
 
         // Creating & Saving Product object
@@ -270,8 +276,12 @@ public class ShopService {
         }
 
         if (file != null && !file.isEmpty()) {
-            String imageUrl = awss3Service.uploadFile(file);
-            updateProductDTO.setImageUrl(new URL(imageUrl));
+            try {
+                String imageUrl = minioService.uploadFile(file, "product", category.getMerchant().getUsername());
+                updateProductDTO.setImageUrl(new URL(imageUrl));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         // Updating product

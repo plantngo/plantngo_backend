@@ -16,33 +16,36 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 
 @Service
-public class AWSS3Service implements FileService {
-    @Autowired
-    private AmazonS3Client awsS3Client;
+public class AWSS3Service
+// implements FileService
+{
+    // @Autowired
+    // private AmazonS3Client awsS3Client;
 
-    @Value("${cloud.aws.bucket}")
-    private String bucket;
+    // @Value("${cloud.aws.bucket}")
+    // private String bucket;
 
-    @Override
-    public String uploadFile(MultipartFile file) {
+    // @Override
+    // public String uploadFile(MultipartFile file) {
 
-        String filenameExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+    // String filenameExtension =
+    // StringUtils.getFilenameExtension(file.getOriginalFilename());
 
-        String key = UUID.randomUUID().toString() + "." + filenameExtension;
+    // String key = UUID.randomUUID().toString() + "." + filenameExtension;
 
-        ObjectMetadata metaData = new ObjectMetadata();
-        metaData.setContentLength(file.getSize());
-        metaData.setContentType(file.getContentType());
+    // ObjectMetadata metaData = new ObjectMetadata();
+    // metaData.setContentLength(file.getSize());
+    // metaData.setContentType(file.getContentType());
 
-        try {
-            awsS3Client.putObject(bucket, key, file.getInputStream(), metaData);
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "An exception occured while uploading the file");
-        }
+    // try {
+    // awsS3Client.putObject(bucket, key, file.getInputStream(), metaData);
+    // } catch (IOException e) {
+    // throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+    // "An exception occured while uploading the file");
+    // }
 
-        awsS3Client.setObjectAcl(bucket, key, CannedAccessControlList.PublicRead);
+    // awsS3Client.setObjectAcl(bucket, key, CannedAccessControlList.PublicRead);
 
-        return awsS3Client.getResourceUrl(bucket, key);
-    }
+    // return awsS3Client.getResourceUrl(bucket, key);
+    // }
 }
