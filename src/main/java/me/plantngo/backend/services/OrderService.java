@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import me.plantngo.backend.models.*;
+import me.plantngo.backend.repositories.CustomerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,18 +30,21 @@ public class OrderService {
 
     private MerchantService merchantService;
 
+    private CustomerRepository customerRepository;
+
     private LogService logService;
 
     private static final String ORDER_STRING = "Order";
 
     @Autowired
     public OrderService(OrderRepository orderRepository, CustomerService customerService,
-            ProductRepository productRepository, MerchantService merchantService,
-            LogService logService) {
+            ProductRepository productRepository, MerchantService merchantService, CustomerRepository customerRepository
+            ,LogService logService) {
         this.orderRepository = orderRepository;
         this.customerService = customerService;
         this.productRepository = productRepository;
         this.merchantService = merchantService;
+        this.customerRepository = customerRepository;
         this.logService = logService;
     }
 
@@ -121,10 +125,23 @@ public class OrderService {
         mapper.getConfiguration().setSkipNullEnabled(true);
         mapper.map(updateOrderDTO, order);
 
+
+        Customer customer = order.getCustomer();
         /*
-         * to log a fulfilled order
+         *  add green points to customer
+         *  to log a fulfilled order
          */
         if (order.getOrderStatus() == OrderStatus.FULFILLED) {
+            Set<OrderItem> orderItems = order.getOrderItems();
+            Integer greenPointsToAdd = customer.getGreenPoints();
+            Integer averageEmission = 4000;
+
+            for (OrderItem item : orderItems){
+                Integer emissionSaved = averageEmission - item.getProduct().getCarbonEmission().intValue();
+                greenPointsToAdd += emissionSaved * item.getQuantity() / 100;
+            }
+            customer.setGreenPoints(greenPointsToAdd);
+            customerRepository.saveAndFlush(customer);
             logService.addLog(order.getCustomer().getUsername(), "order");
         }
 
