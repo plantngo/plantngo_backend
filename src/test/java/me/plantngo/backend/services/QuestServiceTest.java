@@ -291,4 +291,19 @@ public class QuestServiceTest {
                 any(LocalDateTime.class),any(LocalDateTime.class));
     }
 
+    @Test
+    void testRefreshQuest_ValidInput_returnSuccess(){
+        //arrange
+        Integer questId = 1;
+        List<Customer> allCustomer = new ArrayList<>();
+        when(customerRepository.findAll())
+                .thenReturn(allCustomer);
+        //act
+        ResponseEntity<String> output = questService.refreshQuest(questId);
+
+        //assert
+        assertEquals("Refreshed quest 1 for all customers", output.getBody());
+        verify(customerRepository).findAll();
+    }
+
 }
