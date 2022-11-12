@@ -27,3 +27,6 @@ server:
     include-message: always
     include-binding-errors: always
     include-exception: false
+
+jwt:
+  secret: ${JWT_SECRET}

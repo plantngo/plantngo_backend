@@ -24,18 +24,18 @@ services:
     ports:
       - 8080:8080
 
-  sonarqube:
-    image: sonarqube-arm:latest
-    depends_on:
-      - plantngo-db
-    env_file:
-      - ./.env
-    volumes:
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
-      - sonarqube_logs:/opt/sonarqube/logs
-    ports:
-      - 9000:9000
+  # sonarqube:
+  #   image: sonarqube-arm:latest
+  #   depends_on:
+  #     - plantngo-db
+  #   env_file:
+  #     - ./.env
+  #   volumes:
+  #     - sonarqube_data:/opt/sonarqube/data
+  #     - sonarqube_extensions:/opt/sonarqube/extensions
+  #     - sonarqube_logs:/opt/sonarqube/logs
+  #   ports:
+  #     - 9000:9000
 
 volumes:
   postgres_data:

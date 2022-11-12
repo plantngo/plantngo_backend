@@ -22,7 +22,7 @@ public class JwtProvider {
 
     private CustomerRepository customerRepo;
     private MerchantRepository merchantRepo;
-    @Value("not-secret")
+    @Value("${jwt.secret}")
     private String SECRET_KEY;
 
     // 24 hours expiration date - change last digit to determine hours
@@ -48,7 +48,7 @@ public class JwtProvider {
         return claimsResolver.apply(claims);
     }
 
-    public String extractUsername(String token){
+    public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -79,11 +79,11 @@ public class JwtProvider {
         Optional<Merchant> search2 = merchantRepo.findByUsername(userDetails.getUsername());
         String token = "";
 
-        if (search.isPresent()){
-            claims.put("Authority",search.get().getAUTHORITY());
+        if (search.isPresent()) {
+            claims.put("Authority", search.get().getAUTHORITY());
             token = createToken(claims, search.get().getUsername());
-        } else if (search2.isPresent()){
-            claims.put("Authority",search2.get().getAUTHORITY());
+        } else if (search2.isPresent()) {
+            claims.put("Authority", search2.get().getAUTHORITY());
             token = createToken(claims, search2.get().getUsername());
         } else {
             throw new UserNotFoundException();

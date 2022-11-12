@@ -58,3 +58,6 @@ cloud:
     stack:
       auto: false
     bucket: ${AWSS3_BUCKET}
+
+jwt:
+  secret: ${JWT_SECRET}
