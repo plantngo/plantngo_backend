@@ -51,10 +51,15 @@ cd plantngo_backed
 This section covers the fastest way to get setup the environment file to enable the project to work properly.
 
 1. Rename the `sample.env` file in the root of the project directory to `.env`
+
 ![](./.github/README/1-rename-sample-env.png)
+
 2. Create an outlook account or use an existing outlook account
+
 ![](./.github/README/2-create-outlook-account.png)
+
 3. Edit the renamed `.env` file's MAIL_USERNAME variable to your new email address, and MAIL_PASSWORD variable to the password for your email account.
+
 ![](./.github/README/3-environment-variable.png)
 
 
