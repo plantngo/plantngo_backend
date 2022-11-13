@@ -47,7 +47,7 @@ services:
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_logs:/opt/sonarqube/logs
     ports:
-      - 7000:7000
+      - 7000:9000
 
 volumes:
   postgres_data:

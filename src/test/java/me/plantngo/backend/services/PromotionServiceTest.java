@@ -2,6 +2,8 @@ package me.plantngo.backend.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,12 +20,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.multipart.MultipartFile;
 
 import me.plantngo.backend.DTO.PromotionDTO;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.exceptions.PromotionNotFoundException;
 import me.plantngo.backend.models.Merchant;
-import me.plantngo.backend.models.Product;
 import me.plantngo.backend.models.Promotion;
 import me.plantngo.backend.repositories.PromotionRepository;
 
@@ -36,14 +38,21 @@ public class PromotionServiceTest {
     @Mock
     private ProductService productService;
 
+    @Mock
+    private MinioService minioService;
+
     @InjectMocks
     private PromotionService promotionService;
 
     private Promotion promotion;
 
+    private MultipartFile file;
+
     @BeforeEach
     void initEach() {
         
+        file = mock(MultipartFile.class);
+
         promotion = new Promotion();
         promotion.setId(1);
         promotion.setDescription("It's a promotion");
@@ -230,6 +239,68 @@ public class PromotionServiceTest {
         // Assert
         assertEquals(expectedPromotion, responsePromotion);
         verify(promotionRepository, times(1)).save(expectedPromotion);
+    }
+
+    @Test
+    void testAddPromotionWithImage_ValidPromotionDTO_ReturnPromotion() throws Exception {
+
+        // Arrange
+        PromotionDTO promotionDTO = new PromotionDTO("It's a promotion!", null, null, null);
+        String imageUrl = "https://www.google.com.sg";
+
+        Merchant merchant = new Merchant();
+        merchant.setUsername("Daniel");
+
+        Promotion expectedPromotion = new Promotion();
+        expectedPromotion.setDescription("It's a promotion!");
+        expectedPromotion.setBannerUrl(new URL("https://www.google.com.sg"));
+        expectedPromotion.setMerchant(merchant);
+        expectedPromotion.setClicks(0);
+
+        when(minioService.uploadFile(any(MultipartFile.class), anyString(), anyString()))
+            .thenReturn(imageUrl);
+        
+        // Act
+        Promotion responsePromotion = promotionService.addPromotion(promotionDTO, merchant, file);
+
+        // Assert
+        assertEquals(expectedPromotion, responsePromotion);
+        verify(minioService, times(1)).uploadFile(file, "promotion", merchant.getUsername());
+        verify(promotionRepository, times(1)).save(responsePromotion);
+    }
+
+    @Test
+    void testUpdatePromotionWithImage_ValidPromotionDTO_ReturnPromotion() throws Exception {
+
+        // Arrange
+        Integer promotionId = 1;
+        String imageUrl = "https://yahoo.com.sg";
+
+        Merchant merchant = new Merchant();
+        merchant.setUsername("Jacky");
+
+        PromotionDTO promotionDTO = new PromotionDTO("Hello", null, null, null);
+        Promotion expectedPromotion = new Promotion();
+        expectedPromotion.setId(1);
+        expectedPromotion.setMerchant(merchant);
+        expectedPromotion.setDescription("Hello");
+        expectedPromotion.setBannerUrl(new URL("https://yahoo.com.sg"));
+
+        promotion.setMerchant(merchant);
+
+        when(promotionRepository.findById(any(Integer.class)))
+            .thenReturn(Optional.of(promotion));
+        when(minioService.uploadFile(any(MultipartFile.class), anyString(), anyString()))
+            .thenReturn(imageUrl);
+
+        // Act
+        Promotion responsePromotion = promotionService.updatePromotion(promotionDTO, promotionId, file);
+
+        // Assert
+        assertEquals(expectedPromotion, responsePromotion);
+        verify(minioService, times(1)).uploadFile(file, "promotion", merchant.getUsername());
+        verify(promotionRepository, times(1)).save(responsePromotion);
+
     }
 
     @Test

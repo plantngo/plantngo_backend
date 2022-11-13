@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +26,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import me.plantngo.backend.BackendApplication;
-import me.plantngo.backend.DTO.LoginDTO;
+import me.plantngo.backend.DTO.UpdateMerchantDetailsDTO;
 import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.repositories.MerchantRepository;
 import me.plantngo.backend.services.MailService;
@@ -148,10 +147,12 @@ public class MerchantControllerTest {
         HttpEntity<String> request = new HttpEntity<>(headers);
         merchant.setPassword(null);
 
-        URI uri = new URI(rootUrl + port + apiUrl + "/Gabriel/");
+        URI uri = new URI(rootUrl + port + apiUrl + "Gabriel/");
 
         ResponseEntity<Merchant> result = restTemplate.exchange(uri, HttpMethod.GET, request, Merchant.class);
         Merchant responseMerchant = result.getBody();
+        responseMerchant.setCategories(null);
+        responseMerchant.setPromotions(null);
 
         assertEquals(200, result.getStatusCode().value());
         assertEquals(merchant, responseMerchant);
@@ -165,9 +166,54 @@ public class MerchantControllerTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        URI uri = new URI(rootUrl + port + apiUrl + "/Random/");
+        URI uri = new URI(rootUrl + port + apiUrl + "Random/");
 
         ResponseEntity<Merchant> result = restTemplate.exchange(uri, HttpMethod.GET, request, Merchant.class);
+
+        assertEquals(404, result.getStatusCode().value());
+    }
+
+    @Test
+    void testUpdateMerchant_MerchantExists_ReturnMerchant() throws URISyntaxException {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + jwtToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        UpdateMerchantDetailsDTO updateMerchantDetailsDTO = new UpdateMerchantDetailsDTO();
+        updateMerchantDetailsDTO.setUsername("Soon Ann");
+        HttpEntity<UpdateMerchantDetailsDTO> request = new HttpEntity<>(updateMerchantDetailsDTO, headers);
+
+        Merchant expectedMerchant = new Merchant();
+        expectedMerchant.setUsername("Soon Ann");
+        expectedMerchant.setPassword(null);
+        expectedMerchant.setEmail("gabriel@yahoo.com.sg");
+        expectedMerchant.setCompany("PizzaHut");
+
+        URI uri = new URI(rootUrl + port + apiUrl + "Gabriel/");
+
+        ResponseEntity<Merchant> result = restTemplate.exchange(uri, HttpMethod.PUT, request, Merchant.class);
+        Merchant responseMerchant = result.getBody();
+        responseMerchant.setId(null);
+        responseMerchant.setCategories(null);
+        responseMerchant.setPromotions(null);
+
+        assertEquals(200, result.getStatusCode().value());
+        assertEquals(expectedMerchant, responseMerchant);
+    }
+
+    @Test
+    void testUpdateMerchant_MerchantNotExists_ReturnFailure() throws URISyntaxException {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + jwtToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        UpdateMerchantDetailsDTO updateMerchantDetailsDTO = new UpdateMerchantDetailsDTO();
+        updateMerchantDetailsDTO.setUsername("Soon Ann");
+        HttpEntity<UpdateMerchantDetailsDTO> request = new HttpEntity<>(updateMerchantDetailsDTO, headers);
+
+        URI uri = new URI(rootUrl + port + apiUrl + "Random/");
+
+        ResponseEntity<Merchant> result = restTemplate.exchange(uri, HttpMethod.PUT, request, Merchant.class);
 
         assertEquals(404, result.getStatusCode().value());
     }

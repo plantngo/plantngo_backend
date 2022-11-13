@@ -2,7 +2,6 @@ package me.plantngo.backend.services;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,7 +15,6 @@ import me.plantngo.backend.DTO.PromotionDTO;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.exceptions.PromotionNotFoundException;
 import me.plantngo.backend.models.Merchant;
-import me.plantngo.backend.models.Product;
 import me.plantngo.backend.models.Promotion;
 import me.plantngo.backend.repositories.PromotionRepository;
 
@@ -97,14 +95,6 @@ public class PromotionService {
         promotionRepository.save(promotion);
 
         return promotion;
-    }
-
-    private List<Product> returnProductList(List<Integer> productIds) {
-        List<Product> result = new ArrayList<>();
-        for (Integer productId : productIds) {
-            result.add(productService.getProductById(productId));
-        }
-        return result;
     }
 
     public void deletePromotion(Integer promotionId) {

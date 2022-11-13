@@ -96,6 +96,7 @@ public class CustomerControllerTest {
         LoginDTO loginDTO = new LoginDTO("Gabriel", "password");
         ResponseEntity<String> response = restTemplate.exchange(rootUrl + port + loginUrl, HttpMethod.POST, request, String.class);
         jwtToken = response.getHeaders().get("jwt").get(0);
+
     }
 
     @AfterEach
@@ -153,7 +154,7 @@ public class CustomerControllerTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        URI uri = new URI(rootUrl + port + apiUrl + "/Gabriel/");
+        URI uri = new URI(rootUrl + port + apiUrl + "Gabriel/");
 
         ResponseEntity<Customer> result = restTemplate.exchange(uri, HttpMethod.GET, request, Customer.class);
         Customer responseCustomer = result.getBody();
@@ -170,7 +171,7 @@ public class CustomerControllerTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        URI uri = new URI(rootUrl + port + apiUrl + "/Random/");
+        URI uri = new URI(rootUrl + port + apiUrl + "Random/");
 
         ResponseEntity<Customer> result = restTemplate.exchange(uri, HttpMethod.GET, request, Customer.class);
         Customer responseCustomer = result.getBody();
@@ -197,7 +198,7 @@ public class CustomerControllerTest {
         expectedCustomer.setPreferences(new ArrayList<>());
         expectedCustomer.setPassword(encodedPassword);
 
-        URI uri = new URI(rootUrl + port + apiUrl + "/Gabriel/");
+        URI uri = new URI(rootUrl + port + apiUrl + "Gabriel/");
 
         ResponseEntity<Customer> result = restTemplate.exchange(uri, HttpMethod.PUT, request, Customer.class);
         Customer responseCustomer = result.getBody();
@@ -216,7 +217,7 @@ public class CustomerControllerTest {
         UpdateCustomerDetailsDTO updateCustomerDetailsDTO = new UpdateCustomerDetailsDTO(null, null, null, 100);
         HttpEntity<UpdateCustomerDetailsDTO> request = new HttpEntity<>(updateCustomerDetailsDTO, headers);
 
-        URI uri = new URI(rootUrl + port + apiUrl + "/Random/");
+        URI uri = new URI(rootUrl + port + apiUrl + "Random/");
 
         ResponseEntity<Customer> result = restTemplate.exchange(uri, HttpMethod.PUT, request, Customer.class);
         Customer responseCustomer = result.getBody();
@@ -232,7 +233,7 @@ public class CustomerControllerTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        URI uri = new URI(rootUrl + port + apiUrl + "/Gabriel/");
+        URI uri = new URI(rootUrl + port + apiUrl + "Gabriel/");
 
         ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class);
         String response = result.getBody();
@@ -249,7 +250,7 @@ public class CustomerControllerTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        URI uri = new URI(rootUrl + port + apiUrl + "/Random/");
+        URI uri = new URI(rootUrl + port + apiUrl + "Random/");
 
         ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class);
         String response = result.getBody();

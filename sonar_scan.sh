@@ -1,1 +1,4 @@
-./mvnw test sonar:sonar -Dsonar.login=sqp_260ad78e0e0444719397327230f27c553bb06c18 -Dsonar.host.url=http://localhost:9000
+./mvnw clean verify sonar:sonar \
+  -Dsonar.projectKey=PlantNGo \
+  -Dsonar.host.url=http://localhost:7000 \
+  -Dsonar.login=sqp_d50a28b05238db7fc1a70e641a0f419649bbbbab

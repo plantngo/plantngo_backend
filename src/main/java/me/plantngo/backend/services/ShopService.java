@@ -5,23 +5,27 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
-import me.plantngo.backend.DTO.*;
-import me.plantngo.backend.models.Voucher;
-import me.plantngo.backend.repositories.VoucherRepository;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import me.plantngo.backend.DTO.CategoryDTO;
+import me.plantngo.backend.DTO.ProductDTO;
+import me.plantngo.backend.DTO.UpdateCategoryDTO;
+import me.plantngo.backend.DTO.UpdateProductDTO;
+import me.plantngo.backend.DTO.UpdateVoucherDTO;
+import me.plantngo.backend.DTO.VoucherDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.models.Category;
 import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Product;
+import me.plantngo.backend.models.Voucher;
 import me.plantngo.backend.repositories.CategoryRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 import me.plantngo.backend.repositories.ProductRepository;
+import me.plantngo.backend.repositories.VoucherRepository;
 
 @Service
 public class ShopService {
@@ -75,7 +79,7 @@ public class ShopService {
     public Voucher getVoucher(Merchant merchant, Integer voucherId) {
         Optional<Voucher> tempVoucher = voucherRepository.findByIdAndMerchant(voucherId, merchant);
         if (tempVoucher.isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException("Voucher");
         }
         return tempVoucher.get();
     }
@@ -103,7 +107,7 @@ public class ShopService {
         // Check to see if voucher exists
         Optional<Voucher> tempVoucher = voucherRepository.findByIdAndMerchant(voucherId, merchant);
         if (tempVoucher.isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException("Voucher");
         }
 
         // update the voucher's value
@@ -111,7 +115,6 @@ public class ShopService {
         ModelMapper mapper = new ModelMapper();
 
         mapper.map(updateVoucherDTO, voucher);
-        ;
 
         // In case we need to call it before method ends
         voucherRepository.saveAndFlush(voucher);
@@ -128,7 +131,7 @@ public class ShopService {
     public void deleteVoucher(Merchant merchant, Integer voucherId) {
         // Check to see if same voucher under merchant already exists
         if (voucherRepository.findByIdAndMerchant(voucherId, merchant).isEmpty()) {
-            throw new NotExistException();
+            throw new NotExistException("Voucher");
         }
 
         Voucher voucher = voucherRepository.findByIdAndMerchant(voucherId, merchant).get();
