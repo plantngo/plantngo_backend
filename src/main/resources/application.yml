@@ -19,13 +19,11 @@ spring:
     url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${POSTGRES_DB}?currentSchema=${DATABASE_SCHEMA}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
-  
+
   servlet:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
-  
-
 
 server:
   port: 8080
@@ -48,13 +46,13 @@ mail:
         starttls.enable: true
         ssl.trust: ${MAIL_HOST}
 
-cloud:
-  aws:
-    credentials:
-      access-key: ${AWS_ACCESS_KEY}
-      secret-key: ${AWS_SECRET_KEY}
-    region:
-      static: ${AWS_REGION}
-    stack:
-      auto: false
-    bucket: ${AWSS3_BUCKET}
+minio:
+  internalEndpoint: ${MINIO_INTERNAL_ENDPOINT}
+  externalEndpoint: ${MINIO_EXTERNAL_ENDPOINT}
+  accessKey: ${MINIO_ROOT_USER}
+  secretKey: ${MINIO_ROOT_PASSWORD}
+  region: ${MINIO_REGION}
+  bucket: ${MINIO_BUCKET}
+
+jwt:
+  secret: ${JWT_SECRET}

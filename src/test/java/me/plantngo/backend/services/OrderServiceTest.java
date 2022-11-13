@@ -35,7 +35,7 @@ import me.plantngo.backend.repositories.OrderRepository;
 import me.plantngo.backend.repositories.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderServiceTest {
+class OrderServiceTest {
     
     @Mock
     private OrderRepository orderRepository;

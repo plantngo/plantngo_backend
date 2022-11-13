@@ -1,7 +1,10 @@
 package me.plantngo.backend.services;
 
 import me.plantngo.backend.DTO.QuestDTO;
+import me.plantngo.backend.DTO.QuestProgressDTO;
 import me.plantngo.backend.exceptions.NotExistException;
+import me.plantngo.backend.models.Customer;
+import me.plantngo.backend.models.Log;
 import me.plantngo.backend.models.Quest;
 import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.LogRepository;
@@ -17,15 +20,15 @@ import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
-public class QuestServiceTest {
+class QuestServiceTest {
     @Mock
     private QuestRepository questRepository;
 
@@ -120,4 +123,185 @@ public class QuestServiceTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(questRepository).deleteById(questId);
     }
+
+
+    @Test
+    void testRefreshQuestForCustomer_QuestNotFound_ReturnSuccess(){
+        //arrange
+        Integer questId = 1;
+        Integer countToComplete = 1;
+        Integer greenPoints = 100;
+        String type = "order";
+        LocalDateTime postedDateTime = LocalDateTime.of(2022,
+                Month.JULY, 20, 23, 59);
+        LocalDateTime endDateTime = LocalDateTime.of(2022,
+                Month.JULY, 28, 23, 59);
+
+        Quest quest = new Quest();
+        quest.setId(questId);
+        quest.setType(type);
+        quest.setPostedDateTime(postedDateTime);
+        quest.setEndDateTime(endDateTime);
+        quest.setCountToComplete(countToComplete);
+        quest.setPoints(greenPoints);
+
+        String username = "john";
+        Set<Quest> completedQuest = new HashSet<>();
+        Customer customer = new Customer();
+        customer.setUsername(username);
+        customer.setCompletedQuests(completedQuest);
+
+        Integer logId = 2;
+        LocalDateTime completedDateTime = LocalDateTime.of(2022,
+                Month.JULY, 21, 23, 59);
+        Log log = new Log();
+        log.setType(type);
+        log.setUsername(username);
+        log.setId(logId);
+        log.setDateTime(completedDateTime);
+
+        List<Log> matches = new ArrayList<>();
+        matches.add(log);
+
+        when(questRepository.findById(any(Integer.class)))
+                .thenReturn(Optional.of(quest));
+        when(logRepository.findAllByUsernameAndTypeAndDateTimeBetween(any(String.class),any(String.class),
+                any(LocalDateTime.class),any(LocalDateTime.class)))
+                .thenReturn(matches);
+        when(customerRepository.saveAndFlush(any(Customer.class)))
+                .thenReturn(customer);
+
+        //act
+        ResponseEntity<String> response = questService.refreshQuestForCustomer(questId,customer);
+
+        //assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(questRepository).findById(questId);
+        verify(logRepository).findAllByUsernameAndTypeAndDateTimeBetween(username,type,postedDateTime,endDateTime);
+        verify(customerRepository).saveAndFlush(customer);
+    }
+
+    @Test
+    void testRefreshQuestForCustomer_QuestDoesNotExist_ThrowNotExistException(){
+        //arrange
+        String exceptionMsg = "";
+        Customer customer = new Customer();
+        //act
+        try {
+            questService.refreshQuestForCustomer(1,customer);
+        } catch (NotExistException e){
+            exceptionMsg = e.getMessage();
+        }
+        //assert
+        assertEquals("Quest doesn't exist!",exceptionMsg);
+    }
+
+    @Test
+    void testGetAllActiveQuestProgressByUsername_NoActiveQuest_ReturnEmptyList(){
+        //arrange
+        String username = "jacky";
+        Set<Quest> completedQuests = new HashSet<>();
+        Customer customer = new Customer();
+        customer.setUsername(username);
+        customer.setCompletedQuests(completedQuests);
+
+        List<Quest> quests = new ArrayList<>();
+
+        when(questRepository.findAllByEndDateTimeAfter(any(LocalDateTime.class)))
+                .thenReturn(quests);
+        when(customerRepository.findByUsername(any(String.class)))
+                .thenReturn(Optional.of(customer));
+        //act
+        List<QuestProgressDTO> output = questService.getAllActiveQuestProgressByUsername(username);
+
+        //assert
+        assertEquals(0, output.size());
+        verify(questRepository).findAllByEndDateTimeAfter(any(LocalDateTime.class));
+        verify(customerRepository).findByUsername(any(String.class));
+    }
+
+    @Test
+    void testGetAllActiveQuestProgressByUsername_ActiveQuest_ReturnQuestProgressList(){
+        //arrange
+        Integer questId = 1;
+        Integer countToComplete = 1;
+        Integer greenPoints = 100;
+        String type = "order";
+        LocalDateTime postedDateTime = LocalDateTime.of(2022,
+                Month.JULY, 20, 23, 59);
+        LocalDateTime endDateTime = LocalDateTime.of(2022,
+                Month.JULY, 28, 23, 59);
+
+        Quest quest = new Quest();
+        quest.setId(questId);
+        quest.setType(type);
+        quest.setPostedDateTime(postedDateTime);
+        quest.setEndDateTime(endDateTime);
+        quest.setCountToComplete(countToComplete);
+        quest.setPoints(greenPoints);
+
+        Integer quest2Id = 2;
+        Quest quest2 = new Quest();
+        quest.setId(quest2Id);
+        quest.setType(type);
+        quest.setPostedDateTime(postedDateTime);
+        quest.setEndDateTime(endDateTime);
+        quest.setCountToComplete(countToComplete);
+        quest.setPoints(greenPoints);
+
+        String username = "jacky";
+        Set<Quest> completedQuests = new HashSet<>();
+        completedQuests.add(quest2);
+        Customer customer = new Customer();
+        customer.setUsername(username);
+        customer.setCompletedQuests(completedQuests);
+
+        List<Quest> quests = new ArrayList<>();
+        quests.add(quest);
+
+        Integer logId = 2;
+        LocalDateTime completedDateTime = LocalDateTime.of(2022,
+                Month.JULY, 21, 23, 59);
+        Log log = new Log();
+        log.setType(type);
+        log.setUsername(username);
+        log.setId(logId);
+        log.setDateTime(completedDateTime);
+
+        List<Log> matches = new ArrayList<>();
+        matches.add(log);
+
+        when(questRepository.findAllByEndDateTimeAfter(any(LocalDateTime.class)))
+                .thenReturn(quests);
+        when(customerRepository.findByUsername(any(String.class)))
+                .thenReturn(Optional.of(customer));
+        when(logRepository.findAllByUsernameAndTypeAndDateTimeBetween(any(String.class),any(String.class),
+                any(LocalDateTime.class),any(LocalDateTime.class)))
+                .thenReturn(matches);
+        //act
+        List<QuestProgressDTO> output = questService.getAllActiveQuestProgressByUsername(username);
+
+        //assert
+        assertEquals(1, output.size());
+        verify(questRepository).findAllByEndDateTimeAfter(any(LocalDateTime.class));
+        verify(customerRepository).findByUsername(any(String.class));
+        verify(logRepository).findAllByUsernameAndTypeAndDateTimeBetween(any(String.class),any(String.class),
+                any(LocalDateTime.class),any(LocalDateTime.class));
+    }
+
+    @Test
+    void testRefreshQuest_ValidInput_returnSuccess(){
+        //arrange
+        Integer questId = 1;
+        List<Customer> allCustomer = new ArrayList<>();
+        when(customerRepository.findAll())
+                .thenReturn(allCustomer);
+        //act
+        ResponseEntity<String> output = questService.refreshQuest(questId);
+
+        //assert
+        assertEquals("Refreshed quest 1 for all customers", output.getBody());
+        verify(customerRepository).findAll();
+    }
+
 }

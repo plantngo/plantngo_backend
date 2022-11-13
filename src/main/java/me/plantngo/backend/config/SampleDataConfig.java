@@ -21,6 +21,7 @@ import me.plantngo.backend.repositories.PromotionRepository;
 import me.plantngo.backend.repositories.QuestRepository;
 import me.plantngo.backend.services.AuthService;
 import me.plantngo.backend.services.MerchantService;
+import me.plantngo.backend.services.MinioService;
 import me.plantngo.backend.services.ShopService;
 
 @Configuration
@@ -37,6 +38,9 @@ public class SampleDataConfig {
         @Autowired
         private QuestRepository questRepository;
 
+        @Autowired
+        private MinioService minioService;
+
         @Bean
         CommandLineRunner commandLineRunner() {
                 return args -> {
@@ -48,6 +52,7 @@ public class SampleDataConfig {
                         createVouchers();
                         createPromotions();
                         createQuests();
+                        minioService.initBuckets();
                 };
         }
 

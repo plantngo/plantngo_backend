@@ -1,8 +1,8 @@
 package me.plantngo.backend.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.mail.Multipart;
-
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,18 +27,21 @@ import me.plantngo.backend.DTO.CategoryDTO;
 import me.plantngo.backend.DTO.ProductDTO;
 import me.plantngo.backend.DTO.UpdateCategoryDTO;
 import me.plantngo.backend.DTO.UpdateProductDTO;
+import me.plantngo.backend.DTO.UpdateVoucherDTO;
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.models.Category;
 import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.models.Product;
+import me.plantngo.backend.models.Voucher;
 import me.plantngo.backend.repositories.CategoryRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 import me.plantngo.backend.repositories.ProductRepository;
+import me.plantngo.backend.repositories.VoucherRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class ShopServiceTest {
-    
+class ShopServiceTest {
+
     @Mock
     private CategoryRepository categoryRepository;
 
@@ -52,7 +52,10 @@ public class ShopServiceTest {
     private MerchantRepository merchantRepository;
 
     @Mock
-    private AWSS3Service awss3Service;
+    private MinioService minioService;
+
+    @Mock
+    private VoucherRepository voucherRepository;
 
     @InjectMocks
     private ShopService shopService;
@@ -65,8 +68,10 @@ public class ShopServiceTest {
 
     private MultipartFile file;
 
+    private Voucher voucher;
+
     @BeforeEach
-     void initEach() {
+    void initEach() {
 
         file = mock(MultipartFile.class);
 
@@ -76,7 +81,7 @@ public class ShopServiceTest {
 
         category = new Category();
         category.setName("Food");
-        
+
         Category category2 = new Category();
         category2.setName("Dessert");
 
@@ -90,21 +95,180 @@ public class ShopServiceTest {
         category.setMerchant(merchant);
         category2.setMerchant(merchant);
 
-        category.setProducts(List.of(product));
-        merchant.setCategories(List.of(category, category2));
+        ArrayList<Product> products = new ArrayList<>();
+        products.add(product);
+        ArrayList<Category> categories = new ArrayList<>();
+        categories.add(category);
+        categories.add(category2);
+
+        category.setProducts(products);
+        merchant.setCategories(categories);
+
+        voucher = new Voucher();
+        voucher.setId(1);
+        voucher.setMerchant(merchant);
     }
 
     @Test
-     void testAddCategory_NewCategory_ReturnCategory() {
+    void testGetVoucher_VoucherExists_ReturnVoucher() {
+
+        // Arrange
+        Integer voucherId = 1;
+
+        when(voucherRepository.findByIdAndMerchant(any(Integer.class), any(Merchant.class)))
+            .thenReturn(Optional.of(voucher));
+
+        // Act
+        Voucher responseVoucher = shopService.getVoucher(merchant, voucherId);
+
+        // Assert
+        assertEquals(voucher, responseVoucher);
+        verify(voucherRepository, times(1)).findByIdAndMerchant(voucherId, merchant);
+    }
+
+    @Test
+    void testGetVoucher_VoucherNotExist_ThrowNotExistException() {
+
+        // Arrange
+        Integer voucherId = 2;
+        String exceptionMsg = "";
+
+        when(voucherRepository.findByIdAndMerchant(any(Integer.class), any(Merchant.class)))
+            .thenReturn(Optional.empty());
+
+        // Act
+        try {
+            Voucher responseVoucher = shopService.getVoucher(merchant, voucherId);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Voucher doesn't exist!", exceptionMsg);
+        verify(voucherRepository, times(1)).findByIdAndMerchant(voucherId, merchant);
+    }
+
+    @Test
+    void testGetAllVouchersFromMerchant_VouchersExist_ReturnVoucherList() {
+
+        // Arrange
+        Voucher voucher2 = new Voucher();
+        voucher2.setId(2);
+        voucher2.setMerchant(merchant);
+        Voucher voucher3 = new Voucher();
+        voucher3.setId(3);
+        voucher3.setMerchant(merchant);
+        Voucher voucher4 = new Voucher();
+        voucher4.setId(4);
+        voucher4.setMerchant(merchant);
+        List<Voucher> vouchers = List.of(voucher, voucher2, voucher3, voucher4);
+
+        when(voucherRepository.findAllByMerchant(any(Merchant.class)))
+            .thenReturn(vouchers);
+
+        // Act
+        List<Voucher> responseVouchers = shopService.getAllVouchersFromMerchant(merchant);
+
+        // Assert
+        assertEquals(vouchers, responseVouchers);
+        verify(voucherRepository, times(1)).findAllByMerchant(merchant);
+    }
+
+    @Test
+    void testUpdateVoucher_VoucherExists_ReturnVoucher() {
+
+        // Arrange
+        UpdateVoucherDTO updateVoucherDTO = new UpdateVoucherDTO(10.0, null, null, "It's a Voucher");
+        Integer voucherId = 1;
+        Voucher expectedVoucher = new Voucher();
+        expectedVoucher.setId(1);
+        expectedVoucher.setMerchant(merchant);
+        expectedVoucher.setValue(10);
+        expectedVoucher.setDescription("It's a Voucher");
+
+        when(voucherRepository.findByIdAndMerchant(any(Integer.class), any(Merchant.class)))
+            .thenReturn(Optional.of(voucher));
+
+        // Act
+        Voucher responseVoucher = shopService.updateVoucher(merchant, voucherId, updateVoucherDTO);
+
+        // Assert
+        assertEquals(expectedVoucher, responseVoucher);
+        verify(voucherRepository, times(1)).findByIdAndMerchant(voucherId, merchant);
+    }
+
+    @Test
+    void testUpdateVoucher_VoucherNotExist_ThrowNotExistException() {
+
+        // Arrange
+        UpdateVoucherDTO updateVoucherDTO = new UpdateVoucherDTO(10.0, null, null, "It's a Voucher");
+        Integer voucherId = 1;
+        String exceptionMsg = "";
+
+        when(voucherRepository.findByIdAndMerchant(any(Integer.class), any(Merchant.class)))
+            .thenReturn(Optional.empty());
+
+        // Act
+        try {
+            Voucher responseVoucher = shopService.updateVoucher(merchant, voucherId, updateVoucherDTO);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Voucher doesn't exist!", exceptionMsg);
+        verify(voucherRepository, times(1)).findByIdAndMerchant(voucherId, merchant);
+    }
+
+    @Test
+    void testDeleteVoucher_VoucherExists_ReturnSuccess() {
+
+        // Arrange
+        Integer voucherId = 1;
+
+        when(voucherRepository.findByIdAndMerchant(any(Integer.class), any(Merchant.class)))
+            .thenReturn(Optional.of(voucher));
         
+        // Act
+        shopService.deleteVoucher(merchant, voucherId);
+
+        // Assert
+        verify(voucherRepository, times(1)).findByIdAndMerchant(voucherId, merchant);
+        verify(voucherRepository, times(1)).delete(voucher);
+    }
+
+    @Test
+    void testDeleteVoucher_VoucherNotExist_ThrowNotExistException() {
+
+        // Arrange
+        Integer voucherId = 1;
+        String exceptionMsg = "";
+
+        when(voucherRepository.findByIdAndMerchant(any(Integer.class), any(Merchant.class)))
+            .thenReturn(Optional.empty());
+        
+        // Act
+        try {
+            shopService.deleteVoucher(merchant, voucherId);
+        } catch (NotExistException e) {
+            exceptionMsg = e.getMessage();
+        }
+
+        // Assert
+        assertEquals("Voucher doesn't exist!", exceptionMsg);
+        verify(voucherRepository, times(1)).findByIdAndMerchant(voucherId, merchant);
+    }
+
+    @Test
+    void testAddCategory_NewCategory_ReturnCategory() {
 
         // Arrange
         CategoryDTO categoryDTO = new CategoryDTO("Food");
         category.setProducts(null);
         when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(false);
+                .thenReturn(false);
         when(categoryRepository.save(any(Category.class)))
-            .thenReturn(category);
+                .thenReturn(category);
 
         // Act
         Category responseCategory = shopService.addCategory(merchant, categoryDTO);
@@ -116,12 +280,12 @@ public class ShopServiceTest {
     }
 
     @Test
-     void testAddCategory_ExistingCategory_ThrowAlreadyExistException() {
+    void testAddCategory_ExistingCategory_ThrowAlreadyExistException() {
 
         // Arrange
         CategoryDTO categoryDTO = new CategoryDTO("Dessert");
         when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(true);
+                .thenReturn(true);
         String exceptionMsg = "";
 
         // Act
@@ -138,12 +302,12 @@ public class ShopServiceTest {
     }
 
     @Test
-     void testGetCategory_CategoryExists_ReturnCategory() {
+    void testGetCategory_CategoryExists_ReturnCategory() {
 
         // Arrange
         Optional<Category> optionalCategory = Optional.of(category);
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(optionalCategory);
+                .thenReturn(optionalCategory);
 
         // Act
         Category responseCategory = shopService.getCategory(merchant, category.getName());
@@ -191,7 +355,7 @@ public class ShopServiceTest {
 
         // Assert
         assertEquals("", exceptionMsg);
-        verify(categoryRepository, times(2)).findByNameAndMerchant(category.getName(), merchant);
+        verify(categoryRepository, times(1)).findByNameAndMerchant(category.getName(), merchant);
         verify(categoryRepository, times(1)).delete(category);
     }
 
@@ -217,15 +381,15 @@ public class ShopServiceTest {
     }
 
     @Test
-     void testUpdateCategory_CategoryNameAlreadyExists_ThrowAlreadyExistException() {
+    void testUpdateCategory_CategoryNameAlreadyExists_ThrowAlreadyExistException() {
 
         // Arrange
         String exceptionMsg = "";
         String categoryName = "Food";
         when(categoryRepository.existsByName(any(String.class)))
-            .thenReturn(true);
+                .thenReturn(true);
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
         UpdateCategoryDTO updateCategoryDTO = new UpdateCategoryDTO("Dessert");
 
         // Act
@@ -247,9 +411,9 @@ public class ShopServiceTest {
         // Arrange
         String categoryName = "Food";
         when(categoryRepository.existsByName(any(String.class)))
-            .thenReturn(false);
+                .thenReturn(false);
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
         UpdateCategoryDTO updateCategoryDTO = new UpdateCategoryDTO("Drinks");
 
         // Act
@@ -270,9 +434,9 @@ public class ShopServiceTest {
         String categoryName = "Food";
         String productName = "Sprite";
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
         when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
         // Act
         try {
@@ -294,9 +458,9 @@ public class ShopServiceTest {
         String categoryName = "Food";
         String productName = "Laksa";
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
         when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
-            .thenReturn(Optional.of(product));
+                .thenReturn(Optional.of(product));
 
         // Act
         Product responseProduct = shopService.getProduct(merchant, categoryName, productName);
@@ -314,16 +478,19 @@ public class ShopServiceTest {
         String categoryName = "Food";
         String imageUrl = "https://google.com.sg";
         ProductDTO productDTO = new ProductDTO("Bee Hoon", 5.5, "Yellow Noodles", null, null, null);
-        Product expectedProduct = new Product(null, "Bee Hoon", 5.5, "Yellow Noodles", 0.0, new URL("https://google.com.sg"), null, category, null, null);
+        Product expectedProduct = new Product(null, "Bee Hoon", 5.5, "Yellow Noodles", 0.0,
+                new URL("https://google.com.sg"), null, category, null, null);
 
-        when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(true);
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(Optional.of(category));
-        when(awss3Service.uploadFile(any(MultipartFile.class)))
-            .thenReturn(imageUrl);
+                .thenReturn(Optional.of(category));
+        try {
+            when(minioService.uploadFile(any(MultipartFile.class), any(String.class), any(String.class)))
+                    .thenReturn(imageUrl);
+        } catch (Exception e) {
+
+        }
         when(productRepository.save(any(Product.class)))
-            .thenReturn(expectedProduct);
+                .thenReturn(expectedProduct);
 
         // Act
         Product responseProduct = null;
@@ -335,9 +502,13 @@ public class ShopServiceTest {
 
         // Assert
         assertEquals(expectedProduct, responseProduct);
-        verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryName, merchant);
         verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
-        verify(awss3Service, times(1)).uploadFile(file);
+        try {
+            verify(minioService, times(1)).uploadFile(file, "product", merchant.getUsername());
+        } catch (Exception e) {
+
+        }
+
         verify(productRepository, times(1)).save(expectedProduct);
     }
 
@@ -348,9 +519,9 @@ public class ShopServiceTest {
         String categoryName = "Appetizer";
         String exceptionMsg = "";
         ProductDTO productDTO = new ProductDTO("Bee Hoon", 5.5, "Yellow Noodles", null, null, null);
-        when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(false);
-            
+        when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
+                .thenReturn(Optional.empty());
+
         // Act
         try {
             Product responseProduct = shopService.addProduct(merchant, categoryName, productDTO, file);
@@ -362,7 +533,7 @@ public class ShopServiceTest {
 
         // Assert
         assertEquals("Category doesn't exist!", exceptionMsg);
-        verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryName, merchant);
+        verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
     }
 
     @Test
@@ -372,10 +543,9 @@ public class ShopServiceTest {
         String categoryName = "Food";
         String exceptionMsg = "";
         ProductDTO productDTO = new ProductDTO("Laksa", 6.1, "It's Laksa", null, null, null);
-        when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(true);
+        
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
 
         // Act
         try {
@@ -388,7 +558,6 @@ public class ShopServiceTest {
 
         // Assert
         assertEquals("Product already exists!", exceptionMsg);
-        verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryName, merchant);
         verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
     }
 
@@ -401,9 +570,9 @@ public class ShopServiceTest {
         String productName = "Laksa";
         UpdateProductDTO updateProductDTO = new UpdateProductDTO(null, 10.11, null, null, null, null);
         when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
-            .thenReturn(Optional.of(product));
+                .thenReturn(Optional.of(product));
         when(productRepository.saveAndFlush(any(Product.class)))
-            .thenReturn(expectedProduct);
+                .thenReturn(expectedProduct);
 
         // Act
         Product responseProduct = shopService.updateProduct(category, productName, updateProductDTO);
@@ -412,7 +581,7 @@ public class ShopServiceTest {
         assertEquals(expectedProduct, responseProduct);
         verify(productRepository, times(1)).findByNameAndCategory(productName, category);
         verify(productRepository, times(1)).saveAndFlush(expectedProduct);
-        
+
     }
 
     @Test
@@ -423,19 +592,19 @@ public class ShopServiceTest {
         String exceptionMsg = "";
         UpdateProductDTO updateProductDTO = new UpdateProductDTO(null, 10.11, null, null, null, null);
         when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
-            .thenReturn(Optional.empty());
-            
+                .thenReturn(Optional.empty());
+
         // Act
         try {
             Product responseProduct = shopService.updateProduct(category, productName, updateProductDTO);
         } catch (NotExistException e) {
             exceptionMsg = e.getMessage();
-        }   
+        }
 
         // Assert
         assertEquals("Product doesn't exist!", exceptionMsg);
         verify(productRepository, times(1)).findByNameAndCategory(productName, category);
-        
+
     }
 
     @Test
@@ -449,18 +618,56 @@ public class ShopServiceTest {
         String exceptionMsg = "";
         UpdateProductDTO updateProductDTO = new UpdateProductDTO("Bee Hoon", null, null, null, null, null);
         when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
-            .thenReturn(Optional.of(product));
-            
+                .thenReturn(Optional.of(product));
+
         // Act
         try {
             Product responseProduct = shopService.updateProduct(category, productName, updateProductDTO);
         } catch (AlreadyExistsException e) {
             exceptionMsg = e.getMessage();
-        }   
+        }
 
         // Assert
         assertEquals("Product Name already exists!", exceptionMsg);
         verify(productRepository, times(1)).findByNameAndCategory(productName, category);
-        
+
+    }
+
+    @Test
+    void testUpdateProductWithImage_ValidProduct_ReturnProduct() throws Exception {
+
+        // Arrange
+        String productName = "Laksa";
+        String exceptionMsg = "";
+        String imageUrl = "https://google.com.sg";
+        UpdateProductDTO updateProductDTO = new UpdateProductDTO("Bee Hoon", null, null, null, null, null);
+        Product expectedProduct = new Product(null, "Bee Hoon", 6.1, "It's Laksa", 0.0,
+                new URL("https://google.com.sg"), null, category, null, null);
+
+        when(productRepository.findByNameAndCategory(any(String.class), any(Category.class)))
+            .thenReturn(Optional.of(product));
+        when(minioService.uploadFile(any(MultipartFile.class), anyString(), anyString()))
+            .thenReturn(imageUrl);
+
+        // Act
+        Product responseProduct = shopService.updateProduct(category, productName, updateProductDTO, file);
+
+        // Assert
+        assertEquals(expectedProduct, responseProduct);
+        verify(productRepository, times(1)).findByNameAndCategory(productName, category);
+        verify(minioService, times(1)).uploadFile(file, "product", merchant.getUsername());
+    }
+
+    @Test
+    void testDeleteProduct_ProductExists_ReturnSuccess() {
+
+        // Arrange
+        String productName = "Laksa";
+
+        // Act
+        shopService.deleteProduct(product);
+
+        // Assert
+        verify(productRepository, times(1)).deleteById(product.getId());
     }
 }

@@ -62,8 +62,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(InsufficientBalanceException.class)
-    private ResponseEntity<ErrorModel> handleNotExist(InsufficientBalanceException ex) {
-        ErrorModel error = new ErrorModel(HttpStatus.BAD_REQUEST, "Not Found.", ex.getMessage());
+    private ResponseEntity<ErrorModel> handleInsufficientBalance(InsufficientBalanceException ex) {
+        ErrorModel error = new ErrorModel(HttpStatus.BAD_REQUEST, "Insufficient balance", ex.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }

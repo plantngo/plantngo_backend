@@ -2,7 +2,6 @@ package me.plantngo.backend.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,8 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.amazonaws.Response;
-
 import me.plantngo.backend.exceptions.AlreadyExistsException;
 import me.plantngo.backend.exceptions.UserNotFoundException;
 import me.plantngo.backend.models.Customer;
@@ -28,8 +25,8 @@ import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class ChangeCredentialServiceTest {
-    
+class ChangeCredentialServiceTest {
+
     @Mock
     private CustomerRepository customerRepository;
 
@@ -50,7 +47,7 @@ public class ChangeCredentialServiceTest {
         Character userType = 'C';
 
         when(customerRepository.existsByUsername(any(String.class)))
-            .thenReturn(false);
+                .thenReturn(false);
 
         // Act
         changeCredentialService.validateNewUsername(newUsername, userType);
@@ -87,8 +84,8 @@ public class ChangeCredentialServiceTest {
         String exceptionMsg = "";
 
         when(merchantRepository.existsByUsername(any(String.class)))
-            .thenReturn(true);
-        
+                .thenReturn(true);
+
         // Act
         try {
             changeCredentialService.validateNewUsername(newUsername, userType);
@@ -112,15 +109,17 @@ public class ChangeCredentialServiceTest {
         customer.setUsername(oldUsername);
         Customer expectedCustomer = new Customer();
         expectedCustomer.setUsername(newUsername);
-        ResponseEntity<String> expectedResponseEntity = new ResponseEntity<>("Successfully changed username to Jacky", HttpStatus.OK);
+        ResponseEntity<String> expectedResponseEntity = new ResponseEntity<>("Successfully changed username to Jacky",
+                HttpStatus.OK);
 
         when(customerRepository.findByUsername(any(String.class)))
-            .thenReturn(Optional.of(customer));
+                .thenReturn(Optional.of(customer));
         when(customerRepository.saveAndFlush(any(Customer.class)))
-            .thenReturn(expectedCustomer);
+                .thenReturn(expectedCustomer);
 
         // Act
-        ResponseEntity<String> responseEntity = changeCredentialService.replaceUsername(oldUsername, newUsername, userType);
+        ResponseEntity<String> responseEntity = changeCredentialService.replaceUsername(oldUsername, newUsername,
+                userType);
 
         // Assert
         assertEquals(expectedResponseEntity, responseEntity);
@@ -138,11 +137,12 @@ public class ChangeCredentialServiceTest {
         String exceptionMsg = "";
 
         when(customerRepository.findByUsername(any(String.class)))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
         // Act
         try {
-            ResponseEntity<String> responseEntity = changeCredentialService.replaceUsername(oldUsername, newUsername, userType);
+            ResponseEntity<String> responseEntity = changeCredentialService.replaceUsername(oldUsername, newUsername,
+                    userType);
         } catch (UserNotFoundException e) {
             exceptionMsg = e.getMessage();
         }
@@ -163,15 +163,17 @@ public class ChangeCredentialServiceTest {
         merchant.setUsername(oldUsername);
         Merchant expectedMerchant = new Merchant();
         expectedMerchant.setUsername(newUsername);
-        ResponseEntity<String> expectedResponseEntity = new ResponseEntity<>("Successfully changed username to Jacky", HttpStatus.OK);
+        ResponseEntity<String> expectedResponseEntity = new ResponseEntity<>("Successfully changed username to Jacky",
+                HttpStatus.OK);
 
         when(merchantRepository.findByUsername(any(String.class)))
-            .thenReturn(Optional.of(merchant));
+                .thenReturn(Optional.of(merchant));
         when(merchantRepository.saveAndFlush(any(Merchant.class)))
-            .thenReturn(expectedMerchant);
+                .thenReturn(expectedMerchant);
 
         // Act
-        ResponseEntity<String> responseEntity = changeCredentialService.replaceUsername(oldUsername, newUsername, userType);
+        ResponseEntity<String> responseEntity = changeCredentialService.replaceUsername(oldUsername, newUsername,
+                userType);
 
         // Assert
         assertEquals(expectedResponseEntity, responseEntity);
@@ -191,15 +193,17 @@ public class ChangeCredentialServiceTest {
         Customer expectedCustomer = new Customer();
         expectedCustomer.setUsername(username);
         expectedCustomer.setPassword(bCryptPasswordEncoder.encode(newPassword));
-        ResponseEntity<String> expectedResponseEntity = new ResponseEntity<>("Successfully changed password", HttpStatus.OK);
+        ResponseEntity<String> expectedResponseEntity = new ResponseEntity<>("Successfully changed password",
+                HttpStatus.OK);
 
         when(customerRepository.findByUsername(any(String.class)))
-            .thenReturn(Optional.of(customer));
+                .thenReturn(Optional.of(customer));
         when(customerRepository.saveAndFlush(any(Customer.class)))
-            .thenReturn(customer);
+                .thenReturn(customer);
 
         // Act
-        ResponseEntity<String> responseEntity = changeCredentialService.replacePassword(username, newPassword, userType);
+        ResponseEntity<String> responseEntity = changeCredentialService.replacePassword(username, newPassword,
+                userType);
 
         // Assert
         assertEquals(expectedResponseEntity, responseEntity);
@@ -219,15 +223,17 @@ public class ChangeCredentialServiceTest {
         Merchant expectedMerchant = new Merchant();
         expectedMerchant.setUsername(username);
         expectedMerchant.setPassword(bCryptPasswordEncoder.encode(newPassword));
-        ResponseEntity<String> expectedResponseEntity = new ResponseEntity<>("Successfully changed password", HttpStatus.OK);
+        ResponseEntity<String> expectedResponseEntity = new ResponseEntity<>("Successfully changed password",
+                HttpStatus.OK);
 
         when(merchantRepository.findByUsername(any(String.class)))
-            .thenReturn(Optional.of(merchant));
+                .thenReturn(Optional.of(merchant));
         when(merchantRepository.saveAndFlush(any(Merchant.class)))
-            .thenReturn(merchant);
+                .thenReturn(merchant);
 
         // Act
-        ResponseEntity<String> responseEntity = changeCredentialService.replacePassword(username, newPassword, userType);
+        ResponseEntity<String> responseEntity = changeCredentialService.replacePassword(username, newPassword,
+                userType);
 
         // Assert
         assertEquals(expectedResponseEntity, responseEntity);
@@ -246,7 +252,8 @@ public class ChangeCredentialServiceTest {
 
         // Act
         try {
-            ResponseEntity<String> responseEntity = changeCredentialService.replacePassword(username, newPassword, userType);
+            ResponseEntity<String> responseEntity = changeCredentialService.replacePassword(username, newPassword,
+                    userType);
         } catch (IllegalArgumentException e) {
             exceptionMsg = e.getMessage();
         }
@@ -265,11 +272,12 @@ public class ChangeCredentialServiceTest {
         String exceptionMsg = "";
 
         when(merchantRepository.findByUsername(any(String.class)))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
         // Act
         try {
-            ResponseEntity<String> responseEntity = changeCredentialService.replacePassword(username, newPassword, userType);
+            ResponseEntity<String> responseEntity = changeCredentialService.replacePassword(username, newPassword,
+                    userType);
         } catch (UserNotFoundException e) {
             exceptionMsg = e.getMessage();
         }

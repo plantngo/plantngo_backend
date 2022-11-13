@@ -1,5 +1,6 @@
-name: test
 spring:
+  application:
+    test: name
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -27,3 +28,6 @@ server:
     include-message: always
     include-binding-errors: always
     include-exception: false
+
+jwt:
+  secret: secretkey

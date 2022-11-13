@@ -45,20 +45,14 @@ public class ChangeCredentialService {
 
     public ResponseEntity<String> replaceUsername(String oldUsername, String newUsername, Character userType){
         if(userType == 'C') {
-            try{
-                Customer customer = customerRepository.findByUsername(oldUsername).get();
-                return replaceCustomerUsername(customer, newUsername);
-            } catch (NoSuchElementException e){
-                throw new UserNotFoundException(USER_NOT_FOUND_ERROR);
-            }
+            Customer customer = customerRepository.findByUsername(oldUsername)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERROR));
+            return replaceCustomerUsername(customer, newUsername);
         }
         else {
-            try{
-                Merchant merchant = merchantRepository.findByUsername(oldUsername).get();
-                return replaceMerchantUsername(merchant, newUsername);
-            } catch (NoSuchElementException e){
-                throw new UserNotFoundException(USER_NOT_FOUND_ERROR);
-            }
+            Merchant merchant = merchantRepository.findByUsername(oldUsername)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERROR));
+            return replaceMerchantUsername(merchant, newUsername);
         }
     }
     public ResponseEntity<String> replaceCustomerUsername(Customer customer, String newUsername){
@@ -74,23 +68,18 @@ public class ChangeCredentialService {
     }
     public ResponseEntity<String> replacePassword(String username, String newPassword, Character userType){
         if(userType == 'C') {
-            try{
-                Customer customer = customerRepository.findByUsername(username).get();
-                return replaceCustomerPassword(customer, newPassword);
-            } catch (NoSuchElementException e){
-                throw new UserNotFoundException(USER_NOT_FOUND_ERROR);
-            }
+            Customer customer = customerRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERROR));
+            return replaceCustomerPassword(customer, newPassword);
         }
         else if(userType == 'M') {
-            try{
-                Merchant merchant = merchantRepository.findByUsername(username).get();
-                return replaceMerchantPassword(merchant, newPassword);
-            } catch (NoSuchElementException e){
-                throw new UserNotFoundException(USER_NOT_FOUND_ERROR);
-            }
+            Merchant merchant = merchantRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERROR));
+            return replaceMerchantPassword(merchant, newPassword);
         } else
             throw new IllegalArgumentException("Invalid user type");
     }
+    
     public ResponseEntity<String> replaceCustomerPassword(Customer customer, String newPassword){
         customer.setPassword(bCryptPasswordEncoder.encode(newPassword));
         customerRepository.saveAndFlush(customer);

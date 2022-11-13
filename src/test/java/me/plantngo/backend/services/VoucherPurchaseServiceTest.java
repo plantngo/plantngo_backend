@@ -16,9 +16,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class VoucherPurchaseServiceTest {
+class VoucherPurchaseServiceTest {
 
     @Mock
     private VoucherRepository voucherRepository;
@@ -327,7 +325,7 @@ public class VoucherPurchaseServiceTest {
 
 
         // Assert
-        
+        verify(voucherRepository).saveAndFlush(voucher);
         assert(voucher.getCustomersInCart().isEmpty());
         assert(customer.getVouchersCart().isEmpty());
     }

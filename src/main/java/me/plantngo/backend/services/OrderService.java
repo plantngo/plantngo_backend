@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import me.plantngo.backend.models.*;
+import me.plantngo.backend.repositories.CustomerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,47 +30,142 @@ public class OrderService {
 
     private MerchantService merchantService;
 
+    private CustomerRepository customerRepository;
+
     private LogService logService;
 
     private static final String ORDER_STRING = "Order";
 
     @Autowired
     public OrderService(OrderRepository orderRepository, CustomerService customerService,
-            ProductRepository productRepository, MerchantService merchantService,
-            LogService logService) {
+            ProductRepository productRepository, MerchantService merchantService, CustomerRepository customerRepository
+            ,LogService logService) {
         this.orderRepository = orderRepository;
         this.customerService = customerService;
         this.productRepository = productRepository;
         this.merchantService = merchantService;
+        this.customerRepository = customerRepository;
         this.logService = logService;
     }
 
+    /**
+     * Gets all orders
+     * 
+     * @return
+     */
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
+    /**
+     * Gets all orders with given Customer's name
+     * 
+     * @param name
+     * @return
+     */
     public List<Order> getOrdersByCustomerName(String name) {
         return orderRepository.findAllByCustomerUsername(name);
     }
 
+    /**
+     * Gets all orders with given Merchant's name
+     * 
+     * @param name
+     * @return
+     */
     public List<Order> getOrdersByMerchantName(String name) {
         return orderRepository.findAllByMerchantUsername(name);
     }
 
+    /**
+     * Gets all Pending orders with given Merchant's name
+     * 
+     * @param name
+     * @return
+     */
     public List<Order> getPendingOrdersByMerchantName(String name) {
         return orderRepository.findAllByMerchantUsernameAndOrderStatus(name, OrderStatus.PENDING);
     }
 
+    /**
+     * Gets all Fulfilled orders with given Merchant's name
+     * 
+     * @param name
+     * @return
+     */
     public List<Order> getFulfilledOrdersByMerchantName(String name) {
 
         return orderRepository.findAllByMerchantUsernameAndOrderStatus(name, OrderStatus.FULFILLED);
     }
 
+    /**
+     * Gets all Cancelled orders with given Merchant's name
+     * 
+     * @param name
+     * @return
+     */
     public List<Order> getCancelledOrdersByMerchantName(String name) {
 
         return orderRepository.findAllByMerchantUsernameAndOrderStatus(name, OrderStatus.CANCELLED);
     }
 
+    /**
+     * Gets all orders for a given Customer and Merchant
+     * 
+     * @param customerName
+     * @param merchantName
+     * @return
+     */
+    public List<Order> getOrdersByCustomerNameAndMerchantName(String customerName, String merchantName) {
+        return orderRepository.findAllByCustomerUsernameAndMerchantUsername(customerName, merchantName);
+    }
+
+    /**
+     * Gets all orders for a given Customer and Merchant with a specified Order Status
+     * 
+     * @param customerName
+     * @param merchantName
+     * @param orderStatus
+     * @return
+     */
+    public Order getOrdersByCustomerNameAndMerchantNameAndOrderStatus(String customerName, String merchantName,
+            OrderStatus orderStatus) {
+        return orderRepository.findFirstByCustomerUsernameAndMerchantUsernameAndOrderStatus(customerName, merchantName,
+                orderStatus);
+    }
+
+    /**
+     * Gets all orders for a given Customer with a specified Order Status
+     * 
+     * @param customerName
+     * @param orderStatus
+     * @return
+     */
+    public List<Order> getOrdersByCustomerNameAndOrderStatus(String customerName, OrderStatus orderStatus) {
+
+        return orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName, orderStatus);
+    }
+
+    /**
+     * Gets all Pending and Fulfilled orders for a given Customer
+     * 
+     * @param customerName
+     * @return
+     */
+    public List<Order> getAllPendingAndFulfilledOrdersByCustomer(String customerName) {
+        List<Order> tmpList = orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName,
+                OrderStatus.PENDING);
+        tmpList.addAll(orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName, OrderStatus.FULFILLED));
+        return tmpList;
+    }
+
+    /**
+     * Adds a new order for a Customer
+     * 
+     * @param placeOrderDTO
+     * @param customerName
+     * @return
+     */
     public Order addOrder(OrderDTO placeOrderDTO, String customerName) {
         // Check if customer exists
         Customer customer = customerService.getCustomerByUsername(customerName);
@@ -95,10 +191,19 @@ public class OrderService {
         return response;
     }
 
+    /**
+     * Adds a new Order Item to an existing Order for a Customer
+     * 
+     * @param customerName
+     * @param orderId
+     * @param orderItemDTO
+     * @return
+     */
     public Order addOrderItem(String customerName, Integer orderId, OrderItemDTO orderItemDTO) {
 
         // find existing order
-        Order order = orderRepository.findById(orderId).get();
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new NotExistException("Order"));
 
         Set<OrderItem> orderItems = order.getOrderItems();
         OrderItem orderItem = this.orderItemMapToEntity(orderItemDTO, order);
@@ -112,6 +217,13 @@ public class OrderService {
         return order;
     }
 
+    /**
+     * Updates an existing Order given it's id
+     * 
+     * @param updateOrderDTO
+     * @param orderId
+     * @return
+     */
     public Order updateOrder(UpdateOrderDTO updateOrderDTO, Integer orderId) {
         // Check if order exists
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotExistException(ORDER_STRING));
@@ -121,10 +233,23 @@ public class OrderService {
         mapper.getConfiguration().setSkipNullEnabled(true);
         mapper.map(updateOrderDTO, order);
 
+
+        Customer customer = order.getCustomer();
         /*
-         * to log a fulfilled order
+         *  add green points to customer
+         *  to log a fulfilled order
          */
         if (order.getOrderStatus() == OrderStatus.FULFILLED) {
+            Set<OrderItem> orderItems = order.getOrderItems();
+            Integer greenPointsToAdd = customer.getGreenPoints();
+            Integer averageEmission = 4000;
+
+            for (OrderItem item : orderItems){
+                Integer emissionSaved = averageEmission - item.getProduct().getCarbonEmission().intValue();
+                greenPointsToAdd += emissionSaved * item.getQuantity() / 100;
+            }
+            customer.setGreenPoints(greenPointsToAdd);
+            customerRepository.saveAndFlush(customer);
             logService.addLog(order.getCustomer().getUsername(), "order");
         }
 
@@ -138,7 +263,7 @@ public class OrderService {
         for (UpdateOrderItemDTO updateOrderItemDTO : updateOrderItemDTOs) {
             OrderItemDTO orderItemDTO = mapper.map(updateOrderItemDTO, OrderItemDTO.class);
             OrderItem orderItem = this.orderItemMapToEntity(orderItemDTO, order);
-            orderItems.removeIf(x -> x.getProductId() == orderItem.getProductId());
+            orderItems.removeIf(x -> x.getProductId().equals(orderItem.getProductId()));
             if (orderItem.getQuantity() > 0) {
                 orderItems.add(orderItem);
             }
@@ -184,6 +309,12 @@ public class OrderService {
         throw new NotExistException("Order Item");
     }
 
+    /*
+     * 
+     * Helper Methods
+     * 
+     */
+
     private Double getTotalPrice(Set<OrderItem> orderItems) {
         Double totalPrice = 0.0;
         for (OrderItem orderItem : orderItems) {
@@ -218,28 +349,6 @@ public class OrderService {
         orderItem.setProductId(product.getId());
 
         return orderItem;
-    }
-
-    public List<Order> getOrdersByCustomerNameAndMerchantName(String customerName, String merchantName) {
-        return orderRepository.findAllByCustomerUsernameAndMerchantUsername(customerName, merchantName);
-    }
-
-    public Order getOrdersByCustomerNameAndMerchantNameAndOrderStatus(String customerName, String merchantName,
-            OrderStatus orderStatus) {
-        return orderRepository.findFirstByCustomerUsernameAndMerchantUsernameAndOrderStatus(customerName, merchantName,
-                orderStatus);
-    }
-
-    public List<Order> getOrdersByCustomerNameAndOrderStatus(String customerName, OrderStatus orderStatus) {
-
-        return orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName, orderStatus);
-    }
-
-    public List<Order> getAllPendingAndFulfilledOrdersByCustomer(String customerName) {
-        List<Order> tmpList = orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName,
-                OrderStatus.PENDING);
-        tmpList.addAll(orderRepository.findAllByCustomerUsernameAndOrderStatus(customerName, OrderStatus.FULFILLED));
-        return tmpList;
     }
 
 }

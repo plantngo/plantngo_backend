@@ -2,7 +2,6 @@ package me.plantngo.backend.services;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,7 +15,6 @@ import me.plantngo.backend.DTO.PromotionDTO;
 import me.plantngo.backend.exceptions.NotExistException;
 import me.plantngo.backend.exceptions.PromotionNotFoundException;
 import me.plantngo.backend.models.Merchant;
-import me.plantngo.backend.models.Product;
 import me.plantngo.backend.models.Promotion;
 import me.plantngo.backend.repositories.PromotionRepository;
 
@@ -27,23 +25,23 @@ public class PromotionService {
 
     private final ProductService productService;
 
-    private AWSS3Service awss3Service;
+    private final MinioService minioService;
 
     private final static String PROMOTION_STRING = "Promotion";
 
     @Autowired
     public PromotionService(PromotionRepository promotionRepository, ProductService productService,
-            AWSS3Service awss3Service) {
+            MinioService minioService
+
+    ) {
         this.promotionRepository = promotionRepository;
         this.productService = productService;
-        this.awss3Service = awss3Service;
+        this.minioService = minioService;
     }
 
     public Promotion getPromotionById(Integer id) {
-        if (promotionRepository.findById(id).isEmpty()) {
-            throw new PromotionNotFoundException("PromotionId " + id + " does not exist.");
-        }
-        return promotionRepository.findById(id).get();
+        return promotionRepository.findById(id)
+            .orElseThrow(() -> new PromotionNotFoundException("PromotionId " + id + " does not exist."));
     }
 
     public List<Promotion> getAllPromotions() {
@@ -82,21 +80,19 @@ public class PromotionService {
         promotion.setClicks(0);
 
         if (file != null && !file.isEmpty()) {
-            String imageUrl = awss3Service.uploadFile(file);
-            promotion.setBannerUrl(new URL(imageUrl));
+
+            try {
+                String imageUrl = minioService.uploadFile(file, "promotion", merchant.getUsername());
+                promotion.setBannerUrl(new URL(imageUrl));
+            } catch (Exception e) {
+
+            }
+
         }
 
         promotionRepository.save(promotion);
 
         return promotion;
-    }
-
-    private List<Product> returnProductList(List<Integer> productIds) {
-        List<Product> result = new ArrayList<>();
-        for (Integer productId : productIds) {
-            result.add(productService.getProductById(productId));
-        }
-        return result;
     }
 
     public void deletePromotion(Integer promotionId) {
@@ -145,8 +141,12 @@ public class PromotionService {
                 .orElseThrow(() -> new NotExistException(PROMOTION_STRING));
 
         if (file != null && !file.isEmpty()) {
-            String imageUrl = awss3Service.uploadFile(file);
-            promotion.setBannerUrl(new URL(imageUrl));
+            try {
+                String imageUrl = minioService.uploadFile(file, "promotion", promotion.getMerchant().getUsername());
+                promotion.setBannerUrl(new URL(imageUrl));
+            } catch (Exception e) {
+
+            }
         }
         promotion.setDescription(promotionDTO.getDescription());
         promotion.setStartDate(promotionDTO.getStartDate());

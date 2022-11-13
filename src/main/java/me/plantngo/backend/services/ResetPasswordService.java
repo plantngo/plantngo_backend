@@ -1,24 +1,21 @@
 package me.plantngo.backend.services;
 
-import me.plantngo.backend.DTO.UpdateCustomerDetailsDTO;
-import me.plantngo.backend.DTO.UpdateMerchantDetailsDTO;
-import me.plantngo.backend.exceptions.AlreadyExistsException;
-import me.plantngo.backend.exceptions.InvalidUserTypeException;
-import me.plantngo.backend.exceptions.NotExistException;
-import me.plantngo.backend.exceptions.UserNotFoundException;
-import me.plantngo.backend.models.Customer;
-import me.plantngo.backend.models.Merchant;
-import me.plantngo.backend.repositories.CustomerRepository;
-import me.plantngo.backend.repositories.MerchantRepository;
-import net.bytebuddy.utility.RandomString;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import me.plantngo.backend.exceptions.AlreadyExistsException;
+import me.plantngo.backend.exceptions.NotExistException;
+import me.plantngo.backend.models.Customer;
+import me.plantngo.backend.models.Merchant;
+import me.plantngo.backend.repositories.CustomerRepository;
+import me.plantngo.backend.repositories.MerchantRepository;
+import net.bytebuddy.utility.RandomString;
 
 @Service
 public class ResetPasswordService {
@@ -51,7 +48,8 @@ public class ResetPasswordService {
                 customer = optionalCustomer.get();
                 isCustomer = true;
             } else {
-                merchant = merchantRepository.findByEmail(email).get();
+                merchant = merchantRepository.findByEmail(email)
+                    .orElseThrow(() -> new NotExistException("Account"));
                 isCustomer = false;
             }
         } catch (NoSuchElementException e) {
@@ -92,7 +90,8 @@ public class ResetPasswordService {
                 customer = optionalCustomer.get();
                 isCustomer = true;
             } else {
-                merchant = merchantRepository.findByEmail(email).get();
+                merchant = merchantRepository.findByEmail(email)
+                    .orElseThrow(() -> new NotExistException("Account"));
                 isCustomer = false;
             }
         } catch (NoSuchElementException e) {
