@@ -95,7 +95,7 @@ public class Merchant {
         private List<Voucher> vouchers;
 
         @OneToMany(mappedBy = "merchant", orphanRemoval = true, cascade = CascadeType.ALL)
-        @JsonBackReference(value = "merchant_order")
+        @JsonIgnore
         private List<Order> order;
 
         @JsonIgnore

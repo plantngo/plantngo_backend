@@ -9,7 +9,6 @@ import me.plantngo.backend.DTO.*;
 import me.plantngo.backend.models.Voucher;
 import me.plantngo.backend.repositories.VoucherRepository;
 
-import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +48,13 @@ public class ShopService {
      * 
      */
 
+    /**
+     * Adds a Voucher for a Merchant
+     * 
+     * @param merchant
+     * @param voucherDTO
+     * @return
+     */
     public Voucher addVoucher(Merchant merchant, VoucherDTO voucherDTO) {
 
         Voucher voucher = this.voucherMapToEntity(voucherDTO, merchant);
@@ -58,6 +64,13 @@ public class ShopService {
         return voucher;
     }
 
+    /**
+     * Gets a Voucher by a Merchant given its Id
+     * 
+     * @param merchant
+     * @param voucherId
+     * @return
+     */
     public Voucher getVoucher(Merchant merchant, Integer voucherId) {
         Optional<Voucher> tempVoucher = voucherRepository.findByIdAndMerchant(voucherId, merchant);
         if (tempVoucher.isEmpty()) {
@@ -66,10 +79,24 @@ public class ShopService {
         return tempVoucher.get();
     }
 
+    /**
+     * Get all Vouchers by a Merchant
+     * 
+     * @param merchant
+     * @return
+     */
     public List<Voucher> getAllVouchersFromMerchant(Merchant merchant) {
         return voucherRepository.findAllByMerchant(merchant);
     }
 
+    /**
+     * Updates a Voucher for a given Merchant and VoucherId using updateVoucherDTO
+     * 
+     * @param merchant
+     * @param voucherId
+     * @param updateVoucherDTO
+     * @return
+     */
     public Voucher updateVoucher(Merchant merchant, Integer voucherId, UpdateVoucherDTO updateVoucherDTO) {
 
         // Check to see if voucher exists
@@ -91,8 +118,14 @@ public class ShopService {
         return voucher;
     }
 
+    /**
+     * Deletes a Voucher given Merchant and VoucherId
+     * 
+     * @param merchant
+     * @param voucherId
+     */
     public void deleteVoucher(Merchant merchant, Integer voucherId) {
-        // Check to see if same category under merchant already exists
+        // Check to see if same voucher under merchant already exists
         if (voucherRepository.findByIdAndMerchant(voucherId, merchant).isEmpty()) {
             throw new NotExistException();
         }
@@ -107,6 +140,13 @@ public class ShopService {
      * 
      */
 
+    /**
+     * Adds a category for a Merchant
+     * 
+     * @param merchant
+     * @param categoryDTO
+     * @return
+     */
     public Category addCategory(Merchant merchant, CategoryDTO categoryDTO) {
 
         Category category = this.categoryMapToEntity(categoryDTO, merchant);
@@ -119,6 +159,13 @@ public class ShopService {
         return categoryRepository.save(category);
     }
 
+    /**
+     * Gets a Category for a Merchant given its name
+     * 
+     * @param merchant
+     * @param categoryName
+     * @return
+     */
     public Category getCategory(Merchant merchant, String categoryName) {
         Optional<Category> tempCategory = categoryRepository.findByNameAndMerchant(categoryName, merchant);
         if (tempCategory.isEmpty()) {
@@ -127,6 +174,14 @@ public class ShopService {
         return tempCategory.get();
     }
 
+    /**
+     * Updates a Category for a Merchant given its name using updateCategoryDTO
+     * 
+     * @param merchant
+     * @param categoryName
+     * @param updateCategoryDTO
+     * @return
+     */
     public Category updateCategory(Merchant merchant, String categoryName, UpdateCategoryDTO updateCategoryDTO) {
 
         // Check to see if category exists under merchant
@@ -154,6 +209,12 @@ public class ShopService {
         return category;
     }
 
+    /**
+     * Deletes a Category from a Merchant given its name
+     * 
+     * @param merchant
+     * @param categoryName
+     */
     public void deleteCategory(Merchant merchant, String categoryName) {
         // Check to see if same category under merchant already exists
         if (categoryRepository.findByNameAndMerchant(categoryName, merchant).isEmpty()) {
@@ -170,6 +231,14 @@ public class ShopService {
      * 
      */
 
+    /**
+     * Gets a product by a Merchant
+     * 
+     * @param merchant
+     * @param categoryName
+     * @param productName
+     * @return
+     */
     public Product getProduct(Merchant merchant, String categoryName, String productName) {
         Category category = this.getCategory(merchant, categoryName);
         Optional<Product> tempProduct = productRepository.findByNameAndCategory(productName, category);
@@ -179,6 +248,16 @@ public class ShopService {
         return tempProduct.get();
     }
 
+    /**
+     * Adds a new Product for a Merchant and upload the image file to AWSS3 bucket
+     * 
+     * @param merchant
+     * @param categoryName
+     * @param productDTO
+     * @param file
+     * @return
+     * @throws MalformedURLException
+     */
     public Product addProduct(Merchant merchant, String categoryName, ProductDTO productDTO, MultipartFile file)
             throws MalformedURLException {
 
@@ -211,6 +290,14 @@ public class ShopService {
         return product;
     }
 
+    /**
+     * Adds a new product for a merchant without uploading any images
+     * 
+     * @param merchant
+     * @param categoryName
+     * @param productDTO
+     * @return
+     */
     public Product addProduct(Merchant merchant, String categoryName, ProductDTO productDTO) {
 
         // Check to see if category exists
@@ -236,6 +323,14 @@ public class ShopService {
         return product;
     }
 
+    /**
+     * Updates a product for a Merchant with updateProductDTO
+     * 
+     * @param category
+     * @param productName
+     * @param updateProductDTO
+     * @return
+     */
     public Product updateProduct(Category category, String productName, UpdateProductDTO updateProductDTO) {
 
         // Check to see if product exists under category

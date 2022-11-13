@@ -60,7 +60,6 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "merchant_id", nullable = false)
-    @JsonManagedReference(value = "merchant_order")
     @ToString.Exclude
     private Merchant merchant;
 

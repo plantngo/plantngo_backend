@@ -1,5 +1,6 @@
-name: test
 spring:
+  application:
+    test: name
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -27,3 +28,14 @@ server:
     include-message: always
     include-binding-errors: always
     include-exception: false
+
+cloud:
+  aws:
+    credentials:
+      access-key: accesskey
+      secret-key: secretkey
+    region:
+      static: ap-southeast-1
+    stack:
+      auto: false
+    bucket: bucket

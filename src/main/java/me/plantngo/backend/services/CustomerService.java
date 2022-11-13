@@ -3,6 +3,8 @@
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import me.plantngo.backend.DTO.UpdateCustomerDetailsDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +99,7 @@ public class CustomerService {
      * 
      * @param username
      */
+    @Transactional
     public void deleteCustomer(String username) {
         if (!customerRepository.existsByUsername(username)) {
             throw new NotExistException("Customer");
