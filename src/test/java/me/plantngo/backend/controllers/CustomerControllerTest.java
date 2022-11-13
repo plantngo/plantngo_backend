@@ -27,8 +27,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.amazonaws.services.s3.AmazonS3;
-
 import me.plantngo.backend.BackendApplication;
 import me.plantngo.backend.DTO.LoginDTO;
 import me.plantngo.backend.DTO.UpdateCustomerDetailsDTO;
@@ -38,6 +36,7 @@ import me.plantngo.backend.models.Preference;
 import me.plantngo.backend.models.Voucher;
 import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.services.MailService;
+import me.plantngo.backend.services.MinioService;
 
 @SpringBootTest(classes = BackendApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -59,13 +58,13 @@ public class CustomerControllerTest {
     private CustomerRepository customerRepository;
 
     @MockBean
-    private AmazonS3 awsS3;
-
-    @MockBean
     private MailService mailService;
 
     @MockBean
     private JavaMailSender javaMailSender;
+
+    @MockBean
+    private MinioService minioService;
 
     private Customer customer;
 

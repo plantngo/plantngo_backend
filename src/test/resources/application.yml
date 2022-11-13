@@ -30,4 +30,4 @@ server:
     include-exception: false
 
 jwt:
-  secret: ${JWT_SECRET}
+  secret: secretkey

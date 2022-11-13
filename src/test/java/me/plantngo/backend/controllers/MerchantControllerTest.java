@@ -26,13 +26,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.amazonaws.services.s3.AmazonS3;
-
 import me.plantngo.backend.BackendApplication;
 import me.plantngo.backend.DTO.LoginDTO;
 import me.plantngo.backend.models.Merchant;
 import me.plantngo.backend.repositories.MerchantRepository;
 import me.plantngo.backend.services.MailService;
+import me.plantngo.backend.services.MinioService;
 
 @SpringBootTest(classes = BackendApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -54,13 +53,13 @@ public class MerchantControllerTest {
     private MerchantRepository merchantRepository;
 
     @MockBean
-    private AmazonS3 awsS3;
-
-    @MockBean
     private MailService mailService;
 
     @MockBean
     private JavaMailSender javaMailSender;
+
+    @MockBean
+    private MinioService minioService;
 
     private Merchant merchant;
 
@@ -153,8 +152,6 @@ public class MerchantControllerTest {
 
         ResponseEntity<Merchant> result = restTemplate.exchange(uri, HttpMethod.GET, request, Merchant.class);
         Merchant responseMerchant = result.getBody();
-        responseMerchant.setCategories(null);
-        responseMerchant.setPromotions(null);
 
         assertEquals(200, result.getStatusCode().value());
         assertEquals(merchant, responseMerchant);
