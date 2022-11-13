@@ -28,7 +28,7 @@ import java.time.Month;
 import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
-public class QuestServiceTest {
+class QuestServiceTest {
     @Mock
     private QuestRepository questRepository;
 

@@ -40,7 +40,7 @@ import me.plantngo.backend.services.MinioService;
 
 @SpringBootTest(classes = BackendApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class CustomerControllerTest {
+class CustomerControllerTest {
 
     private final String rootUrl = "http://localhost:";
 

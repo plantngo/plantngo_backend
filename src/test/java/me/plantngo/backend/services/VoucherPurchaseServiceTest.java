@@ -27,7 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class VoucherPurchaseServiceTest {
+class VoucherPurchaseServiceTest {
 
     @Mock
     private VoucherRepository voucherRepository;
@@ -325,7 +325,7 @@ public class VoucherPurchaseServiceTest {
 
 
         // Assert
-        
+        verify(voucherRepository).saveAndFlush(voucher);
         assert(voucher.getCustomersInCart().isEmpty());
         assert(customer.getVouchersCart().isEmpty());
     }

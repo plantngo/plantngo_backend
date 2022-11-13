@@ -48,10 +48,8 @@ public class MerchantService {
      * @return
      */
     public Merchant getMerchantById(Integer id){
-        if (merchantRepository.findById(id).isEmpty()) {
-            throw new UserNotFoundException();
-        }
-        return merchantRepository.findById(id).get();
+        return merchantRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException());
     }
     
     /**

@@ -40,7 +40,7 @@ import me.plantngo.backend.repositories.ProductRepository;
 import me.plantngo.backend.repositories.VoucherRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class ShopServiceTest {
+class ShopServiceTest {
 
     @Mock
     private CategoryRepository categoryRepository;
@@ -233,7 +233,7 @@ public class ShopServiceTest {
         shopService.deleteVoucher(merchant, voucherId);
 
         // Assert
-        verify(voucherRepository, times(2)).findByIdAndMerchant(voucherId, merchant);
+        verify(voucherRepository, times(1)).findByIdAndMerchant(voucherId, merchant);
         verify(voucherRepository, times(1)).delete(voucher);
     }
 
@@ -355,7 +355,7 @@ public class ShopServiceTest {
 
         // Assert
         assertEquals("", exceptionMsg);
-        verify(categoryRepository, times(2)).findByNameAndMerchant(category.getName(), merchant);
+        verify(categoryRepository, times(1)).findByNameAndMerchant(category.getName(), merchant);
         verify(categoryRepository, times(1)).delete(category);
     }
 
@@ -481,8 +481,6 @@ public class ShopServiceTest {
         Product expectedProduct = new Product(null, "Bee Hoon", 5.5, "Yellow Noodles", 0.0,
                 new URL("https://google.com.sg"), null, category, null, null);
 
-        when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-                .thenReturn(true);
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
                 .thenReturn(Optional.of(category));
         try {
@@ -504,7 +502,6 @@ public class ShopServiceTest {
 
         // Assert
         assertEquals(expectedProduct, responseProduct);
-        verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryName, merchant);
         verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
         try {
             verify(minioService, times(1)).uploadFile(file, "product", merchant.getUsername());
@@ -522,8 +519,8 @@ public class ShopServiceTest {
         String categoryName = "Appetizer";
         String exceptionMsg = "";
         ProductDTO productDTO = new ProductDTO("Bee Hoon", 5.5, "Yellow Noodles", null, null, null);
-        when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-                .thenReturn(false);
+        when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
+                .thenReturn(Optional.empty());
 
         // Act
         try {
@@ -536,7 +533,7 @@ public class ShopServiceTest {
 
         // Assert
         assertEquals("Category doesn't exist!", exceptionMsg);
-        verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryName, merchant);
+        verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
     }
 
     @Test
@@ -546,8 +543,7 @@ public class ShopServiceTest {
         String categoryName = "Food";
         String exceptionMsg = "";
         ProductDTO productDTO = new ProductDTO("Laksa", 6.1, "It's Laksa", null, null, null);
-        when(categoryRepository.existsByNameAndMerchant(any(String.class), any(Merchant.class)))
-                .thenReturn(true);
+        
         when(categoryRepository.findByNameAndMerchant(any(String.class), any(Merchant.class)))
                 .thenReturn(Optional.of(category));
 
@@ -562,7 +558,6 @@ public class ShopServiceTest {
 
         // Assert
         assertEquals("Product already exists!", exceptionMsg);
-        verify(categoryRepository, times(1)).existsByNameAndMerchant(categoryName, merchant);
         verify(categoryRepository, times(1)).findByNameAndMerchant(categoryName, merchant);
     }
 

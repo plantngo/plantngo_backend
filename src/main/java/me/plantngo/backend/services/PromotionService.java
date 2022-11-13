@@ -40,10 +40,8 @@ public class PromotionService {
     }
 
     public Promotion getPromotionById(Integer id) {
-        if (promotionRepository.findById(id).isEmpty()) {
-            throw new PromotionNotFoundException("PromotionId " + id + " does not exist.");
-        }
-        return promotionRepository.findById(id).get();
+        return promotionRepository.findById(id)
+            .orElseThrow(() -> new PromotionNotFoundException("PromotionId " + id + " does not exist."));
     }
 
     public List<Promotion> getAllPromotions() {
@@ -87,7 +85,7 @@ public class PromotionService {
                 String imageUrl = minioService.uploadFile(file, "promotion", merchant.getUsername());
                 promotion.setBannerUrl(new URL(imageUrl));
             } catch (Exception e) {
-                e.printStackTrace();
+
             }
 
         }
@@ -147,7 +145,7 @@ public class PromotionService {
                 String imageUrl = minioService.uploadFile(file, "promotion", promotion.getMerchant().getUsername());
                 promotion.setBannerUrl(new URL(imageUrl));
             } catch (Exception e) {
-                e.printStackTrace();
+
             }
         }
         promotion.setDescription(promotionDTO.getDescription());

@@ -26,7 +26,7 @@ import me.plantngo.backend.repositories.MerchantRepository;
 import net.bytebuddy.utility.RandomString;
 
 @ExtendWith(MockitoExtension.class)
-public class ResetPasswordServiceTest {
+class ResetPasswordServiceTest {
     
     @Mock
     private CustomerRepository customerRepository;

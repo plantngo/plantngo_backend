@@ -30,7 +30,7 @@ import me.plantngo.backend.models.Promotion;
 import me.plantngo.backend.repositories.PromotionRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class PromotionServiceTest {
+class PromotionServiceTest {
     
     @Mock
     private PromotionRepository promotionRepository;
@@ -76,7 +76,7 @@ public class PromotionServiceTest {
 
         // Assert
         assertEquals(expectedPromotion, responsePromotion);
-        verify(promotionRepository, times(2)).findById(id);
+        verify(promotionRepository, times(1)).findById(id);
     }
 
     @Test
@@ -368,7 +368,7 @@ public class PromotionServiceTest {
         // Assert
         assertEquals(1, promotion.getClicks());
         verify(promotionRepository, times(1)).existsById(promotionId);
-        verify(promotionRepository, times(2)).findById(promotionId);
+        verify(promotionRepository, times(1)).findById(promotionId);
         verify(promotionRepository, times(1)).saveAndFlush(expectedPromotion);
     }
 

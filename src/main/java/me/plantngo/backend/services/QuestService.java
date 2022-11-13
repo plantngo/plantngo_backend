@@ -42,11 +42,8 @@ public class QuestService {
     }
 
     public Quest getQuest(Integer id) {
-        try {
-            return questRepository.findById(id).get();
-        } catch (NoSuchElementException e) {
-            throw new NotExistException("Quest");
-        }
+        return questRepository.findById(id)
+            .orElseThrow(() -> new NotExistException("Quest"));
     }
 
     public List<Quest> getActiveQuests() {
@@ -78,7 +75,8 @@ public class QuestService {
     }
 
     public ResponseEntity<String> refreshQuestByCustomerUsername(Integer id, String username) {
-        Customer customer = customerRepository.findByUsername(username).get();
+        Customer customer = customerRepository.findByUsername(username)
+            .orElseThrow(() -> new NotExistException("Customer"));
         return refreshQuestForCustomer(id, customer);
 
     }
@@ -86,12 +84,8 @@ public class QuestService {
     public ResponseEntity<String> refreshQuestForCustomer(Integer questId, Customer customer) {
         String username = customer.getUsername();
 
-        Quest quest;
-        try {
-            quest = questRepository.findById(questId).get();
-        } catch (NoSuchElementException e) {
-            throw new NotExistException("Quest");
-        }
+        Quest quest = questRepository.findById(questId)
+            .orElseThrow(() -> new NotExistException("Quest"));
 
         List<Log> matches = logRepository.findAllByUsernameAndTypeAndDateTimeBetween(
                 username,
@@ -105,7 +99,7 @@ public class QuestService {
         if (matches.size() >= quest.getCountToComplete()) {
             boolean isFound = false;
             for (Quest q : customer.getCompletedQuests()) {
-                if (q.getId() == quest.getId()) {
+                if (q.getId().equals(quest.getId())) {
                     isFound = true;
                 }
             }
@@ -120,7 +114,6 @@ public class QuestService {
                 customer.setGreenPoints(customer.getGreenPoints() + quest.getPoints());
 
                 customerRepository.saveAndFlush(customer);
-                System.out.println("<QUEST>: Updated quest status for customer: " + username);
 
             }
 
@@ -132,13 +125,9 @@ public class QuestService {
     public ResponseEntity<String> refreshQuest(Integer questId) {
         List<Customer> allCustomers = customerRepository.findAll();
 
-        System.out.println("-------------------------------------");
-        System.out.println("<QUEST>: Refreshing quest " + questId);
         for (Customer customer : allCustomers) {
             refreshQuestForCustomer(questId, customer);
         }
-        System.out.println("<QUEST>: Refreshed quest " + questId);
-        System.out.println("-------------------------------------");
 
         return new ResponseEntity<>("Refreshed quest " + questId + " for all customers", HttpStatus.OK);
     }
@@ -153,7 +142,6 @@ public class QuestService {
             refreshQuest(id);
         }
 
-        System.out.println("<QUEST>: Refreshed ALL quests ");
         return new ResponseEntity<>("Refreshed all quests for all customers", HttpStatus.OK);
     }
 
@@ -173,7 +161,7 @@ public class QuestService {
             customerRepository.save(customer);
             return isAdded;
         } catch (Exception e) {
-            e.printStackTrace();
+
             return false;
         }
 
@@ -194,7 +182,8 @@ public class QuestService {
 
         // get all valid quests
         List<Quest> quests = this.questRepository.findAllByEndDateTimeAfter(LocalDateTime.now());
-        Customer customer = this.customerRepository.findByUsername(username).get();
+        Customer customer = this.customerRepository.findByUsername(username)
+            .orElseThrow(() -> new NotExistException("Customer"));
         Set<Quest> completedQuests = customer.getCompletedQuests();
 
         List<QuestProgressDTO> questProgress = new ArrayList<>();

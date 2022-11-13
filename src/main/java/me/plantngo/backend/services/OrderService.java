@@ -202,7 +202,8 @@ public class OrderService {
     public Order addOrderItem(String customerName, Integer orderId, OrderItemDTO orderItemDTO) {
 
         // find existing order
-        Order order = orderRepository.findById(orderId).get();
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new NotExistException("Order"));
 
         Set<OrderItem> orderItems = order.getOrderItems();
         OrderItem orderItem = this.orderItemMapToEntity(orderItemDTO, order);
@@ -262,7 +263,7 @@ public class OrderService {
         for (UpdateOrderItemDTO updateOrderItemDTO : updateOrderItemDTOs) {
             OrderItemDTO orderItemDTO = mapper.map(updateOrderItemDTO, OrderItemDTO.class);
             OrderItem orderItem = this.orderItemMapToEntity(orderItemDTO, order);
-            orderItems.removeIf(x -> x.getProductId() == orderItem.getProductId());
+            orderItems.removeIf(x -> x.getProductId().equals(orderItem.getProductId()));
             if (orderItem.getQuantity() > 0) {
                 orderItems.add(orderItem);
             }

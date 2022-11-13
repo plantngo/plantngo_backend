@@ -25,7 +25,7 @@ import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class ChangeCredentialServiceTest {
+class ChangeCredentialServiceTest {
 
     @Mock
     private CustomerRepository customerRepository;

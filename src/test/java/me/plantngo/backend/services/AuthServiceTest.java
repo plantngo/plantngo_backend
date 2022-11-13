@@ -23,7 +23,7 @@ import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthServiceTest {
+class AuthServiceTest {
     
     @Mock
     private CustomerRepository customerRepository;
@@ -44,7 +44,7 @@ public class AuthServiceTest {
     private Customer customer;
 
     @BeforeEach
-    public void initEach() {
+    void initEach() {
         registrationDTO = new RegistrationDTO();
         registrationDTO.setUsername("Daniel");
         registrationDTO.setEmail("daniel@gmail.com");
@@ -60,7 +60,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testRegisterUser_InvalidUserType_ThrowInvalidUserTypeException() {
+    void testRegisterUser_InvalidUserType_ThrowInvalidUserTypeException() {
 
         // Arrange
         registrationDTO.setUserType('T');
@@ -78,7 +78,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testRegisterUser_MerchantEmailAlreadyExists_ThrowFailedRegistrationException() {
+    void testRegisterUser_MerchantEmailAlreadyExists_ThrowFailedRegistrationException() {
 
         // Arrange
         registrationDTO.setUserType('M');
@@ -99,7 +99,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testRegisterUser_ValidMerchant_ReturnMerchant() {
+    void testRegisterUser_ValidMerchant_ReturnMerchant() {
 
         // Arrange
         registrationDTO.setUserType('M');
@@ -126,7 +126,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testRegisterUser_CustomerUsernameAlreadyExists_ThrowFailedRegistrationException() {
+    void testRegisterUser_CustomerUsernameAlreadyExists_ThrowFailedRegistrationException() {
 
         // Arrange
         registrationDTO.setUserType('C');
@@ -153,7 +153,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testRegisterUser_ValidCustomer_ReturnCustomer() {
+    void testRegisterUser_ValidCustomer_ReturnCustomer() {
 
         // Arrange
         registrationDTO.setUserType('C');

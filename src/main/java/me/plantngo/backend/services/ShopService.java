@@ -129,12 +129,8 @@ public class ShopService {
      * @param voucherId
      */
     public void deleteVoucher(Merchant merchant, Integer voucherId) {
-        // Check to see if same voucher under merchant already exists
-        if (voucherRepository.findByIdAndMerchant(voucherId, merchant).isEmpty()) {
-            throw new NotExistException("Voucher");
-        }
-
-        Voucher voucher = voucherRepository.findByIdAndMerchant(voucherId, merchant).get();
+        Voucher voucher = voucherRepository.findByIdAndMerchant(voucherId, merchant)
+            .orElseThrow(() -> new NotExistException("Voucher"));
         voucherRepository.delete(voucher);
     }
 
@@ -220,12 +216,8 @@ public class ShopService {
      * @param categoryName
      */
     public void deleteCategory(Merchant merchant, String categoryName) {
-        // Check to see if same category under merchant already exists
-        if (categoryRepository.findByNameAndMerchant(categoryName, merchant).isEmpty()) {
-            throw new NotExistException("Category");
-        }
-
-        Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
+        Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant)
+            .orElseThrow(() -> new NotExistException("Category"));
         categoryRepository.delete(category);
     }
 
@@ -266,11 +258,9 @@ public class ShopService {
             throws MalformedURLException {
 
         // Check to see if category exists
-        if (!categoryRepository.existsByNameAndMerchant(categoryName, merchant)) {
-            throw new NotExistException("Category");
-        }
+        Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant)
+            .orElseThrow(() -> new NotExistException("Category"));
 
-        Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
         List<Product> productList = category.getProducts();
 
         // Check to see if product with same name already exists in category
@@ -286,7 +276,7 @@ public class ShopService {
                 String imageUrl = minioService.uploadFile(file, "product", merchant.getUsername());
                 productDTO.setImageUrl(new URL(imageUrl));
             } catch (Exception e) {
-                e.printStackTrace();
+
             }
 
         }
@@ -310,11 +300,9 @@ public class ShopService {
     public Product addProduct(Merchant merchant, String categoryName, ProductDTO productDTO) {
 
         // Check to see if category exists
-        if (!categoryRepository.existsByNameAndMerchant(categoryName, merchant)) {
-            throw new NotExistException("Category");
-        }
-
-        Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant).get();
+        Category category = categoryRepository.findByNameAndMerchant(categoryName, merchant)
+            .orElseThrow(() -> new NotExistException("Category"));
+        
         List<Product> productList = category.getProducts();
 
         // Check to see if product with same name already exists in category
@@ -396,7 +384,7 @@ public class ShopService {
                 String imageUrl = minioService.uploadFile(file, "product", category.getMerchant().getUsername());
                 updateProductDTO.setImageUrl(new URL(imageUrl));
             } catch (Exception e) {
-                e.printStackTrace();
+
             }
         }
 

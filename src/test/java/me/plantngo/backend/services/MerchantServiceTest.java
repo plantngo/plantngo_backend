@@ -27,7 +27,7 @@ import me.plantngo.backend.repositories.CustomerRepository;
 import me.plantngo.backend.repositories.MerchantRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class MerchantServiceTest {
+class MerchantServiceTest {
 
     @Mock
     private MerchantRepository merchantRepository;
@@ -39,7 +39,7 @@ public class MerchantServiceTest {
     private MerchantService merchantService;
 
     @BeforeEach
-    public void initEach() {
+    void initEach() {
         
     }
 

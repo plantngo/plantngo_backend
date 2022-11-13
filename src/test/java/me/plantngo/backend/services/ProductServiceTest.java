@@ -32,7 +32,7 @@ import me.plantngo.backend.repositories.ProductIngredientRepository;
 import me.plantngo.backend.repositories.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class ProductServiceTest {
+class ProductServiceTest {
     
     @Mock
     private ProductRepository productRepository;

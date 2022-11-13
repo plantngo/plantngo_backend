@@ -18,7 +18,7 @@ import me.plantngo.backend.models.Log;
 import me.plantngo.backend.repositories.LogRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class LogServiceTest {
+class LogServiceTest {
     
     @Mock
     private LogRepository logRepository;

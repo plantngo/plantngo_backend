@@ -48,7 +48,8 @@ public class ResetPasswordService {
                 customer = optionalCustomer.get();
                 isCustomer = true;
             } else {
-                merchant = merchantRepository.findByEmail(email).get();
+                merchant = merchantRepository.findByEmail(email)
+                    .orElseThrow(() -> new NotExistException("Account"));
                 isCustomer = false;
             }
         } catch (NoSuchElementException e) {
@@ -89,7 +90,8 @@ public class ResetPasswordService {
                 customer = optionalCustomer.get();
                 isCustomer = true;
             } else {
-                merchant = merchantRepository.findByEmail(email).get();
+                merchant = merchantRepository.findByEmail(email)
+                    .orElseThrow(() -> new NotExistException("Account"));
                 isCustomer = false;
             }
         } catch (NoSuchElementException e) {
