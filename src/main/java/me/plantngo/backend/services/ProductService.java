@@ -40,47 +40,111 @@ public class ProductService {
         this.ingredientRepository = ingredientRepository;
     }
 
+    /**
+     * Gets all products
+     * 
+     * @return
+     */
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
+    /**
+     * Gets all product ingredients
+     * 
+     * @return
+     */
     public List<ProductIngredient> getAllProductIngredients() {
         return productIngredientRepository.findAll();
     }
 
+    /**
+     * Gets all product ingredients given Merchant and Product's name
+     * 
+     * @param merchantName
+     * @param productName
+     * @return
+     */
     public List<ProductIngredient> getProductIngredientsByMerchantAndProduct(String merchantName, String productName) {
         return productIngredientRepository.findByProductNameAndProductCategoryMerchantUsername(productName, merchantName);
     }
 
+    /**
+     * Gets a product given it's Id
+     * 
+     * @param productId
+     * @return
+     */
     public Product getProductById(Integer productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new NotExistException(PRODUCT_STRING));
     }
 
+    /**
+     * Gets a product given its name
+     * 
+     * @param productName
+     * @return
+     */
     public Product getProductByName(String productName) {
         return productRepository.findByName(productName)
                 .orElseThrow(() -> new NotExistException(PRODUCT_STRING));
     }
 
+    /**
+     * Gets a product given its name and Merchant
+     * 
+     * @param productName
+     * @param merchantName
+     * @return
+     */
     public Product getProductByNameAndMerchantName(String productName, String merchantName) {
         return productRepository.findByNameAndCategoryMerchantUsername(productName, merchantName)
                 .orElseThrow(() -> new NotExistException(PRODUCT_STRING));
     }
 
+    /**
+     * Gets an ingredient given its name
+     * 
+     * @param name
+     * @return
+     */
     public Ingredient getIngredientByName(String name) {
         return ingredientRepository.findByName(name)
                 .orElseThrow(() -> new NotExistException("Ingredient"));
     }
 
+    /**
+     * Gets all product ingredients given the ingredient it's based off, the Product and Merchant
+     * 
+     * @param ingredient
+     * @param product
+     * @param merchantName
+     * @return
+     */
     public ProductIngredient getProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername(Ingredient ingredient, Product product, String merchantName) {
         return productIngredientRepository.findByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName)
                 .orElseThrow(() -> new NotExistException(PRODUCT_INGREDIENT_STRING));
     }
 
+    /**
+     * Gets all products by a given Merchant
+     * 
+     * @param merchantName
+     * @return
+     */
     public List<Product> getAllProductsByMerchant(String merchantName) {
         return productRepository.findByCategoryMerchantUsernameOrderByCarbonEmission(merchantName);
     }
 
+    /**
+     * Adds a product ingredient to a given Product by a Merchant
+     * 
+     * @param merchantName
+     * @param productName
+     * @param productIngredientDTO
+     * @return
+     */
     public ProductIngredient addProductIngredient(String merchantName, String productName, ProductIngredientDTO productIngredientDTO) {
         Product product = this.getProductByName(productName);
         Ingredient ingredient = this.getIngredientByName(productIngredientDTO.getName());
@@ -106,6 +170,14 @@ public class ProductService {
         return productIngredient;
     }
 
+    /**
+     * Updates a product ingredient in a given Product by a Merchant
+     * 
+     * @param merchantName
+     * @param productName
+     * @param productIngredientDTO
+     * @return
+     */
     public ProductIngredient updateProductIngredient(String merchantName,
             String productName,
             ProductIngredientDTO productIngredientDTO) {
@@ -132,6 +204,12 @@ public class ProductService {
         return productIngredient;
     }
 
+    /**
+     * Deletes all product ingredients from a given Product by a Merchant
+     * 
+     * @param merchantName
+     * @param productName
+     */
     public void deleteAllProductIngredients(String merchantName, String productName) {
         Product product = this.getProductByNameAndMerchantName(productName, merchantName);
 
@@ -146,6 +224,13 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    /**
+     * Deletes a specified product ingredient in a given Product by a Merchant
+     * 
+     * @param merchantName
+     * @param productName
+     * @param productIngredientName
+     */
     public void deleteProductIngredient(String merchantName, String productName,  String productIngredientName) {
         Product product = this.getProductByName(productName);
         Ingredient ingredient = this.getIngredientByName(productIngredientName);
@@ -164,6 +249,12 @@ public class ProductService {
 
         productRepository.save(product);
     }
+
+    /*
+     * 
+     * Helper Methods
+     * 
+     */
 
     private Double calculateCarbonRating(Product product) {
         List<Product> products = product.getCategory().getProducts();
