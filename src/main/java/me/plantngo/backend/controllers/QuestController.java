@@ -31,7 +31,7 @@ public class QuestController {
         return questService.getAllQuests();
     }
 
-    @ApiOperation(value = "Get all quests that a user has")
+    @ApiOperation(value = "Get all quests that a user has with its current progress counter")
     @GetMapping(path = "/active/progress/user/{username}")
     public List<QuestProgressDTO> getAllActiveQuestProgressByUsername(@PathVariable("username") String username) {
         return questService.getAllActiveQuestProgressByUsername(username);
