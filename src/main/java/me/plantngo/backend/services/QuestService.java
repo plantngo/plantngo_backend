@@ -43,7 +43,7 @@ public class QuestService {
 
     public Quest getQuest(Integer id) {
         return questRepository.findById(id)
-            .orElseThrow(() -> new NotExistException("Quest"));
+                .orElseThrow(() -> new NotExistException("Quest"));
     }
 
     public List<Quest> getActiveQuests() {
@@ -76,17 +76,18 @@ public class QuestService {
 
     public ResponseEntity<String> refreshQuestByCustomerUsername(Integer id, String username) {
         Customer customer = customerRepository.findByUsername(username)
-            .orElseThrow(() -> new NotExistException("Customer"));
+                .orElseThrow(() -> new NotExistException("Customer"));
         return refreshQuestForCustomer(id, customer);
 
     }
 
     public ResponseEntity<String> refreshQuestForCustomer(Integer questId, Customer customer) {
         String username = customer.getUsername();
+        System.out.println(username);
 
         Quest quest = questRepository.findById(questId)
-            .orElseThrow(() -> new NotExistException("Quest"));
-
+                .orElseThrow(() -> new NotExistException("Quest"));
+        System.out.println(questId + " " + quest);
         List<Log> matches = logRepository.findAllByUsernameAndTypeAndDateTimeBetween(
                 username,
                 quest.getType(),
@@ -97,23 +98,33 @@ public class QuestService {
          * update customer's completed quests if necessary
          */
         if (matches.size() >= quest.getCountToComplete()) {
-            boolean isFound = false;
+            // tracks if the quest has already been completed
+            boolean isCompleted = false;
+
+            // iterate through all customer's quests and check if any of the completed quest
+            // is the one we're trying to reward for
             for (Quest q : customer.getCompletedQuests()) {
-                if (q.getId().equals(quest.getId())) {
-                    isFound = true;
+                if (q.getId() == quest.getId()) {
+                    isCompleted = true;
+                    break;
                 }
             }
-            if (!isFound) {
+
+            // if the quest was already rewarded for, do not reward it
+            if (!isCompleted) {
                 Set<Quest> completed = customer.getCompletedQuests();
 
                 if (completed == null) {
                     completed = new HashSet<>();
                 }
 
+                // add the completed quest to the customer's set of completed quest
+                completed.add(quest);
+
                 customer.setCompletedQuests(completed);
                 customer.setGreenPoints(customer.getGreenPoints() + quest.getPoints());
 
-                customerRepository.saveAndFlush(customer);
+                customerRepository.save(customer);
 
             }
 
@@ -183,7 +194,7 @@ public class QuestService {
         // get all valid quests
         List<Quest> quests = this.questRepository.findAllByEndDateTimeAfter(LocalDateTime.now());
         Customer customer = this.customerRepository.findByUsername(username)
-            .orElseThrow(() -> new NotExistException("Customer"));
+                .orElseThrow(() -> new NotExistException("Customer"));
         Set<Quest> completedQuests = customer.getCompletedQuests();
 
         List<QuestProgressDTO> questProgress = new ArrayList<>();
