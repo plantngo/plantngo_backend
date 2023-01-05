@@ -22,7 +22,7 @@ import me.plantngo.backend.repositories.ProductRepository;
 
 @Service
 public class ProductService {
-    
+
     private final ProductRepository productRepository;
 
     private final ProductIngredientRepository productIngredientRepository;
@@ -34,7 +34,8 @@ public class ProductService {
     private static final String PRODUCT_INGREDIENT_STRING = "Product Ingredient";
 
     @Autowired
-    public ProductService(ProductRepository productRepository, ProductIngredientRepository productIngredientRepository, IngredientRepository ingredientRepository) {
+    public ProductService(ProductRepository productRepository, ProductIngredientRepository productIngredientRepository,
+            IngredientRepository ingredientRepository) {
         this.productRepository = productRepository;
         this.productIngredientRepository = productIngredientRepository;
         this.ingredientRepository = ingredientRepository;
@@ -66,7 +67,8 @@ public class ProductService {
      * @return
      */
     public List<ProductIngredient> getProductIngredientsByMerchantAndProduct(String merchantName, String productName) {
-        return productIngredientRepository.findByProductNameAndProductCategoryMerchantUsername(productName, merchantName);
+        return productIngredientRepository.findByProductNameAndProductCategoryMerchantUsername(productName,
+                merchantName);
     }
 
     /**
@@ -115,15 +117,18 @@ public class ProductService {
     }
 
     /**
-     * Gets all product ingredients given the ingredient it's based off, the Product and Merchant
+     * Gets all product ingredients given the ingredient it's based off, the Product
+     * and Merchant
      * 
      * @param ingredient
      * @param product
      * @param merchantName
      * @return
      */
-    public ProductIngredient getProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername(Ingredient ingredient, Product product, String merchantName) {
-        return productIngredientRepository.findByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName)
+    public ProductIngredient getProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername(
+            Ingredient ingredient, Product product, String merchantName) {
+        return productIngredientRepository
+                .findByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName)
                 .orElseThrow(() -> new NotExistException(PRODUCT_INGREDIENT_STRING));
     }
 
@@ -145,14 +150,17 @@ public class ProductService {
      * @param productIngredientDTO
      * @return
      */
-    public ProductIngredient addProductIngredient(String merchantName, String productName, ProductIngredientDTO productIngredientDTO) {
+    public ProductIngredient addProductIngredient(String merchantName, String productName,
+            ProductIngredientDTO productIngredientDTO) {
         Product product = this.getProductByName(productName);
         Ingredient ingredient = this.getIngredientByName(productIngredientDTO.getName());
-        if (productIngredientRepository.existsByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName)) {
+        if (productIngredientRepository.existsByIngredientAndProductAndProductCategoryMerchantUsername(ingredient,
+                product, merchantName)) {
             throw new AlreadyExistsException(PRODUCT_INGREDIENT_STRING);
         }
 
-        ProductIngredient productIngredient = this.productIngredientMapToEntity(productIngredientDTO, product, ingredient);
+        ProductIngredient productIngredient = this.productIngredientMapToEntity(productIngredientDTO, product,
+                ingredient);
 
         // Update list of ingredients in Product
         Set<ProductIngredient> productIngredients = product.getProductIngredients();
@@ -161,8 +169,8 @@ public class ProductService {
         // Save all the new values in product
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
         product.setProductIngredients(productIngredients);
-        Merchant merchant = product.getCategory().getMerchant();
-        merchant.setCarbonRating(this.calculateCarbonRating(product));
+        // Merchant merchant = product.getCategory().getMerchant();
+        // merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         // Add ProductIngredient to Repo + Update Product in Repo
         productIngredientRepository.save(productIngredient);
@@ -184,7 +192,9 @@ public class ProductService {
 
         Product product = this.getProductByName(productName);
         Ingredient ingredient = this.getIngredientByName(productIngredientDTO.getName());
-        ProductIngredient productIngredient =  this.getProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName);
+        ProductIngredient productIngredient = this
+                .getProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product,
+                        merchantName);
 
         // Set new servingQty
         productIngredient.setServingQty(productIngredientDTO.getServingQty());
@@ -195,8 +205,8 @@ public class ProductService {
         productIngredients.add(productIngredient);
         product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
-        Merchant merchant = product.getCategory().getMerchant();
-        merchant.setCarbonRating(this.calculateCarbonRating(product));
+        // Merchant merchant = product.getCategory().getMerchant();
+        // merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         // Add ProductIngredient to Repo + Update Product in Repo
         productIngredientRepository.save(productIngredient);
@@ -218,8 +228,8 @@ public class ProductService {
 
         product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
-        Merchant merchant = product.getCategory().getMerchant();
-        merchant.setCarbonRating(this.calculateCarbonRating(product));
+        // Merchant merchant = product.getCategory().getMerchant();
+        // merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         productRepository.save(product);
     }
@@ -231,10 +241,12 @@ public class ProductService {
      * @param productName
      * @param productIngredientName
      */
-    public void deleteProductIngredient(String merchantName, String productName,  String productIngredientName) {
+    public void deleteProductIngredient(String merchantName, String productName, String productIngredientName) {
         Product product = this.getProductByName(productName);
         Ingredient ingredient = this.getIngredientByName(productIngredientName);
-        ProductIngredient productIngredient = this.getProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product, merchantName);
+        ProductIngredient productIngredient = this
+                .getProductIngredientByIngredientAndProductAndProductCategoryMerchantUsername(ingredient, product,
+                        merchantName);
 
         Set<ProductIngredient> productIngredients = product.getProductIngredients();
         if (!productIngredients.contains(productIngredient)) {
@@ -244,8 +256,8 @@ public class ProductService {
         productIngredients.remove(productIngredient);
         product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
-        Merchant merchant = product.getCategory().getMerchant();
-        merchant.setCarbonRating(this.calculateCarbonRating(product));
+        // Merchant merchant = product.getCategory().getMerchant();
+        // merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         productRepository.save(product);
     }
@@ -271,7 +283,7 @@ public class ProductService {
     private Double calculateTotalEmissions(Set<ProductIngredient> productIngredients) {
         Double totalEmissions = 0.0;
 
-        for(ProductIngredient p : productIngredients) {
+        for (ProductIngredient p : productIngredients) {
             double emission = p.getIngredient().getEmissionPerGram().doubleValue() * p.getServingQty().doubleValue();
             totalEmissions += Double.valueOf(emission);
         }
@@ -281,7 +293,7 @@ public class ProductService {
 
     private ProductIngredient productIngredientMapToEntity(@Valid ProductIngredientDTO productIngredientDTO,
             Product product, Ingredient ingredient) {
-        
+
         ModelMapper mapper = new ModelMapper();
         ProductIngredient productIngredient = mapper.map(productIngredientDTO, ProductIngredient.class);
 
