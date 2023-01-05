@@ -169,7 +169,8 @@ public class ProductService {
         // Save all the new values in product
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
         product.setProductIngredients(productIngredients);
-        Merchant merchant = product.getCategory().getMerchant();
+
+        // Merchant merchant = product.getCategory().getMerchant();
         // merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         // Add ProductIngredient to Repo + Update Product in Repo
@@ -205,7 +206,7 @@ public class ProductService {
         productIngredients.add(productIngredient);
         product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
-        Merchant merchant = product.getCategory().getMerchant();
+        // Merchant merchant = product.getCategory().getMerchant();
         // merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         // Add ProductIngredient to Repo + Update Product in Repo
@@ -228,7 +229,7 @@ public class ProductService {
 
         product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
-        Merchant merchant = product.getCategory().getMerchant();
+        // Merchant merchant = product.getCategory().getMerchant();
         // merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         productRepository.save(product);
@@ -256,7 +257,7 @@ public class ProductService {
         productIngredients.remove(productIngredient);
         product.setProductIngredients(productIngredients);
         product.setCarbonEmission(this.calculateTotalEmissions(productIngredients));
-        Merchant merchant = product.getCategory().getMerchant();
+        // Merchant merchant = product.getCategory().getMerchant();
         // merchant.setCarbonRating(this.calculateCarbonRating(product));
 
         productRepository.save(product);
